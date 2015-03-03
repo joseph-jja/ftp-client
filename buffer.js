@@ -2,6 +2,8 @@ function Buffer() {
   this.types = [Array, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array,
                 Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array ];
   this.bufferType;
+  this.multipliers = [ 1, 1, 1, 1, 2, 2, 4, 4, 4, 8];
+  this.bufferMultiplier;
 }
 
 // takes an ArrayBuffer and figures ou it's type and then converts to a string
@@ -11,6 +13,7 @@ Buffer.protoype.getDataType = function(buffer) {
     for (i = 0; i < this.types.length; i++) {
         if (buffer instanceof this.types[i]) {
             resultType = this.types[i];
+            this.bufferMultiplier = this.multipliers[i];
             break;
         }
     }
@@ -30,13 +33,16 @@ Buffer.protoype.toString = function(data) {
     return result;
 }
 
-// fixme
+// FIXME??  not sure if this is totall correct
 Buffer.protoype.encode = function(data) {
-    var buf = new ArrayBuffer(data.length);
-    // 2 bytes for each char 
-    var bufView = new Uint8Array(buf);
-    for (var i = 0, strLen = str.length; i < strLen; i++) {
-        bufView[i] = str.charCodeAt(i);
+    var i, len, buffer, 
+      buf = new ArrayBuffer(data.length * this.bufferMultipler);
+      
+    buffer = new this.bufferType(buf);
+    len = data.length;
+    
+    for (i = 0; i < len; i++) {
+        buffer[i] = data.charCodeAt(i);
     }
     return buf;
 }
