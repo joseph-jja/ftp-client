@@ -1,0 +1,16 @@
+/* CSS file placeholder. */
+label {
+  display: inline;
+}
+
+input {
+  display: inline;
+}
+fieldset {
+  border: 1px solid #000;
+  margin-bottom: 5px;
+}
+fieldset.listings button,fieldset.listings label, fieldset.listings select {
+  display: inline-block;
+  width: 48%;
+}
