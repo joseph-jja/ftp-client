@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ftp-client</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <h1 id="greeting"></h1>
+  <form>
+    <fieldset>
+      <label>FTP Host:</label>
+      <input type="text" name="ftpHost" id="ftpHost">
+      <label>FTP Port:</label>
+      <input type="text" name="ftpPort" id="ftpPort" value="21">
+    </fieldset>
+    <fieldset>
+      <label>Username:</label>
+      <input type="text" name="username" id="username">
+      <label>Password:</label>
+      <input type="password" name="password" id="password">
+    </fieldset>
+    <fieldset>
+      <button id="connectID"type="button">Connect</button>
+    </fieldset>
+    <fieldset class="listings">
+      <label>Local Files</label>
+      <label>Remote Files</label>
+    </fieldset>
+    <fieldset class="listings">
+      <select name="localFiles" id="localFiles" size="10"></select>
+      <select name="remoteFiles" id="remoteFiles" size="10"></select>
+    </fieldset>
+    <fieldset class="listings">
+      <button type="button">Upload</button>
+      <button type="button">Download</button>
+    </fieldset>
+    <fieldset>
+      <textarea rows="4" cols="70" id="resultData"></textarea>
+    </fieldset>
+  </form>
+  <script src="ftp-client-protocol.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
