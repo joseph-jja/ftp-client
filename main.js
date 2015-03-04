@@ -2,11 +2,12 @@
 window.onload = function() {
 	document.querySelector('#greeting').innerText = 'ftp-client';
 
+	var ftp = new FtpClient();
+	ftp.initialize();
+
 	document.getElementById('connectID').addEventListener('click', function(e) {
 
-		var ftp = new FtpClient();
-
-		ftp.connect();
+		ftp.connect(ftp.hostname.value, ftp.port.value);
 
 		return false;
 	});
