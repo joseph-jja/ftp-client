@@ -1,14 +1,13 @@
 // main
 window.onload = function() {
-  document.querySelector('#greeting').innerText =
-    'ftp-client';
+	document.querySelector('#greeting').innerText = 'ftp-client';
 
-  document.getElementById('connectID').addEventListener('click', function(e) {
+	document.getElementById('connectID').addEventListener('click', function(e) {
 
-    var ftp = new FtpClient();
+		var ftp = new FtpClient();
 
-    ftp.connect();
+		ftp.connect();
 
-    return false;
-  });
+		return false;
+	});
 };
