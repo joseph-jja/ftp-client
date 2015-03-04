@@ -1,7 +1,8 @@
 // basic buffer for convverting between strings
-function BufferCoverter() {
-  this.types = [Array, Int8Array, Uint8Array, Uint8ClampedArray, Int16Array,
-                Uint16Array, Int32Array, Uint32Array, Float32Array, Float64Array ];
+function BufferConverter() {
+  this.types = [Array, Int8Array, Uint8Array,
+          Uint8ClampedArray, Int16Array, Uint16Array,
+          Int32Array, Uint32Array, Float32Array, Float64Array ];
   this.bufferType;
   this.multipliers = [ 1, 1, 1, 1, 2, 2, 4, 4, 4, 8];
   this.bufferMultiplier;
@@ -9,7 +10,7 @@ function BufferCoverter() {
 
 // takes an ArrayBuffer and figures ou it's type and then converts to a string
 // useful in FTP when you are doing a chrome app and it gives you ArrayBuffers
-BufferCoverter.prototype.getDataType = function(data) {
+BufferConverter.prototype.getDataType = function(data) {
     var i, resultType;
     for (i = 0; i < this.types.length; i++) {
         if (data instanceof this.types[i]) {
@@ -22,7 +23,7 @@ BufferCoverter.prototype.getDataType = function(data) {
     return resultType;
 }
 // takes an ArrayBuffer and then converts to String
-BufferCoverter.prototype.toString = function(data) {
+BufferConverter.prototype.toString = function(data) {
     var i,
         buffer = new this.bufferType(data),
         len = buffer.length,
@@ -34,8 +35,8 @@ BufferCoverter.prototype.toString = function(data) {
     return result;
 }
 
-// FIXME??  not sure if this is totall correct
-BufferCoverter.prototype.encode = function(data) {
+// FIXME??  not sure if this is totally correct
+BufferConverter.prototype.encode = function(data) {
     var i, len, buffer,
       buf = new ArrayBuffer(data.length * this.bufferMultipler);
 
