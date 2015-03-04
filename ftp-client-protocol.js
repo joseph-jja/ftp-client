@@ -15,8 +15,8 @@ function FtpClient() {
 
   this.socketID;
   this.tcp = chrome.sockets.tcp;
-  
-  this.bufferInfo = new Buffer();
+
+  this.bufferInfo = new BufferCoverter();
 }
 
 FtpClient.prototype.sendCommand = function(data, callback) {
@@ -57,7 +57,7 @@ FtpClient.prototype.connect = function() {
           console.log(result);
           if ( ! isNaN(result) ) {
             // send login information
-
+            self.login();
           }
       });
 
@@ -70,9 +70,9 @@ FtpClient.prototype.logon = function() {
     pass = this.password.value;
 
     if ( typeof user !== 'undefined' && typeof pass !== 'undefined' ) {
-      this.tcp.send("USER " + user, function(info) {
+      this.sendCommand("USER " + user, function(info) {
         console.log(info);
-        this.tcp.send("PASS " + pass, function(pinfo) {
+        this.sendCommand("PASS " + pass, function(pinfo) {
           console.log(pinfo);
         });
       });
