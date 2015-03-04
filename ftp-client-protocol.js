@@ -91,14 +91,14 @@ FtpClient.prototype.logon = function(user, pass) {
 	var self = this;
 	
 	if (typeof user !== 'undefined' && typeof pass !== 'undefined') {
+		this.next = function() {
+			self.sendCommand("PASS " + pass, function(info) {
+				console.log(info);
+				self.next = self.quit;
+			});
+		};
 		this.sendCommand("USER " + user, function(info) {
 			console.log(info);
-			self.next = function() {
-				self.sendCommand("PASS " + pass, function(pinfo) {
-					console.log(pinfo);
-					self.next = self.quit;
-				});
-			}
 		});
 	}
 
