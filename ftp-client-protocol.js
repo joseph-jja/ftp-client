@@ -72,6 +72,7 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
     if (typeof this.next !== 'undefined') {
         this.next();
     }
+    
     if (data.toLowerCase().indexOf("227 entering passive mode") === 0) {
         pasvHost = data.substring("227 Entering Passive Mode".length + 1);
         pasvHost = pasvHost.replace(/\(/, '');
@@ -104,7 +105,6 @@ FtpClient.prototype.connect = function(host, port) {
     if (host && host.length > 0) {
         port = (port && port.length > 0) ? port : 21;
         this.tcp.create({}, function(createInfo) {
-            var buffer;
             self.socketID = createInfo.socketId;
             self.next = function() {
                 self.logon(self.username.value, self.password.value);
