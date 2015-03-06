@@ -16,7 +16,7 @@ function FtpClient() {
     this.tcp = chrome.sockets.tcp;
 
     this.next;
-    this.commands = ['SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV'];
+    this.commands = ['SYST', 'MODE S', 'TYPE A', 'PWD' ]; //, 'PASV'];
     this.commandIndex = 0;
 }
 
@@ -71,17 +71,22 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
 
     if (typeof this.next !== 'undefined') {
         this.next();
+    } else if ( this.commandIndex < this.commands.length ) {
+    	self.sendCommand(this.commands[this.commandIndex], function(info) {
+            console.log(JSON.stringify(info));
+            // stop the call chain
+            self.next = undefined;
+            self.commandIndex ++;
+        });
     }
     
     if (data.toLowerCase().indexOf("227 entering passive mode") === 0) {
-        pasvHost = data.substring("227 Entering Passive Mode".length + 1);
-        pasvHost = pasvHost.replace(/\(/, '');
-        pasvHost = pasvHost.replace(/\)/, '');
-        pasvHost = pasvHost.replace(/\./, '');
+    	// find the 6 digits - TODO better regexp here
+    	pasvHost = data.match(/(\d*\,\d*\,\d*\,\d*)(\,)(\d*\,\d*)/gi)[0];
         portData = pasvHost.split(",");
-        port = (portData[4] * 256) + (+portData[5]);
+        port = ( parseInt(portData[4], 10) * 256) + parseInt(portData[5], 10);
         host = portData[0] + "." + portData[1] + "." + portData[2] + "." + portData[3];
-        console.log(host + " " + port);
+        console.log(host + " " + port + " " + JSON.stringify(portData));
 
         this.tcp.create({}, function(createInfo) {
             self.pasvSocketID = createInfo.socketId;
@@ -92,7 +97,8 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
                     self.next = undefined;
                 });
             };
-            self.tcp.connect(self.pasvSocketID, host, +port, function(result) {
+            //self.tcp.connect(self.pasvSocketID, host, +port, function(result) {
+            self.tcp.connect(self.pasvSocketID, self.hostname.value, +port, function(result) {
                 console.log(result);
             });
         });
