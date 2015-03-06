@@ -16,7 +16,7 @@ function FtpClient() {
     this.tcp = chrome.sockets.tcp;
 
     this.next;
-    this.commands = ['SYST', 'MODE S', 'TYPE A', 'PWD' ]; //, 'PASV', 'LIST -aL'];
+    this.commands = ['SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV', 'LIST -aL'];
     this.commandIndex = 0;
 }
 
@@ -28,7 +28,6 @@ FtpClient.prototype.initialize = function() {
 
     // add listener to tcp for
     this.tcp.onReceive.addListener(function(info) {
-        // console.log(self);
         self.defaultReceiveCallback(info);
     });
 
@@ -89,16 +88,15 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
         host = portData[0] + "." + portData[1] + "." + portData[2] + "." + portData[3];
         console.log(host + " " + port + " " + JSON.stringify(portData));
 
+        if ( this.pasvSocketID ) {
+        	this.tcp.disconnect(this.pasvSocketID, function() {
+        		console.log("Closing open data socket!");
+        	});
+        }
         this.tcp.create({}, function(createInfo) {
             self.pasvSocketID = createInfo.socketId;
             console.log(JSON.stringify(createInfo));
-            self.next = function() {
-                self.sendCommand("LIST -aL", function(info) {
-                    console.log(JSON.stringify(info));
-                    // stop the call chain
-                    self.next = undefined;
-                });
-            };
+            
             self.tcp.connect(self.pasvSocketID, host, +port, function(result) {
             //self.tcp.connect(self.pasvSocketID, self.hostname.value, +port, function(result) {
                 console.log(result);
