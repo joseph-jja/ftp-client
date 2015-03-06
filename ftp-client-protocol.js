@@ -67,7 +67,7 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
 	console.log(data);
 	this.resultData.innerHTML = buffer + data;
 	
-	if ( typeof this.next !== 'undefined') {
+	if ( typeof this.next !== 'undefined' ) {
 		this.next();
 		//this.next = undefined;
 	}
@@ -102,7 +102,6 @@ FtpClient.prototype.logon = function(user, pass) {
 		this.next = function() {
 			self.sendCommand("PASS " + pass, function(info) {
 				console.log(JSON.stringify(info));
-				self.next = self.acct;
 			});
 		};
 		this.sendCommand("USER " + user, function(info) {
