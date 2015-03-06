@@ -23,6 +23,7 @@
     <fieldset>
       <button id="connectID"type="button">Connect</button>
     </fieldset>
+    <!-- 
     <fieldset class="listings">
       <label>Local Files</label>
       <label>Remote Files</label>
@@ -35,8 +36,20 @@
       <button type="button">Upload</button>
       <button type="button">Download</button>
     </fieldset>
+    -->
     <fieldset>
-      <textarea rows="4" cols="70" id="resultData"></textarea>
+      <label>Send Command:</label>
+      <input type="text" name="command" id="command">
+      <button id="sendCommand"type="button">Send</button>
+      <br>SYST 
+      <br>MODE S 
+      <br>TYPE I
+      <br>PWD
+      <br>PASV
+      <br>LIST -aL
+    </fieldset>
+    <fieldset>
+      <textarea rows="10" cols="80" id="resultData"></textarea>
     </fieldset>
   </form>
   <script src="buffer-converter.js"></script>

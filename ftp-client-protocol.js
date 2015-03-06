@@ -38,16 +38,19 @@ FtpClient.prototype.initialize = function() {
 }
 
 FtpClient.prototype.sendCommand = function(data, callback) {
-
 	var message = BufferConverter.encode(data + "\n", Uint8Array, 1);
 	console.log( BufferConverter.decode(message, Uint8Array) );
 	this.tcp.send(this.socketID, message, callback);
 }
 
 FtpClient.prototype.defaultReceiveCallback = function(info) {
-	var result;
+	var result, self = this, data;
+	
 	if (info.socketId !== this.socketID) {
-		console.log(info);
+		console.log(JSON.stringify(info));
+		this.tcp.disconnect(info.socketId, function() {
+			console.log("Socket " + info.socketId + " disconnected!");
+		});
 		return;
 	}
 	result = info.data;
@@ -60,49 +63,55 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
 	//	bufferMultiplier: BufferConverter.bufferMultiplier
 	//};
 	//console.log(this.bufferInfo);
-	this.resultData.innerHTML = buffer + BufferConverter.decode(result, Uint8Array);
+	data = BufferConverter.decode(result, Uint8Array);
+	console.log(data);
+	this.resultData.innerHTML = buffer + data;
 	
 	if ( typeof this.next !== 'undefined') {
 		this.next();
-		this.next = undefined;
+		//this.next = undefined;
 	}
 }
 
 FtpClient.prototype.connect = function(host, port) {
 	var self = this;
 	
-	this.tcp.create({}, function(createInfo) {
-		var buffer;
-		self.socketID = createInfo.socketId;
-		self.next = function() {
-			self.logon(self.username.value, self.password.value);
-		}
-		self.tcp.connect(self.socketID, host, +port, function(result) {
-			console.log(result);
-			if (!isNaN(result)) {
-				// send login information
-				// self.login();
+	if ( host && host.length > 0 ) {
+		port = ( port && port.length > 0 ) ? port : 21; 
+		this.tcp.create({}, function(createInfo) {
+			var buffer;
+			self.socketID = createInfo.socketId;
+			self.next = function() {
+				self.logon(self.username.value, self.password.value);
 			}
+			self.tcp.connect(self.socketID, host, +port, function(result) {
+				console.log(result);
+				if (!isNaN(result)) {
+					// send login information
+					// self.login();
+				}
+			});
 		});
-	});
+	}
 }
 
 FtpClient.prototype.logon = function(user, pass) {
 	var self = this;
 	
-	if (typeof user !== 'undefined' && typeof pass !== 'undefined') {
+	if ( user && user.length > 0 && pass && pass.length > 0 ) {
 		this.next = function() {
 			self.sendCommand("PASS " + pass, function(info) {
-				console.log(info);
-				self.next = self.quit;
+				console.log(JSON.stringify(info));
+				self.next = self.acct;
 			});
 		};
 		this.sendCommand("USER " + user, function(info) {
-			console.log(info);
+			console.log(JSON.stringify(info));
 		});
 	}
-
 }
+
+FtpClient.prototype.commands = [ 'SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV' ];
 
 FtpClient.prototype.quit = function() {
 	this.tcp.disconnect(this.socketID, function() {
@@ -110,6 +119,4 @@ FtpClient.prototype.quit = function() {
 	});
 }
 
-FtpClient.prototype.listRemoteFiles = function() {
 
-}
