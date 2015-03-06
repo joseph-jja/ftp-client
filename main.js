@@ -30,4 +30,12 @@ window.onload = function() {
 		}
 		return false;
 	});
+
+	document.getElementById('clearBuffer').addEventListener('click', function(e) {
+		
+		ftp.resultData.innerHTML = "";
+		return false;
+	});
+
+	
 };

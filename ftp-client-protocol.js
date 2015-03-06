@@ -141,10 +141,15 @@ FtpClient.prototype.logon = function(user, pass) {
 
 FtpClient.prototype.quit = function() {
     var self = this;
-    this.tcp.disconnect(this.socketID, function() {
-        console.log("Command socket disconnected!");
-        self.commandIndex = 0;
-    });
+    this.sendCommand("QUIT", function(info) {
+        console.log(JSON.stringify(info));
+        self.next = function() { 
+        	self.tcp.disconnect(self.socketID, function() {
+	            console.log("Command socket disconnected!");
+	            self.commandIndex = 0;
+	        });
+        }
+    }); 
     if ( this.pasvSocketID ) { 
         this.tcp.disconnect(this.pasvSocketID, function() {
             console.log("Data socket disconnected!");
