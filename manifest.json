@@ -3,14 +3,13 @@
   "name": "ftp-client",
   "short_name": "ftp-client",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "minimum_chrome_version": "38",
 
   "icons": {
     "16": "assets/icon_16.png",
     "128": "assets/icon_128.png"
   },
-
   "app": {
     "background": {
       "scripts": ["background.js"]
@@ -20,8 +19,7 @@
     "fileSystem"
   ],
   "sockets": {
-    "tcp": { "connect" : "*:21" }
-
+    "tcp": { "connect" : "*:*" }
   }
 }
 
