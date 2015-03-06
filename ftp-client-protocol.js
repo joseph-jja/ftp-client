@@ -17,6 +17,8 @@ function FtpClient() {
 	this.tcp = chrome.sockets.tcp;
 	
 	this.next;
+	this.commands = [ 'SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV' ];
+	this.commandIndex = 0;
 }
 
 FtpClient.prototype.initialize = function() {
@@ -44,7 +46,7 @@ FtpClient.prototype.sendCommand = function(data, callback) {
 }
 
 FtpClient.prototype.defaultReceiveCallback = function(info) {
-	var result, self = this, data;
+	var result, self = this, data, pasvHost, portData, port, host;
 	
 	if (info.socketId !== this.socketID) {
 		console.log(JSON.stringify(info));
@@ -69,7 +71,31 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
 	
 	if ( typeof this.next !== 'undefined' ) {
 		this.next();
-		//this.next = undefined;
+	}
+	if ( data.toLowerCase().indexOf("227 entering passive mode") === 0 ) {
+		pasvHost = data.substring("227 Entering Passive Mode".length + 1); 
+		pasvHost = pasvHost.replace(/\(/, '');
+		pasvHost = pasvHost.replace(/\)/, '');
+		pasvHost = pasvHost.replace(/\./, '');
+		portData = pasvHost.split(","); 
+		port = (portData[4] * 256 ) + (+portData[4]);
+		host = portData[0] + "." + portData[1] + "." + portData[2] + "." + portData[3]; 
+		console.log(host + " " + port);
+		
+		this.tcp.create({}, function(createInfo) {
+			var buffer;
+			self.socketID = createInfo.socketId;
+			self.next = function() {
+				self.sendCommand("LIST", function(info) {
+					console.log(JSON.stringify(info));
+					// stop the call chain
+					self.next = undefined;
+				});
+			}
+			self.tcp.connect(self.socketID, host, +port, function(result) {
+				console.log(result);
+			});
+		});
 	}
 }
 
@@ -102,6 +128,8 @@ FtpClient.prototype.logon = function(user, pass) {
 		this.next = function() {
 			self.sendCommand("PASS " + pass, function(info) {
 				console.log(JSON.stringify(info));
+				// stop the call chain
+				self.next = undefined;
 			});
 		};
 		this.sendCommand("USER " + user, function(info) {
@@ -110,11 +138,11 @@ FtpClient.prototype.logon = function(user, pass) {
 	}
 }
 
-FtpClient.prototype.commands = [ 'SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV' ];
-
 FtpClient.prototype.quit = function() {
+	var self = this;
 	this.tcp.disconnect(this.socketID, function() {
 		console.log("Socket disconnected!");
+		self.commandIndex = 0;
 	});
 }
 
