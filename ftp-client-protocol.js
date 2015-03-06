@@ -16,7 +16,7 @@ function FtpClient() {
     this.tcp = chrome.sockets.tcp;
 
     this.next;
-    this.commands = ['SYST', 'MODE S', 'TYPE A', 'PWD' ]; //, 'PASV'];
+    this.commands = ['SYST', 'MODE S', 'TYPE A', 'PWD' ]; //, 'PASV', 'LIST -aL'];
     this.commandIndex = 0;
 }
 
@@ -91,7 +91,7 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
         this.tcp.create({}, function(createInfo) {
             self.pasvSocketID = createInfo.socketId;
             self.next = function() {
-                self.sendCommand("LIST", function(info) {
+                self.sendCommand("LIST -aL", function(info) {
                     console.log(JSON.stringify(info));
                     // stop the call chain
                     self.next = undefined;
