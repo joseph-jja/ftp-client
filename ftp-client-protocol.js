@@ -18,6 +18,8 @@ function FtpClient() {
     this.next;
     this.commands = ['SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV', 'LIST -aL'];
     this.commandIndex = 0;
+    
+    this.arrayBufferType = Uint8Array; 
 }
 
 FtpClient.prototype.initialize = function() {
@@ -38,15 +40,9 @@ FtpClient.prototype.initialize = function() {
 };
 
 FtpClient.prototype.sendCommand = function(data, callback) {
-    var message = BufferConverter.encode(data + "\n", Uint8Array, 1);
-    console.log(BufferConverter.decode(message, Uint8Array));
+    var message = BufferConverter.encode(data + "\n", this.arrayBufferType, 1);
+    console.log(BufferConverter.decode(message, this.arrayBufferType));
     this.tcp.send(this.socketID, message, callback);
-};
-
-FtpClient.prototype.sendDataCommand = function(data, callback) {
-    var message = BufferConverter.encode(data + "\n", Uint8Array, 1);
-    console.log(BufferConverter.decode(message, Uint8Array));
-    this.tcp.send(this.pasvSocketID, message, callback);
 };
 
 FtpClient.prototype.defaultReceiveCallback = function(info) {
@@ -62,7 +58,11 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
     // info.data is an arrayBuffer
     buffer = this.resultData.innerHTML;
     // conversion event
-    data = BufferConverter.decode(result, Uint8Array);
+    // seems that with some server we get the wrong IP address 
+    // from the PASV command
+    // for example sunsite.unc.edu returns 
+    // 172.27.205.13 instead of 152.19.134.40
+    data = BufferConverter.decode(result, this.arrayBufferType);
     console.log(data);
     this.resultData.innerHTML = buffer + data;
 
