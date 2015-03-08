@@ -16,8 +16,14 @@ function FtpClient() {
     this.tcp = chrome.sockets.tcp;
 
     this.next;
+
+    // command sets
     this.logonCommands = ['SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV', 'LIST -aL'];
-    this.lCommandIndex = 0;
+    this.listDir = [ 'PASV', 'LIST -aL' ];
+
+    this.commandList = [];
+    this.commandIndex = 0;
+
 
     this.arrayBufferType = Int8Array;
 }
@@ -45,6 +51,19 @@ FtpClient.prototype.sendCommand = function(data, callback) {
     this.tcp.send(this.socketID, message, callback);
 };
 
+FtpClient.prototype.sendListCommand = function() {
+  var self = this;
+  this.sendCommand(this.commandList[this.commandIndex], function(info) {
+    Logger.log.call(this, JSON.stringify(info));
+    // stop the call chain
+    self.next = undefined;
+  });
+  this.commandIndex ++;
+  if ( this.commandIndex > this.commandList.length ) {
+  	Logger.log.call(this, "done!");
+  }
+}
+
 FtpClient.prototype.defaultReceiveCallback = function(info) {
     var buffer, result, self = this,
         data, pasvHost, portData, port, host;
@@ -64,16 +83,8 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
 
     if (typeof this.next !== 'undefined') {
         this.next();
-    } else if ( this.lCommandIndex < this.logonCommands.length ) {
-    	self.sendCommand(this.logonCommands[this.lCommandIndex], function(info) {
-            Logger.log.call(this, JSON.stringify(info));
-            // stop the call chain
-            self.next = undefined;
-        });
-    	this.lCommandIndex ++;
-    	if ( this.lCommandIndex > this.logonCommands.length ) {
-    		Logger.log.call(this, "done!");
-    	}
+    } else if ( this.commandIndex < this.commandList.length ) {
+      self.sendListCommand();
     }
 
     if (data.toLowerCase().indexOf("227 entering passive mode") === 0) {
@@ -128,6 +139,7 @@ FtpClient.prototype.logon = function(user, pass) {
                 Logger.log.call(this, JSON.stringify(info));
                 // stop the call chain
                 self.next = undefined;
+                self.commandList = self.logonCommands;
             });
         };
         this.sendCommand("USER " + user, function(info) {
