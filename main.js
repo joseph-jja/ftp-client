@@ -29,7 +29,7 @@ window.onload = function() {
 		    ftp.commandList = ftp.listDir;
 		    ftp.commandIndex = 0;
 		    ftp.sendListCommand()
-		  } else if ( cmd.indexOf('cd') !== -1 ) {
+		  } else if ( cmd.indexOf('cd') !== -1 || cmd.indexOf("CWD") !== -1 ) {
 		    cmd = cmd.replace('cd', 'CWD');
 		    ftp.commandList = ftp.listDir;
 		    ftp.commandIndex = 0;
