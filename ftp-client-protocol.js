@@ -16,7 +16,7 @@ function FtpClient() {
     this.tcp = chrome.sockets.tcp;
 
     this.next;
-    this.commands = ['SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV', 'LIST -aL'];
+    this.logonCommands = ['SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV', 'LIST -aL'];
     this.commandIndex = 0;
 
     this.arrayBufferType = Int8Array;
@@ -64,14 +64,14 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
 
     if (typeof this.next !== 'undefined') {
         this.next();
-    } else if ( this.commandIndex < this.commands.length ) {
-    	self.sendCommand(this.commands[this.commandIndex], function(info) {
+    } else if ( this.commandIndex < this.logonCommands.length ) {
+    	self.sendCommand(this.logonCommands[this.commandIndex], function(info) {
             console.log(JSON.stringify(info));
             // stop the call chain
             self.next = undefined;
         });
     	this.commandIndex ++;
-    	if ( this.commandIndex > this.commands.length ) {
+    	if ( this.commandIndex > this.logonCommands.length ) {
     		console.log( "done!");
     	}
     }
