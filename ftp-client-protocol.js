@@ -18,8 +18,8 @@ function FtpClient() {
     this.next;
     this.commands = ['SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV', 'LIST -aL'];
     this.commandIndex = 0;
-    
-    this.arrayBufferType = Uint8Array; 
+
+    this.arrayBufferType = Int8Array;
 }
 
 FtpClient.prototype.initialize = function() {
@@ -40,7 +40,7 @@ FtpClient.prototype.initialize = function() {
 };
 
 FtpClient.prototype.sendCommand = function(data, callback) {
-    var message = BufferConverter.encode(data + "\n", this.arrayBufferType, 1);
+    var message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
     console.log(BufferConverter.decode(message, this.arrayBufferType));
     this.tcp.send(this.socketID, message, callback);
 };
@@ -58,10 +58,6 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
     // info.data is an arrayBuffer
     buffer = this.resultData.innerHTML;
     // conversion event
-    // seems that with some server we get the wrong IP address 
-    // from the PASV command
-    // for example sunsite.unc.edu returns 
-    // 172.27.205.13 instead of 152.19.134.40
     data = BufferConverter.decode(result, this.arrayBufferType);
     console.log(data);
     this.resultData.innerHTML = buffer + data;
@@ -72,14 +68,14 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
     	self.sendCommand(this.commands[this.commandIndex], function(info) {
             console.log(JSON.stringify(info));
             // stop the call chain
-            self.next = undefined; 
+            self.next = undefined;
         });
     	this.commandIndex ++;
-    	if ( this.commandIndex > this.commands.length ) { 
+    	if ( this.commandIndex > this.commands.length ) {
     		console.log( "done!");
     	}
     }
-    
+
     if (data.toLowerCase().indexOf("227 entering passive mode") === 0) {
     	// find the 6 digits - TODO better regexp here
     	pasvHost = data.match(/(\d*\,\d*\,\d*\,\d*)(\,)(\d*\,\d*)/gi)[0];
@@ -96,9 +92,9 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
         this.tcp.create({}, function(createInfo) {
             self.pasvSocketID = createInfo.socketId;
             console.log(JSON.stringify(createInfo));
-            
+
+            //self.tcp.connect(self.pasvSocketID, host, +port, function(result) {
             self.tcp.connect(self.pasvSocketID, host, +port, function(result) {
-            //self.tcp.connect(self.pasvSocketID, self.hostname.value, +port, function(result) {
                 console.log(result);
             });
         });
@@ -141,16 +137,16 @@ FtpClient.prototype.logon = function(user, pass) {
 
 FtpClient.prototype.quit = function() {
     var self = this;
+    this.commandIndex = 0;
     this.sendCommand("QUIT", function(info) {
         console.log(JSON.stringify(info));
-        self.next = function() { 
+        self.next = function() {
         	self.tcp.disconnect(self.socketID, function() {
 	            console.log("Command socket disconnected!");
-	            self.commandIndex = 0;
 	        });
         }
-    }); 
-    if ( this.pasvSocketID ) { 
+    });
+    if ( this.pasvSocketID ) {
         this.tcp.disconnect(this.pasvSocketID, function() {
             console.log("Data socket disconnected!");
         });
