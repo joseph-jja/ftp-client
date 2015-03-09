@@ -43,13 +43,13 @@
       <button id="sendCommand"type="button">Send</button>
       <br>Type HELP
       <br>upload file = PASV, STOR filename, ?
-      <br>download file = PASV, RETR
+      <br>download file = get filename
       <br>list dir = ls
       <br>change dir = cd &lt;dirname&gt;
       <br><button id="clearBuffer" type="button">Clear</button>
     </fieldset>
     <fieldset>
-      <textarea rows="15" cols="90" id="resultData"></textarea>
+      <pre id="resultData"></pre>
     </fieldset>
   </form>
   <script src="logger.js"></script>

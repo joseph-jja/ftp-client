@@ -29,6 +29,11 @@ window.onload = function() {
 		    ftp.commandList = ftp.listDir;
 		    ftp.commandIndex = 0;
 		    ftp.sendListCommand()
+		  } else if ( cmd.indexOf('get') !== -1 ) {
+		    ftp.commandList = ftp.getFile;
+		    ftp.getFile[ftp.getFile.length-1] = 'RETR ' + cmd.substring(4);
+		    ftp.commandIndex = 0;
+		    ftp.sendListCommand()
 		  } else if ( cmd.indexOf('cd') !== -1 || cmd.indexOf("CWD") !== -1 ) {
 		    cmd = cmd.replace('cd', 'CWD');
 		    ftp.commandList = ftp.listDir;
