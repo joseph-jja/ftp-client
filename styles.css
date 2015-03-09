@@ -1,9 +1,13 @@
 /* CSS file placeholder. */
 label {
-
+  display: inline-block;
+  width: 6em;
 }
-
+label.right {
+  margin-left: 3em;
+}
 input {
+  display: inline-block;
   margin-left: 2em;
 }
 fieldset {
@@ -13,6 +17,9 @@ fieldset {
 fieldset.listings button,fieldset.listings label, fieldset.listings select {
   display: inline-block;
   width: 48%;
+}
+#clearBuffer {
+  margin-left: 5em;
 }
 #resultData {
   width: 98%;

@@ -11,34 +11,21 @@
     <fieldset>
       <label>FTP Host:</label>
       <input type="text" name="ftpHost" id="ftpHost" value="cdimage.debian.org">
-      <label>FTP Port:</label>
+      <label class="right">FTP Port:</label>
       <input type="text" name="ftpPort" id="ftpPort" value="21">
     </fieldset>
     <fieldset>
       <label>Username:</label>
       <input type="text" name="username" id="username" value="anonymous">
-      <label>Password:</label>
+      <label class="right">Password:</label>
       <input type="password" name="password" id="password" value="j@m.com">
     </fieldset>
     <fieldset>
       <button id="connectID"type="button">Connect</button>
+      <button id="clearBuffer" type="button">Clear Console</button>
     </fieldset>
-    <!--
-    <fieldset class="listings">
-      <label>Local Files</label>
-      <label>Remote Files</label>
-    </fieldset>
-    <fieldset class="listings">
-      <select name="localFiles" id="localFiles" size="10"></select>
-      <select name="remoteFiles" id="remoteFiles" size="10"></select>
-    </fieldset>
-    <fieldset class="listings">
-      <button type="button">Upload</button>
-      <button type="button">Download</button>
-    </fieldset>
-    -->
     <fieldset>
-      <label>Send Command:</label>
+      <label>Command:</label>
       <input type="text" name="command" id="command">
       <button id="sendCommand"type="button">Send</button>
       <br>Type HELP
@@ -46,7 +33,6 @@
       <br>download file = get &lt;filename&gt;
       <br>list dir = ls
       <br>change dir = cd &lt;dirname&gt;
-      <br><button id="clearBuffer" type="button">Clear</button>
     </fieldset>
     <fieldset>
       <pre id="resultData"></pre>
