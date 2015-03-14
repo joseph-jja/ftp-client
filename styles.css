@@ -10,6 +10,10 @@ input {
   display: inline-block;
   margin-left: 2em;
 }
+input[type="file"] {
+  border: 1px solid black;
+  width: 60%;
+}
 fieldset {
   border: 1px solid #000;
   margin: 5px 0px;
