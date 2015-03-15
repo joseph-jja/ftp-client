@@ -21,7 +21,7 @@ function FtpClient() {
     this.logonCommands = ['SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV', 'LIST -aL'];
     this.listDir = [ 'PASV', 'LIST -aL' ];
     this.getFile = [ 'PASV', 'RETR' ];
-    this.uploadFile = [ 'PASV', 'STOR', 'LIST -aL' ];
+    this.uploadFile = [ 'PASV', 'STOR' ];
 
     this.commandList = [];
     this.commandIndex = 0;
@@ -53,6 +53,13 @@ FtpClient.prototype.sendCommand = function(data, callback) {
     this.tcp.send(this.socketID, message, callback);
 };
 
+// for ftp upload
+FtpClient.prototype.sendData = function(data, callback) {
+    var message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
+    Logger.log.call(this, BufferConverter.decode(message, this.arrayBufferType));
+    this.tcp.send(this.pasvSocketID, message, callback);
+};
+
 FtpClient.prototype.sendListCommand = function() {
   var self = this;
   this.sendCommand(this.commandList[this.commandIndex], function(info) {
@@ -61,10 +68,17 @@ FtpClient.prototype.sendListCommand = function() {
     self.next = undefined;
   });
   this.commandIndex ++;
-  if ( this.commandIndex > this.commandList.length ) {
+  if ( this.commandIndex >= this.commandList.length ) {
   	Logger.log.call(this, "done!");
+  	// close socket because we should be done with the passive port
+  	if ( this.pasvSocketID ) {
+        this.tcp.disconnect(this.pasvSocketID, function() {
+            Logger.log.call(this, "Data socket disconnected!");
+            this.pasvSocketID = undefined;
+        });
+    }
   }
-}
+};
 
 FtpClient.prototype.defaultReceiveCallback = function(info) {
     var buffer, result, self = this,
@@ -102,6 +116,7 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
         if ( this.pasvSocketID ) {
         	this.tcp.disconnect(this.pasvSocketID, function() {
         		Logger.log.call(this, "Closing open data socket!");
+            this.pasvSocketID = undefined;
         	});
         }
         this.tcp.create({}, function(createInfo) {
@@ -164,6 +179,7 @@ FtpClient.prototype.quit = function() {
     if ( this.pasvSocketID ) {
         this.tcp.disconnect(this.pasvSocketID, function() {
             Logger.log.call(this, "Data socket disconnected!");
+            this.pasvSocketID = undefined;
         });
     }
 };

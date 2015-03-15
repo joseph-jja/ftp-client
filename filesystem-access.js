@@ -1,5 +1,5 @@
 var FS = {
-  openFile: function(event) {
+  openFile: function(event, callback) {
     var input = event.target;
 
     var reader = new FileReader();
@@ -8,7 +8,7 @@ var FS = {
         asciiFile;
 
       asciiFile = BufferConverter.decode( dataURL, Uint8Array );
-      console.log(asciiFile);
+      callback(asciiFile);
     };
     reader.readAsArrayBuffer( input.files[0] );
   }

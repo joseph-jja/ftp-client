@@ -28,12 +28,12 @@ window.onload = function() {
 		  if ( cmd === 'ls' ) {
 		    ftp.commandList = ftp.listDir;
 		    ftp.commandIndex = 0;
-		    ftp.sendListCommand()
+		    ftp.sendListCommand();
 		  } else if ( cmd.indexOf('get') !== -1 ) {
 		    ftp.commandList = ftp.getFile;
 		    ftp.getFile[ftp.getFile.length-1] = 'RETR ' + cmd.substring(4);
 		    ftp.commandIndex = 0;
-		    ftp.sendListCommand()
+		    ftp.sendListCommand();
 		  } else if ( cmd.indexOf('cd') !== -1 || cmd.indexOf("CWD") !== -1 ) {
 		    cmd = cmd.replace('cd', 'CWD');
 		    ftp.commandList = ftp.listDir;
@@ -50,7 +50,20 @@ window.onload = function() {
 		return false;
 	});
 
-  document.getElementById("sendFileID").addEventListener('change', FS.openFile);
+  document.getElementById("sendFileID").addEventListener('change', function(event) {
+    FS.openFile(event, function(data) {
+      var parts, filename = document.getElementById("sendFileID").value;
+
+      parts = filename.split(/\/|\\/g);
+      filename = parts[parts.length-1];
+      console.log(filename);
+		  ftp.commandIndex = 0;
+		  ftp.commandList = ftp.uploadFile;
+      ftp.commandList[1] = "STOR " + filename;
+      //ftp.commandList[3] = data;
+		  ftp.sendListCommand();
+    });
+  });
 
 	document.getElementById('clearBuffer').addEventListener('click', function(e) {
 
