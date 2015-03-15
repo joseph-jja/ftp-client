@@ -26,6 +26,7 @@ function FtpClient() {
     this.commandList = [];
     this.commandIndex = 0;
 
+    this.uploadData;
 
     this.arrayBufferType = Int8Array;
 }
@@ -68,10 +69,10 @@ FtpClient.prototype.sendListCommand = function() {
     self.next = undefined;
   });
   this.commandIndex ++;
-  if ( this.commandIndex >= this.commandList.length ) {
-  	Logger.log.call(this, "done!");
-  	// close socket because we should be done with the passive port
-  	if ( this.pasvSocketID ) {
+  if ( this.commandIndex >= this.commandList.length && ! this.uploadData ) {
+    Logger.log.call(this, "done!");
+    // close socket because we should be done with the passive port
+    if ( this.pasvSocketID ) {
         this.tcp.disconnect(this.pasvSocketID, function() {
             Logger.log.call(this, "Data socket disconnected!");
             this.pasvSocketID = undefined;
@@ -128,6 +129,26 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
             });
         });
     }
+
+    if ( this.commandIndex >= this.commandList.length ) {
+      this.commandList = [];
+      // if we are doing a store now we send the data
+      if ( this.uploadData ) {
+        this.sendData(this.uploadData, function(info) {
+          Logger.log.call(this, JSON.stringify(info));
+          self.uploadData = undefined;
+        	Logger.log.call(this, "data sent and done!");
+        	// close socket because we should be done with the passive port
+        	if ( this.pasvSocketID ) {
+              this.tcp.disconnect(this.pasvSocketID, function() {
+                  Logger.log.call(this, "Data socket disconnected!");
+                  this.pasvSocketID = undefined;
+              });
+          }
+        });
+      }
+    }
+
 };
 
 FtpClient.prototype.connect = function(host, port) {

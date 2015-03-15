@@ -60,7 +60,7 @@ window.onload = function() {
 		  ftp.commandIndex = 0;
 		  ftp.commandList = ftp.uploadFile;
       ftp.commandList[1] = "STOR " + filename;
-      //ftp.commandList[3] = data;
+      ftp.uploadData = data;
 		  ftp.sendListCommand();
     });
   });
