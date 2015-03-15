@@ -14,4 +14,3 @@ var FS = {
   }
 };
 
-document.getElementById("sendFileID").addEventListener('change', FS.openFile);

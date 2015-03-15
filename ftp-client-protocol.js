@@ -21,6 +21,7 @@ function FtpClient() {
     this.logonCommands = ['SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV', 'LIST -aL'];
     this.listDir = [ 'PASV', 'LIST -aL' ];
     this.getFile = [ 'PASV', 'RETR' ];
+    this.uploadFile = [ 'PASV', 'STOR', 'LIST -aL' ];
 
     this.commandList = [];
     this.commandIndex = 0;

@@ -50,6 +50,8 @@ window.onload = function() {
 		return false;
 	});
 
+  document.getElementById("sendFileID").addEventListener('change', FS.openFile);
+
 	document.getElementById('clearBuffer').addEventListener('click', function(e) {
 
 		ftp.resultData.innerHTML = "";
