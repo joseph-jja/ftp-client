@@ -10,15 +10,18 @@ function TcpWrapper() {
 
   this.arrayBufferType = Int8Array;
 
+  this.ps = PublishSubscribe;
+
   // add listener to tcp for
   this.tcp.onReceive.addListener(function(info) {
-    Logger.log.call(this, "TcpWrapper onReceive: " + JSON.stringify(info));
+    Logger.log.call(self, "TcpWrapper onReceive: " + JSON.stringify(info));
+    self.ps('receive', info);
     self.receiveData(info);
   });
 
   this.tcp.onReceiveError.addListener(function(info) {
-    Logger.log.call(this, "TcpWrapper onReceiveError error: " + JSON.stringify(info));
-    // notify
+    Logger.log.call(self, "TcpWrapper onReceiveError error: " + JSON.stringify(info));
+    self.ps('receiveError', info);
   });
 }
 
@@ -30,11 +33,11 @@ TcpWrapper.prototype.connect = function(host, port) {
     this.tcp.create({}, function(createInfo) {
       self.socketID = createInfo.socketId;
       Logger.log.call(self, "TcpWrapper connect tcp.create: " + JSON.stringify(result));
-      // notify
+      self.ps('created', createInfo);
       // now actually connect
       self.tcp.connect(self.socketID, host, +port, function(result) {
         Logger.log.call(self, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
-        // notify
+        self.ps('connected', result);
       });
     });
   }
@@ -42,16 +45,17 @@ TcpWrapper.prototype.connect = function(host, port) {
 
 // send commands and raise notifications
 TcpWrapper.prototype.sendCommand = function(data) {
-  var message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
+  var self = this,
+    message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
   Logger.log.call(this, "TcpWrapper sendCommand: " + BufferConverter.decode(message, this.arrayBufferType));
   this.tcp.send(this.socketID, message, function(info) {
-    // notify
+    self.ps('sendData', info);
   });
 };
 
 // receive data and raise events
 TcpWrapper.prototype.receiveData = function(info) {
-  var result, data;
+  var result, resultData;
 
   Logger.log.call(this, "TcpWrapper receiveData: " + JSON.stringify(info));
   if ( this.socketID && info.socketId !== this.socketID ) {
@@ -63,17 +67,18 @@ TcpWrapper.prototype.receiveData = function(info) {
   result = info.data;
 
   // conversion event
-  data = BufferConverter.decode(result, this.arrayBufferType);
-  Logger.log.call(this, "TcpWrapper receiveData data: " + data);
+  resultData = BufferConverter.decode(result, this.arrayBufferType);
+  Logger.log.call(this, "TcpWrapper receiveData data: " + resultData);
 
-  // notify
+  this.ps('receiveData', { rawInfo: info, data: resultData } );
 };
 
 TcpWrapper.prototype.disconnect = function() {
   var self = this;
   if ( this.socketID ) {
-    this.tcp.disconnect(self.socketID, function() {
+    this.tcp.disconnect(self.socketID, function(info) {
 	    Logger.log.call(self, "Command socket disconnected!");
-	});
+      self.ps('disconnect', info);
+  	});
   }
 };
