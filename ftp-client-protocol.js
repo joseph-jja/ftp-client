@@ -18,6 +18,7 @@ function FtpClient() {
     this.next;
 
     // command sets
+    this.authenticate = [ 'USER', 'PASS' ];
     this.logonCommands = ['SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV', 'LIST -aL'];
     this.listDir = [ 'PASV', 'LIST -aL' ];
     this.getFile = [ 'PASV', 'RETR' ];
@@ -169,17 +170,11 @@ FtpClient.prototype.logon = function(user, pass) {
     var self = this;
 
     if (user && user.length > 0 && pass && pass.length > 0) {
-        this.next = function() {
-            self.sendCommand("PASS " + pass, function(info) {
-                Logger.log.call(this, JSON.stringify(info));
-                // stop the call chain
-                self.next = undefined;
-                self.commandList = self.logonCommands;
-            });
-        };
-        this.sendCommand("USER " + user, function(info) {
-            Logger.log.call(this, JSON.stringify(info));
-        });
+      this.commandIndex = 0;
+		  this.commandList = ftp.authenticate;
+		  this.commandList[0] = 'USER ' + user;
+		  this.commandList[1] = 'PASS ' + pass;
+		  this.sendListCommand();
     }
 };
 
