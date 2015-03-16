@@ -118,10 +118,7 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
           }
         });
       }
-    }
-
-
-    if (data.toLowerCase().indexOf("227 entering passive mode") === 0) {
+    } else if (data.toLowerCase().indexOf("227 entering passive mode") === 0) {
     	// find the 6 digits - TODO better regexp here
     	pasvHost = data.match(/(\d*\,\d*\,\d*\,\d*)(\,)(\d*\,\d*)/gi)[0];
         portData = pasvHost.split(",");
