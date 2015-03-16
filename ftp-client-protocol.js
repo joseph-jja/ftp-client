@@ -44,7 +44,7 @@ FtpClient.prototype.initialize = function() {
     });
 
     this.tcp.onReceiveError.addListener(function(info) {
-        Logger.log.call(this, "Error: " + JSON.stringify(info));
+        Logger.log.call(self, "Error: " + JSON.stringify(info));
         self.next = undefined;
     });
 };
@@ -65,7 +65,7 @@ FtpClient.prototype.sendData = function(data, callback) {
 FtpClient.prototype.sendListCommand = function() {
   var self = this;
   this.sendCommand(this.commandList[this.commandIndex], function(info) {
-    Logger.log.call(this, JSON.stringify(info));
+    Logger.log.call(self, JSON.stringify(info));
     // stop the call chain
     self.next = undefined;
   });
@@ -75,7 +75,7 @@ FtpClient.prototype.sendListCommand = function() {
     // close socket because we should be done with the passive port
     if ( this.pasvSocketID ) {
         this.tcp.disconnect(this.pasvSocketID, function() {
-            Logger.log.call(this, "Data socket disconnected!");
+            Logger.log.call(self, "Data socket disconnected!");
             this.pasvSocketID = undefined;
         });
     }
@@ -134,16 +134,16 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
         }
         if ( this.pasvSocketID ) {
         	this.tcp.disconnect(this.pasvSocketID, function() {
-        		Logger.log.call(this, "Closing open data socket!");
+        		Logger.log.call(self, "Closing open data socket!");
             this.pasvSocketID = undefined;
         	});
         }
         this.tcp.create({}, function(createInfo) {
             self.pasvSocketID = createInfo.socketId;
-            Logger.log.call(this, JSON.stringify(createInfo));
+            Logger.log.call(self, JSON.stringify(createInfo));
 
             self.tcp.connect(self.pasvSocketID, host, +port, function(result) {
-                Logger.log.call(this, result);
+                Logger.log.call(self, result);
             });
         });
     }
@@ -160,7 +160,7 @@ FtpClient.prototype.connect = function(host, port) {
                 self.logon(self.username.value, self.password.value);
             }
             self.tcp.connect(self.socketID, host, +port, function(result) {
-                Logger.log.call(this, result);
+                Logger.log.call(self, result);
             });
         });
     }
@@ -182,16 +182,16 @@ FtpClient.prototype.quit = function() {
     var self = this;
     this.lCommandIndex = 0;
     this.sendCommand("QUIT", function(info) {
-        Logger.log.call(this, JSON.stringify(info));
+        Logger.log.call(self, JSON.stringify(info));
         self.next = function() {
         	self.tcp.disconnect(self.socketID, function() {
-	            Logger.log.call(this, "Command socket disconnected!");
+	            Logger.log.call(self, "Command socket disconnected!");
 	        });
         }
     });
     if ( this.pasvSocketID ) {
         this.tcp.disconnect(this.pasvSocketID, function() {
-            Logger.log.call(this, "Data socket disconnected!");
+            Logger.log.call(self, "Data socket disconnected!");
             this.pasvSocketID = undefined;
         });
     }
