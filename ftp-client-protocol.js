@@ -174,6 +174,7 @@ FtpClient.prototype.logon = function(user, pass) {
 		  this.commandList = ftp.authenticate;
 		  this.commandList[0] = 'USER ' + user;
 		  this.commandList[1] = 'PASS ' + pass;
+                  this.commandList = this.commandList.concat(this.logonCommands);
 		  this.sendListCommand();
     }
 };
