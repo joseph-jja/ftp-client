@@ -104,16 +104,17 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
       self.sendListCommand();
     } else if ( this.commandIndex >= this.commandList.length ) {
       this.commandList = [];
+      this.commandIndex = 0;
       // if we are doing a store now we send the data
       if ( this.uploadData ) {
         this.sendData(this.uploadData, function(info) {
-          Logger.log.call(this, "Data sent: " + JSON.stringify(info));
+          Logger.log.call(self, "Data sent: " + JSON.stringify(info));
           self.uploadData = undefined;
         	// close socket because we should be done with the passive port
-        	if ( this.pasvSocketID ) {
-              this.tcp.disconnect(this.pasvSocketID, function() {
-                  Logger.log.call(this, "Data socket disconnected!");
-                  this.pasvSocketID = undefined;
+        	if ( self.pasvSocketID ) {
+              self.tcp.disconnect(self.pasvSocketID, function() {
+                  Logger.log.call(self, "Data socket disconnected!");
+                  self.pasvSocketID = undefined;
               });
           }
         });
