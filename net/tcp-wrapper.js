@@ -29,30 +29,32 @@ function TcpWrapper(id) {
 }
 
 // connect and raise events
-TcpWrapper.prototype.connect = function(host, port) {
-  var self = this;
+TcpWrapper.prototype.connect = function(data) {
+  var self = this, host, port;
+  host = data.host; 
+  port = data.port;
   if (host && host.length > 0) {
     port = (port && port.length > 0) ? port : 21;
     this.tcp.create({}, function(createInfo) {
       self.socketID = createInfo.socketId;
       Logger.log.call(self, "TcpWrapper connect tcp.create: " + JSON.stringify(result));
-      self.ps('created'+this.id, createInfo);
+      self.ps('created'+self.id, createInfo);
       // now actually connect
       self.tcp.connect(self.socketID, host, +port, function(result) {
         Logger.log.call(self, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
-        self.ps('connected'+this.id, result);
+        self.ps('connected'+self.id, result);
       });
     });
   }
 };
 
 // send commands and raise notifications
-TcpWrapper.prototype.sendCommand = function(data) {
-  var self = this,
+TcpWrapper.prototype.sendCommand = function(dataObj) {
+  var self = this, data = dataObj.msg,
     message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
   Logger.log.call(this, "TcpWrapper sendCommand: " + BufferConverter.decode(message, this.arrayBufferType));
   this.tcp.send(this.socketID, message, function(info) {
-    self.ps('sendData'+this.id, info);
+    self.ps('sendData'+self.id, info);
   });
 };
 
@@ -81,7 +83,7 @@ TcpWrapper.prototype.disconnect = function() {
   if ( this.socketID ) {
     this.tcp.disconnect(self.socketID, function(info) {
 	    Logger.log.call(self, "Command socket disconnected!");
-      self.ps('disconnect'+this.id, info);
+      self.ps('disconnect'+self.id, info);
   	});
   }
 };
