@@ -2,7 +2,7 @@
 //TODO remove the dom access here and externalize it
 //we want this just doing FTP client stuff
 //http://www.ncftp.com/libncftp/doc/ftp_overview.html
-function FtpClient() {
+function FtpClientUI() {
 
     this.hostname = document.getElementById("ftpHost");
     this.port = document.getElementById("ftpPort");
@@ -11,9 +11,6 @@ function FtpClient() {
 
     this.fileListID = document.getElementById("remoteFiles");
     this.resultData = document.getElementById("resultData");
-
-    this.socketID = undefined;
-    this.tcp = chrome.sockets.tcp;
 
     this.next = undefined;
 
@@ -28,14 +25,15 @@ function FtpClient() {
     this.commandIndex = 0;
 
     this.uploadData = undefined;
-
-    this.arrayBufferType = Int8Array;
 }
 
-FtpClient.prototype.initialize = function() {
+FtpClientUI.prototype.initialize = function() {
 
     var self = this;
     
+    this.TcpWrapper = new TcpWrapper();
+    this.ps = PublishSubscribe;
+
     this.resultData.innerHTML = "";
 
     // add listener to tcp for
@@ -49,20 +47,20 @@ FtpClient.prototype.initialize = function() {
     });
 };
 
-FtpClient.prototype.sendCommand = function(data, callback) {
+FtpClientUI.prototype.sendCommand = function(data, callback) {
     var message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
     Logger.log.call(this, BufferConverter.decode(message, this.arrayBufferType));
     this.tcp.send(this.socketID, message, callback);
 };
 
 // for ftp upload
-FtpClient.prototype.sendData = function(data, callback) {
+FtpClientUI.prototype.sendData = function(data, callback) {
     var message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
     Logger.log.call(this, BufferConverter.decode(message, this.arrayBufferType));
     this.tcp.send(this.pasvSocketID, message, callback);
 };
 
-FtpClient.prototype.sendListCommand = function() {
+FtpClientUI.prototype.sendListCommand = function() {
   var self = this;
   this.sendCommand(this.commandList[this.commandIndex], function(info) {
     Logger.log.call(self, JSON.stringify(info));
@@ -82,7 +80,7 @@ FtpClient.prototype.sendListCommand = function() {
   }
 };
 
-FtpClient.prototype.defaultReceiveCallback = function(info) {
+FtpClientUI.prototype.defaultReceiveCallback = function(info) {
     var buffer, result, self = this,
         data, pasvHost, portData, port, host;
 
@@ -149,7 +147,7 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
     }
 };
 
-FtpClient.prototype.connect = function(host, port) {
+FtpClientUI.prototype.connect = function(host, port) {
     var self = this;
 
     if (host && host.length > 0) {
@@ -166,7 +164,7 @@ FtpClient.prototype.connect = function(host, port) {
     }
 };
 
-FtpClient.prototype.logon = function(user, pass) {
+FtpClientUI.prototype.logon = function(user, pass) {
     var self = this;
 
     if (user && user.length > 0 && pass && pass.length > 0) {
@@ -179,7 +177,7 @@ FtpClient.prototype.logon = function(user, pass) {
     }
 };
 
-FtpClient.prototype.quit = function() {
+FtpClientUI.prototype.quit = function() {
     var self = this;
     this.lCommandIndex = 0;
     this.sendCommand("QUIT", function(info) {
