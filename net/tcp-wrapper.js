@@ -5,7 +5,7 @@ function TcpWrapper() {
 
   var self = this;
 
-  this.socketID;
+  this.socketID = undefined;
   this.tcp = chrome.sockets.tcp;
 
   this.arrayBufferType = Int8Array;

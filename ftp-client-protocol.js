@@ -12,10 +12,10 @@ function FtpClient() {
     this.fileListID = document.getElementById("remoteFiles");
     this.resultData = document.getElementById("resultData");
 
-    this.socketID;
+    this.socketID = undefined;
     this.tcp = chrome.sockets.tcp;
 
-    this.next;
+    this.next = undefined;
 
     // command sets
     this.authenticate = [ 'USER', 'PASS' ];
@@ -27,7 +27,7 @@ function FtpClient() {
     this.commandList = [];
     this.commandIndex = 0;
 
-    this.uploadData;
+    this.uploadData = undefined;
 
     this.arrayBufferType = Int8Array;
 }
