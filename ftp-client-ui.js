@@ -36,28 +36,12 @@ FtpClientUI.prototype.initialize = function() {
 
     this.resultData.innerHTML = "";
 
-    // add listener to tcp for
-    this.tcp.onReceive.addListener(function(info) {
-        self.defaultReceiveCallback(info);
-    });
-
-    this.tcp.onReceiveError.addListener(function(info) {
-        Logger.log.call(self, "Error: " + JSON.stringify(info));
-        self.next = undefined;
-    });
 };
 
-FtpClientUI.prototype.sendCommand = function(data, callback) {
+FtpClientUI.prototype.sendCommand = function(channel, data, callback) {
     var message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
     Logger.log.call(this, BufferConverter.decode(message, this.arrayBufferType));
-    this.tcp.send(this.socketID, message, callback);
-};
-
-// for ftp upload
-FtpClientUI.prototype.sendData = function(data, callback) {
-    var message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
-    Logger.log.call(this, BufferConverter.decode(message, this.arrayBufferType));
-    this.tcp.send(this.pasvSocketID, message, callback);
+    channel.send(message, callback);
 };
 
 FtpClientUI.prototype.sendListCommand = function() {
@@ -148,50 +132,10 @@ FtpClientUI.prototype.defaultReceiveCallback = function(info) {
 };
 
 FtpClientUI.prototype.connect = function(host, port) {
-    var self = this;
-
-    if (host && host.length > 0) {
-        port = (port && port.length > 0) ? port : 21;
-        this.tcp.create({}, function(createInfo) {
-            self.socketID = createInfo.socketId;
-            self.next = function() {
-                self.logon(self.username.value, self.password.value);
-            };
-            self.tcp.connect(self.socketID, host, +port, function(result) {
-                Logger.log.call(self, result);
-            });
-        });
-    }
-};
-
-FtpClientUI.prototype.logon = function(user, pass) {
-    var self = this;
-
-    if (user && user.length > 0 && pass && pass.length > 0) {
-      this.commandIndex = 0;
-		  this.commandList = ftp.authenticate;
-		  this.commandList[0] = 'USER ' + user;
-		  this.commandList[1] = 'PASS ' + pass;
-                  this.commandList = this.commandList.concat(this.logonCommands);
-		  this.sendListCommand();
-    }
+    
 };
 
 FtpClientUI.prototype.quit = function() {
-    var self = this;
-    this.lCommandIndex = 0;
-    this.sendCommand("QUIT", function(info) {
-        Logger.log.call(self, JSON.stringify(info));
-        self.next = function() {
-        	self.tcp.disconnect(self.socketID, function() {
-	            Logger.log.call(self, "Command socket disconnected!");
-	        });
-        };
-    });
-    if ( this.pasvSocketID ) {
-        this.tcp.disconnect(this.pasvSocketID, function() {
-            Logger.log.call(self, "Data socket disconnected!");
-            this.pasvSocketID = undefined;
-        });
-    }
+
+  
 };
