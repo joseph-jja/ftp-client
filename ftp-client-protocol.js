@@ -35,6 +35,9 @@ function FtpClient() {
 FtpClient.prototype.initialize = function() {
 
     var self = this;
+    
+    this.TcpWrapper = new TcpWrapper();
+    this.ps = PublishSubscribe;
 
     this.resultData.innerHTML = "";
 
