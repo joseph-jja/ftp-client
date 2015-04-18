@@ -191,7 +191,7 @@ FtpClient.prototype.quit = function() {
         	self.tcp.disconnect(self.socketID, function() {
 	            Logger.log.call(self, "Command socket disconnected!");
 	        });
-        }
+        };
     });
     if ( this.pasvSocketID ) {
         this.tcp.disconnect(this.pasvSocketID, function() {

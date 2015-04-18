@@ -34,4 +34,4 @@ var BufferConverter =  {
 		return buf;
 	}
 
-}
+};
