@@ -161,7 +161,7 @@ FtpClient.prototype.connect = function(host, port) {
             self.socketID = createInfo.socketId;
             self.next = function() {
                 self.logon(self.username.value, self.password.value);
-            }
+            };
             self.tcp.connect(self.socketID, host, +port, function(result) {
                 Logger.log.call(self, result);
             });
