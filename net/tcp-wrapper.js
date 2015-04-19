@@ -3,7 +3,7 @@
 // and then react
 // id can be an empty string or something to identify the different sockets
 // that may be in use
-function TcpWrapper(id) {
+function TcpWrapper(id, addListeners) {
 
   var self = this;
 
@@ -16,18 +16,20 @@ function TcpWrapper(id) {
   // our reference to the pub sub for pub - sub 
   this.ps = PublishSubscribe;
 
-  // add listener to tcp for
-  this.tcp.onReceive.addListener(function(info) {
-    Logger.log.call(self, "TcpWrapper onReceive: " + JSON.stringify(info));
-    self.ps.publish('receive'+this.id, info);
-    self.receiveData(info);
-  });
-
-  this.tcp.onReceiveError.addListener(function(info) {
-    Logger.log.call(self, "TcpWrapper onReceiveError error: " + JSON.stringify(info));
-    self.ps.publish('receiveError'+this.id, info);
-  });
-
+ if ( addListeners ) {
+    // add listener to tcp for receiving data and errors
+    // we only want to add this once though
+    this.tcp.onReceive.addListener(function(info) {
+      Logger.log.call(self, "TcpWrapper onReceive: " + JSON.stringify(info));
+      self.ps.publish('receive'+this.id, info);
+      self.receiveData(info);
+    });
+  
+    this.tcp.onReceiveError.addListener(function(info) {
+      Logger.log.call(self, "TcpWrapper onReceiveError error: " + JSON.stringify(info));
+      self.ps.publish('receiveError'+this.id, info);
+    });
+ }
 }
 
 // connect and raise events
