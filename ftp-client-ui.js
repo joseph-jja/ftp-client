@@ -36,7 +36,8 @@ FtpClient.prototype.initialize = function() {
 FtpClient.prototype.sendCommand = function() {
   mediator.send(this.channel, {msg: this.commandList[this.commandIndex] }, this.defaultReceiveCallback);
   this.commandIndex++;
-  Logger.log.call(this, "Index: " + this.commandIndex + " next command: " + this.commandList[this.commandIndex]);
+  Logger.log.call(this, "FtpClient Channel: " + this.channel);
+  Logger.log.call(this, "FtpClient Index: " + this.commandIndex + " next command: " + this.commandList[this.commandIndex]);
 };
 
 FtpClient.prototype.defaultReceiveCallback = function(info) {
@@ -62,8 +63,8 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
           self.uploadData = undefined;
         	// close socket because we should be done with the passive port
         	mediator.disconnect('data');
+          this.channel = 'command';
         });
-        this.channel = 'command';
       }
     }
 
@@ -73,7 +74,7 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
       portData = pasvHost.split(",");
       port = ( parseInt(portData[4], 10) * 256) + parseInt(portData[5], 10);
       host = portData[0] + "." + portData[1] + "." + portData[2] + "." + portData[3];
-      Logger.log.call(this, host + " " + port + " " + JSON.stringify(portData));
+      Logger.log.call(this, "FtpClient " + host + " " + port + " " + JSON.stringify(portData));
       if ( host === "0.0.0.0" ) {
         host = this.hostname.value;
       }
@@ -92,7 +93,7 @@ FtpClient.prototype.connect = function() {
   		  this.commandList[0] = 'USER ' + this.username.value;
   		  this.commandList[1] = 'PASS ' + this.password.value;
         this.commandList = this.commandList.concat(this.logonCommands);
-        Logger.log.call(this, "Commands: " + JSON.stringify(this.commandList));
+        //Logger.log.call(this, "Commands: " + JSON.stringify(this.commandList));
       }
       mediator.connect("command", { host: this.hostname.value, port: port }, this.defaultReceiveCallback);
     }

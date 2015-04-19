@@ -21,12 +21,12 @@ function TcpWrapper(id, addListeners) {
     // we only want to add this once though
     this.tcp.onReceive.addListener(function(info) {
       Logger.log.call(self, "TcpWrapper onReceive: " + JSON.stringify(info));
-      self.ps.publish('receive'+self.id, info);
+      self.ps.publish('receive', info);
     });
   
     this.tcp.onReceiveError.addListener(function(info) {
       Logger.log.call(self, "TcpWrapper onReceiveError error: " + JSON.stringify(info));
-      self.ps.publish('receiveError'+self.id, info);
+      self.ps.publish('receiveError', info);
     });
  }
 }
@@ -85,7 +85,7 @@ TcpWrapper.prototype.disconnect = function() {
   var self = this;
   if ( this.socketID ) {
     this.tcp.disconnect(self.socketID, function(info) {
-	    Logger.log.call(self, "Command socket disconnected!");
+	    Logger.log.call(self, self.id + " socket disconnected!");
       self.ps.publish('disconnected'+self.id, info);
   	});
   }
