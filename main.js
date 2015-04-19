@@ -1,10 +1,14 @@
-var ftp;
+var ftp, ftpCommandChannel, ftpDataChannel;
 // main
 window.onload = function() {
 	document.querySelector('#greeting').innerText = 'ftp-client';
 
 	ftp = new FtpClient();
 	ftp.initialize();
+	
+	// setup the tcp
+	//ftpCommandChannel = new TcpWrapper("cmd");
+	//ftpDataChannel = new TcpWrapper("data");
 
 	document.getElementById('connectID').addEventListener('click', function(e) {
 
