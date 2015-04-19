@@ -15,9 +15,6 @@ function TcpWrapper(id) {
 
   // our reference to the pub sub for pub - sub 
   this.ps = PublishSubscribe;
-}
-
-TcpWrapper.prototype.initialize = function(data) {
 
   // add listener to tcp for
   this.tcp.onReceive.addListener(function(info) {
@@ -31,18 +28,7 @@ TcpWrapper.prototype.initialize = function(data) {
     self.ps.publish('receiveError'+this.id, info);
   });
 
-  this.ps.subscribe('connect'+this.id, this.connect);
-  this.ps.subscribe('disconnect'+this.id, this.disconnect);
-  this.ps.subscribe('sendCommand'+this.id, this.sendCommand);
-
-};
-
-TcpWrapper.prototype.destroy = function(data) {
-
-  this.ps.unsubscribe('connect'+this.id, this.connect);
-  this.ps.unsubscribe('disconnect'+this.id, this.disconnect);
-  this.ps.unsubscribe('sendCommand'+this.id, this.sendCommand);
-};
+}
 
 // connect and raise events
 TcpWrapper.prototype.connect = function(data) {

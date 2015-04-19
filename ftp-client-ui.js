@@ -25,23 +25,12 @@ function FtpClientUI() {
     this.commandIndex = 0;
 
     this.uploadData = undefined;
-}
-
-FtpClientUI.prototype.initialize = function() {
-
-    var self = this;
-    
-    this.TcpWrapper = new TcpWrapper();
-    this.ps = PublishSubscribe;
 
     this.resultData.innerHTML = "";
-
-};
+}
 
 FtpClientUI.prototype.sendCommand = function(channel, data, callback) {
-    var message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
-    Logger.log.call(this, BufferConverter.decode(message, this.arrayBufferType));
-    channel.send(message, callback);
+    channel.send(data, callback);
 };
 
 FtpClientUI.prototype.sendListCommand = function() {
