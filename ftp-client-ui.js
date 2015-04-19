@@ -40,12 +40,13 @@ FtpClient.prototype.sendCommand = function() {
 
 FtpClient.prototype.defaultReceiveCallback = function(info) {
     var buffer, result, self = this,
-        data, pasvHost, portData, port, host;
+        pasvHost, portData, port, host;
 
     Logger.log.call(this, JSON.stringify(info.rawInfo));
 
     result = info.message;
     Logger.log.call(this, result);
+    buffer = this.resultData.innerHTML;
     this.resultData.innerHTML = buffer + result;
 
     if ( this.commandIndex < this.commandList.length ) {
@@ -65,9 +66,9 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
       }
     }
 
-    if (data.toLowerCase().indexOf("227 entering passive mode") === 0) {
+    if (result.toLowerCase().indexOf("227 entering passive mode") === 0) {
     	// find the 6 digits - TODO better regexp here
-    	pasvHost = data.match(/(\d*\,\d*\,\d*\,\d*)(\,)(\d*\,\d*)/gi)[0];
+    	pasvHost = result.match(/(\d*\,\d*\,\d*\,\d*)(\,)(\d*\,\d*)/gi)[0];
       portData = pasvHost.split(",");
       port = ( parseInt(portData[4], 10) * 256) + parseInt(portData[5], 10);
       host = portData[0] + "." + portData[1] + "." + portData[2] + "." + portData[3];
