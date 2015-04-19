@@ -21,13 +21,13 @@ function TcpWrapper(id, addListeners) {
     // we only want to add this once though
     this.tcp.onReceive.addListener(function(info) {
       Logger.log.call(self, "TcpWrapper onReceive: " + JSON.stringify(info));
-      self.ps.publish('receive'+this.id, info);
+      self.ps.publish('receive'+self.id, info);
       self.receiveData.call(self, info);
     });
   
     this.tcp.onReceiveError.addListener(function(info) {
       Logger.log.call(self, "TcpWrapper onReceiveError error: " + JSON.stringify(info));
-      self.ps.publish('receiveError'+this.id, info);
+      self.ps.publish('receiveError'+self.id, info);
     });
  }
 }

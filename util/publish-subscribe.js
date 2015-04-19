@@ -2,7 +2,7 @@ var PublishSubscribe = {
   topics: {},
   publish: function( topic, data ) {
     var s = PublishSubscribe,
-      i, end;
+      i, end, topicFM;
     // no listeners 
     if ( ! s.topics[topic] ) {
       return;
@@ -10,10 +10,11 @@ var PublishSubscribe = {
     // list of listeners
     end = s.topics[topic].length;
     for ( i = 0; i < end; i++ ) {
-      if ( s.topics[topic][i].caller ) {
-        s.topics[topic][i].cb.call(s.topics[topic][i].caller, data);
+      topicFM = s.topics[topic][i];
+      if ( topicFM.caller ) {
+        topicFM.cb.call(topicFM.caller, data);
       } else {
-        s.topics[topic][i](data);
+        topicFM(data);
       }
     }
   },

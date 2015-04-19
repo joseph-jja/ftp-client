@@ -47,9 +47,9 @@ FtpMediator.prototype.connect = function(channel, data, callback) {
 FtpMediator.prototype.receive = function(data) {
 
   // pass the data to the client
-  Logger.log.call(this, "FtpMediator receiveData: " + JSON.stringify(data) + this.receiveHandler );
+  Logger.log.call(this, "FtpMediator receiveData: " + JSON.stringify(data) );
   if ( this.receiveCB ) {
-    this.receiveCB.call(this.receiveHandler, data);
+    this.receiveCB.apply(this.receiveHandler, data);
     this.receiveCB = undefined;
   }
 };
