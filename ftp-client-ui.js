@@ -51,7 +51,19 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
     buffer = this.resultData.innerHTML;
     this.resultData.innerHTML = buffer + result;
 
-    if ( this.commandIndex < this.commandList.length ) {
+    if (result.toLowerCase().indexOf("227 entering passive mode") === 0) {
+    	// find the 6 digits - TODO better regexp here
+    	pasvHost = result.match(/(\d*\,\d*\,\d*\,\d*)(\,)(\d*\,\d*)/gi)[0];
+      portData = pasvHost.split(",");
+      port = ( parseInt(portData[4], 10) * 256) + parseInt(portData[5], 10);
+      host = portData[0] + "." + portData[1] + "." + portData[2] + "." + portData[3];
+      Logger.log.call(this, "FtpClient " + host + " " + port + " " + JSON.stringify(portData));
+      if ( host === "0.0.0.0" ) {
+        host = this.hostname.value;
+      }
+      this.channel = 'data';
+      mediator.connect('data', { host: host, port: +port }, this.defaultReceiveCallback);
+    } else if ( this.commandIndex < this.commandList.length ) {
       this.sendCommand();
     } else if ( this.commandIndex >= this.commandList.length ) {
       this.commandList = [];
@@ -66,20 +78,6 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
           this.channel = 'command';
         });
       }
-    }
-
-    if (result.toLowerCase().indexOf("227 entering passive mode") === 0) {
-    	// find the 6 digits - TODO better regexp here
-    	pasvHost = result.match(/(\d*\,\d*\,\d*\,\d*)(\,)(\d*\,\d*)/gi)[0];
-      portData = pasvHost.split(",");
-      port = ( parseInt(portData[4], 10) * 256) + parseInt(portData[5], 10);
-      host = portData[0] + "." + portData[1] + "." + portData[2] + "." + portData[3];
-      Logger.log.call(this, "FtpClient " + host + " " + port + " " + JSON.stringify(portData));
-      if ( host === "0.0.0.0" ) {
-        host = this.hostname.value;
-      }
-      this.channel = 'data';
-      mediator.connect('data', { host: host, port: +port }, this.defaultReceiveCallback);
     }
 };
 
