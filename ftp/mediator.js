@@ -31,10 +31,12 @@ FtpMediator.prototype.getChannel = function(channel) {
 };
 
 // connect and on which channel
-FtpMediator.prototype.connect = function(channel, data) {
+FtpMediator.prototype.connect = function(channel, data, callback) {
   var ftpChannel;
   
   ftpChannel = this.getChannel(channel);
+
+  this.receiveCB = callback;
   
   ftpChannel.publish('connect'+ftpChannel.id, data);
 };
@@ -45,6 +47,7 @@ FtpMediator.prototype.receive = function(data) {
   // pass the data to the client
   if ( this.receiveCB ) {
     this.receiveCB(data);
+    this.receiveCB = undefined;
   }
 };
 
@@ -60,10 +63,12 @@ FtpMediator.prototype.send = function(channel, data, callback) {
 };
 
 // disconnect
-FtpMediator.prototype.disconnect = function(channel, data) {
+FtpMediator.prototype.disconnect = function(channel, callback) {
   var ftpChannel;
   
   ftpChannel = this.getChannel(channel);
   
-  ftpChannel.publish('disconnect'+ftpChannel.id, data);
+  this.receiveCB = callback;
+  
+  ftpChannel.publish('disconnect'+ftpChannel.id, { });
 };

@@ -33,6 +33,7 @@ function TcpWrapper(id, addListeners) {
 }
 
 // connect and raise events
+// object should contain { host: string, port: number }
 TcpWrapper.prototype.connect = function(data) {
   var self = this, host, port;
   host = data.host; 
@@ -53,6 +54,7 @@ TcpWrapper.prototype.connect = function(data) {
 };
 
 // send commands and raise notifications
+// object should contain { msg: string }
 TcpWrapper.prototype.sendCommand = function(dataObj) {
   var self = this, data = dataObj.msg,
     message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
@@ -79,7 +81,7 @@ TcpWrapper.prototype.receiveData = function(info) {
   resultData = BufferConverter.decode(result, this.arrayBufferType);
   Logger.log.call(this, "TcpWrapper receiveData data: " + resultData);
 
-  this.ps.publish('receiveData'+this.id, { rawInfo: info, data: resultData } );
+  this.ps.publish('receiveData'+this.id, { rawInfo: info, message: resultData } );
 };
 
 TcpWrapper.prototype.disconnect = function() {

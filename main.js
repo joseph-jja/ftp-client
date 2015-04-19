@@ -1,16 +1,18 @@
-var ftp;
+var ftp, mediator;
 // main
 window.onload = function() {
 	document.querySelector('#greeting').innerText = 'ftp-client';
 
 	ftp = new FtpClient();
 	ftp.initialize();
+	
+	mediator = new FtpMediator();
 
 	document.getElementById('connectID').addEventListener('click', function(e) {
 
 		var txt = this.innerHTML;
 		if ( txt === 'Connect' ) {
-			ftp.connect(ftp.hostname.value, ftp.port.value);
+			ftp.connect();
 			this.innerHTML = "Disconnect";
 		} else {
 			ftp.quit();
