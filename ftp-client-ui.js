@@ -35,20 +35,21 @@ FtpClient.prototype.initialize = function() {
 // for ftp send
 FtpClient.prototype.sendCommand = function() {
   mediator.send(this.channel, {msg: this.commandList[this.commandIndex] }, this.defaultReceiveCallback);
+  this.commandIndex++;
 };
 
 FtpClient.prototype.defaultReceiveCallback = function(info) {
     var buffer, result, self = this,
         data, pasvHost, portData, port, host;
 
-    Logger.log.call(this, info.rawInfo);
+    Logger.log.call(this, JSON.stringify(info.rawInfo));
 
     result = info.message;
     Logger.log.call(this, result);
     this.resultData.innerHTML = buffer + result;
 
     if ( this.commandIndex < this.commandList.length ) {
-      self.sendListCommand();
+      self.sendCommand();
     } else if ( this.commandIndex >= this.commandList.length ) {
       this.commandList = [];
       this.commandIndex = 0;

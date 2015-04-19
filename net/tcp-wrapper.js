@@ -22,7 +22,7 @@ function TcpWrapper(id, addListeners) {
     this.tcp.onReceive.addListener(function(info) {
       Logger.log.call(self, "TcpWrapper onReceive: " + JSON.stringify(info));
       self.ps.publish('receive'+this.id, info);
-      self.receiveData(info);
+      self.receiveData.call(self, info);
     });
   
     this.tcp.onReceiveError.addListener(function(info) {
