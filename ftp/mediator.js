@@ -8,16 +8,16 @@ function FtpMediator() {
   this.receiveCB = undefined;
   
   // setup command channel
-  this.ps.subscribe('connect'+this.ftpCommandChannel.id, this.ftpCommandChannel.connect);
-  this.ps.subscribe('disconnect'+this.ftpCommandChannel.id, this.ftpCommandChannel.disconnect);
-  this.ps.subscribe('sendCommand'+this.ftpCommandChannel.id, this.ftpCommandChannel.sendCommand);
-  this.ps.subscribe('receiveData'+this.ftpCommandChannel.id, this.receive);
+  this.ps.subscribe('connect'+this.ftpCommandChannel.id, this.ftpCommandChannel.connect, this.ftpCommandChannel);
+  this.ps.subscribe('disconnect'+this.ftpCommandChannel.id, this.ftpCommandChannel.disconnect, this.ftpCommandChannel);
+  this.ps.subscribe('sendCommand'+this.ftpCommandChannel.id, this.ftpCommandChannel.sendCommand, this.ftpCommandChannel);
+  this.ps.subscribe('receiveData'+this.ftpCommandChannel.id, this.receive, this.ftpCommandChannel);
 
   // setup data channel
-  this.ps.subscribe('connect'+this.ftpDataChannel.id, this.ftpDataChannel.connect);
-  this.ps.subscribe('disconnect'+this.ftpDataChannel.id, this.ftpDataChannel.disconnect);
-  this.ps.subscribe('sendCommand'+this.ftpDataChannel.id, this.ftpDataChannel.sendCommand);
-  this.ps.subscribe('receiveData'+this.ftpDataChannel.id, this.receive);
+  this.ps.subscribe('connect'+this.ftpDataChannel.id, this.ftpDataChannel.connect, this.ftpDataChannel);
+  this.ps.subscribe('disconnect'+this.ftpDataChannel.id, this.ftpDataChannel.disconnect, this.ftpDataChannel);
+  this.ps.subscribe('sendCommand'+this.ftpDataChannel.id, this.ftpDataChannel.sendCommand, this.ftpDataChannel);
+  this.ps.subscribe('receiveData'+this.ftpDataChannel.id, this.receive, this.ftpDataChannel);
 }
 
 // utility method to switch between data and command channels
@@ -45,6 +45,7 @@ FtpMediator.prototype.connect = function(channel, data, callback) {
 FtpMediator.prototype.receive = function(data) {
 
   // pass the data to the client
+  Logger.log.call(this, "FtpMediator receiveData: " + JSON.stringify(data));
   if ( this.receiveCB ) {
     this.receiveCB(data);
     this.receiveCB = undefined;

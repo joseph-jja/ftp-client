@@ -42,7 +42,7 @@ TcpWrapper.prototype.connect = function(data) {
     port = (port && port.length > 0) ? port : 21;
     this.tcp.create({}, function(createInfo) {
       self.socketID = createInfo.socketId;
-      Logger.log.call(self, "TcpWrapper connect tcp.create: " + JSON.stringify(result));
+      Logger.log.call(self, "TcpWrapper connect tcp.create: " + JSON.stringify(data));
       self.ps.publish('created'+self.id, createInfo);
       // now actually connect
       self.tcp.connect(self.socketID, host, +port, function(result) {
@@ -89,7 +89,7 @@ TcpWrapper.prototype.disconnect = function() {
   if ( this.socketID ) {
     this.tcp.disconnect(self.socketID, function(info) {
 	    Logger.log.call(self, "Command socket disconnected!");
-      self.ps.publish('disconnect'+self.id, info);
+      self.ps.publish('disconnected'+self.id, info);
   	});
   }
 };
