@@ -10,4 +10,4 @@ There are some 'alias' coded in:
 - cd <dir> = CWD <dir> + PASV + LIST -aL
 - get <file> = PASV + RETR <file>
 
-
+# Version 0.0.3
