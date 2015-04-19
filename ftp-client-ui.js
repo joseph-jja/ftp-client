@@ -36,7 +36,7 @@ FtpClient.prototype.initialize = function() {
 FtpClient.prototype.sendCommand = function() {
   mediator.send(this.channel, {msg: this.commandList[this.commandIndex] }, this.defaultReceiveCallback);
   this.commandIndex++;
-  Logger.log.call(this, this.commandIndex);
+  Logger.log.call(this, this.commandList[this.commandIndex]);
 };
 
 FtpClient.prototype.defaultReceiveCallback = function(info) {
@@ -51,7 +51,7 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
     this.resultData.innerHTML = buffer + result;
 
     if ( this.commandIndex < this.commandList.length ) {
-      self.sendCommand();
+      this.sendCommand();
     } else if ( this.commandIndex >= this.commandList.length ) {
       this.commandList = [];
       this.commandIndex = 0;
