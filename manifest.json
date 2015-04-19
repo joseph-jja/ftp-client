@@ -3,7 +3,7 @@
   "name": "ftp-client",
   "short_name": "ftp-client",
   "description": "",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "minimum_chrome_version": "38",
 
   "icons": {

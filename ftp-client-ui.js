@@ -12,10 +12,9 @@ function FtpClient() {
     this.fileListID = document.getElementById("remoteFiles");
     this.resultData = document.getElementById("resultData");
 
-    this.next = undefined;
+    this.channel = 'command';
 
     // command sets
-    this.authenticate = [ 'USER', 'PASS' ];
     this.logonCommands = ['SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV', 'LIST -aL'];
     this.listDir = [ 'PASV', 'LIST -aL' ];
     this.getFile = [ 'PASV', 'RETR' ];
@@ -28,44 +27,14 @@ function FtpClient() {
 }
 
 FtpClient.prototype.initialize = function() {
-
     var self = this;
     
     this.resultData.innerHTML = "";
-
 };
 
-FtpClient.prototype.sendCommand = function(data, callback) {
-    var message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
-    Logger.log.call(this, BufferConverter.decode(message, this.arrayBufferType));
-    this.tcp.send(this.socketID, message, callback);
-};
-
-// for ftp upload
-FtpClient.prototype.sendData = function(data, callback) {
-    var message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
-    Logger.log.call(this, BufferConverter.decode(message, this.arrayBufferType));
-    this.tcp.send(this.pasvSocketID, message, callback);
-};
-
-FtpClient.prototype.sendListCommand = function() {
-  var self = this;
-  this.sendCommand(this.commandList[this.commandIndex], function(info) {
-    Logger.log.call(self, JSON.stringify(info));
-    // stop the call chain
-    self.next = undefined;
-  });
-  this.commandIndex ++;
-  if ( this.commandIndex >= this.commandList.length && ! this.uploadData ) {
-    Logger.log.call(this, "done!");
-    // close socket because we should be done with the passive port
-    if ( this.pasvSocketID ) {
-        this.tcp.disconnect(this.pasvSocketID, function() {
-            Logger.log.call(self, "Data socket disconnected!");
-            this.pasvSocketID = undefined;
-        });
-    }
-  }
+// for ftp send
+FtpClient.prototype.sendCommand = function() {
+  mediator.send(this.channel, {msg: this.commandList[this.commandIndex] }, this.defaultReceiveCallback);
 };
 
 FtpClient.prototype.defaultReceiveCallback = function(info) {
@@ -78,9 +47,7 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
     Logger.log.call(this, result);
     this.resultData.innerHTML = buffer + result;
 
-    if (typeof this.next !== 'undefined') {
-        this.next();
-    } else if ( this.commandIndex < this.commandList.length ) {
+    if ( this.commandIndex < this.commandList.length ) {
       self.sendListCommand();
     } else if ( this.commandIndex >= this.commandList.length ) {
       this.commandList = [];
@@ -93,26 +60,22 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
         	// close socket because we should be done with the passive port
         	mediator.disconnect('data');
         });
+        this.channel = 'command';
       }
     }
 
     if (data.toLowerCase().indexOf("227 entering passive mode") === 0) {
     	// find the 6 digits - TODO better regexp here
     	pasvHost = data.match(/(\d*\,\d*\,\d*\,\d*)(\,)(\d*\,\d*)/gi)[0];
-        portData = pasvHost.split(",");
-        port = ( parseInt(portData[4], 10) * 256) + parseInt(portData[5], 10);
-        host = portData[0] + "." + portData[1] + "." + portData[2] + "." + portData[3];
-        Logger.log.call(this, host + " " + port + " " + JSON.stringify(portData));
-        if ( host === "0.0.0.0" ) {
-          host = this.hostname.value;
-        }
-        if ( this.pasvSocketID ) {
-        	this.tcp.disconnect(this.pasvSocketID, function() {
-        		Logger.log.call(self, "Closing open data socket!");
-            this.pasvSocketID = undefined;
-        	});
-        }
-        mediator.connect('data', { host: host, port: +port }, this.defaultReceiveCallback);
+      portData = pasvHost.split(",");
+      port = ( parseInt(portData[4], 10) * 256) + parseInt(portData[5], 10);
+      host = portData[0] + "." + portData[1] + "." + portData[2] + "." + portData[3];
+      Logger.log.call(this, host + " " + port + " " + JSON.stringify(portData));
+      if ( host === "0.0.0.0" ) {
+        host = this.hostname.value;
+      }
+      this.channel = 'data';
+      mediator.connect('data', { host: host, port: +port }, this.defaultReceiveCallback);
     }
 };
 
@@ -123,7 +86,6 @@ FtpClient.prototype.connect = function() {
 
       if (this.username.value && this.username.value.length > 0 && this.password.value && this.password.value.length > 0) {
         this.commandIndex = 0;
-  		  this.commandList = ftp.authenticate;
   		  this.commandList[0] = 'USER ' + this.username.value;
   		  this.commandList[1] = 'PASS ' + this.password.value;
         this.commandList = this.commandList.concat(this.logonCommands);

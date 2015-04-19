@@ -14,9 +14,9 @@ function FtpMediator() {
   this.ps.subscribe('receiveData'+this.ftpCommandChannel.id, this.receive);
 
   // setup data channel
-  this.ps.subscribe('connect'+ftpDataChannel.id, ftpDataChannel.connect);
-  this.ps.subscribe('disconnect'+ftpDataChannel.id, ftpDataChannel.disconnect);
-  this.ps.subscribe('sendCommand'+ftpDataChannel.id, ftpDataChannel.sendCommand);
+  this.ps.subscribe('connect'+this.ftpDataChannel.id, this.ftpDataChannel.connect);
+  this.ps.subscribe('disconnect'+this.ftpDataChannel.id, this.ftpDataChannel.disconnect);
+  this.ps.subscribe('sendCommand'+this.ftpDataChannel.id, this.ftpDataChannel.sendCommand);
   this.ps.subscribe('receiveData'+this.ftpDataChannel.id, this.receive);
 }
 
@@ -38,7 +38,7 @@ FtpMediator.prototype.connect = function(channel, data, callback) {
 
   this.receiveCB = callback;
   
-  ftpChannel.publish('connect'+ftpChannel.id, data);
+  this.ps.publish('connect'+ftpChannel.id, data);
 };
 
 // receive data
@@ -59,7 +59,7 @@ FtpMediator.prototype.send = function(channel, data, callback) {
   
   this.receiveCB = callback;
   
-  ftpChannel.publish('sendCommand'+ftpChannel.id, data);
+  this.ps.publish('sendCommand'+ftpChannel.id, data);
 };
 
 // disconnect
@@ -70,5 +70,5 @@ FtpMediator.prototype.disconnect = function(channel, callback) {
   
   this.receiveCB = callback;
   
-  ftpChannel.publish('disconnect'+ftpChannel.id, { });
+  this.ps.publish('disconnect'+ftpChannel.id, { });
 };
