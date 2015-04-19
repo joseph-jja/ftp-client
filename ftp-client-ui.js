@@ -36,7 +36,7 @@ FtpClient.prototype.initialize = function() {
 FtpClient.prototype.sendCommand = function() {
   mediator.send(this.channel, {msg: this.commandList[this.commandIndex] }, this.defaultReceiveCallback);
   this.commandIndex++;
-  Logger.log.call(this, this.commandList[this.commandIndex]);
+  Logger.log.call(this, "Index: " + this.commandIndex + " next command: " + this.commandList[this.commandIndex]);
 };
 
 FtpClient.prototype.defaultReceiveCallback = function(info) {
@@ -92,6 +92,7 @@ FtpClient.prototype.connect = function() {
   		  this.commandList[0] = 'USER ' + this.username.value;
   		  this.commandList[1] = 'PASS ' + this.password.value;
         this.commandList = this.commandList.concat(this.logonCommands);
+        Logger.log.call(this, "Commands: " + JSON.stringify(this.commandList));
       }
       mediator.connect("command", { host: this.hostname.value, port: port }, this.defaultReceiveCallback);
     }

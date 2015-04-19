@@ -22,7 +22,6 @@ function TcpWrapper(id, addListeners) {
     this.tcp.onReceive.addListener(function(info) {
       Logger.log.call(self, "TcpWrapper onReceive: " + JSON.stringify(info));
       self.ps.publish('receive'+self.id, info);
-      self.receiveData.call(self, info);
     });
   
     this.tcp.onReceiveError.addListener(function(info) {
@@ -66,19 +65,17 @@ TcpWrapper.prototype.sendCommand = function(dataObj) {
 
 // receive data and raise events
 TcpWrapper.prototype.receiveData = function(info) {
-  var result, resultData;
+  var resultData;
 
-  Logger.log.call(this, "TcpWrapper receiveData: " + JSON.stringify(info));
+  // compare socket ids and log
+  Logger.log.call(this, "TcpWrapper receiveData sockets: " + this.socketID + " " + info.socketId);
   if ( this.socketID && info.socketId !== this.socketID ) {
     this.disconnect();
     return;
   }
 
-  // store result in temp storage
-  result = info.data;
-
   // conversion event
-  resultData = BufferConverter.decode(result, this.arrayBufferType);
+  resultData = BufferConverter.decode(info.data, this.arrayBufferType);
   Logger.log.call(this, "TcpWrapper receiveData data: " + resultData);
 
   this.ps.publish('receiveData'+this.id, { rawInfo: info, message: resultData } );

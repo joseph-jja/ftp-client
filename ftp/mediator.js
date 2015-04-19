@@ -13,12 +13,14 @@ function FtpMediator(recvHdlr) {
   this.ps.subscribe('connect'+this.ftpCommandChannel.id, this.ftpCommandChannel.connect, this.ftpCommandChannel);
   this.ps.subscribe('disconnect'+this.ftpCommandChannel.id, this.ftpCommandChannel.disconnect, this.ftpCommandChannel);
   this.ps.subscribe('sendCommand'+this.ftpCommandChannel.id, this.ftpCommandChannel.sendCommand, this.ftpCommandChannel);
+  this.ps.subscribe('receive'+this.ftpCommandChannel.id, this.ftpCommandChannel.receiveData, this.ftpCommandChannel);
   this.ps.subscribe('receiveData'+this.ftpCommandChannel.id, this.receive, this);
 
   // setup data channel
   this.ps.subscribe('connect'+this.ftpDataChannel.id, this.ftpDataChannel.connect, this.ftpDataChannel);
   this.ps.subscribe('disconnect'+this.ftpDataChannel.id, this.ftpDataChannel.disconnect, this.ftpDataChannel);
   this.ps.subscribe('sendCommand'+this.ftpDataChannel.id, this.ftpDataChannel.sendCommand, this.ftpDataChannel);
+  this.ps.subscribe('receive'+this.ftpDataChannel.id, this.ftpDataChannel.receiveData, this.ftpDataChannel);
   this.ps.subscribe('receiveData'+this.ftpDataChannel.id, this.receive, this);
 }
 
@@ -47,11 +49,11 @@ FtpMediator.prototype.connect = function(channel, data, callback) {
 FtpMediator.prototype.receive = function(data) {
 
   // pass the data to the client
-  Logger.log.call(this, "FtpMediator receiveData: " + JSON.stringify(data) );
+  Logger.log.call(this, "FtpMediator receive: " + JSON.stringify(data) );
   if ( this.receiveCB ) {
-    //exception :(
+    //Logger.log.call(this, "FtpMediator callback: " + this.receiveCB );
     this.receiveCB.call(this.receiveHandler, data);
-    this.receiveCB = undefined;
+    //this.receiveCB = undefined;
   }
 };
 
@@ -63,6 +65,7 @@ FtpMediator.prototype.send = function(channel, data, callback) {
   
   this.receiveCB = callback;
   
+  Logger.log.call(this, "FtpMediator send: " + JSON.stringify(data) );
   this.ps.publish('sendCommand'+ftpChannel.id, data);
 };
 
