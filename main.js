@@ -30,23 +30,21 @@ window.onload = function() {
 		  if ( cmd === 'ls' ) {
 		    ftp.commandList = ftp.listDir;
 		    ftp.commandIndex = 0;
-		    ftp.sendListCommand();
+		    ftp.sendCommand();
 		  } else if ( cmd.indexOf('get') !== -1 ) {
 		    ftp.commandList = ftp.getFile;
 		    ftp.getFile[ftp.getFile.length-1] = 'RETR ' + cmd.substring(4);
 		    ftp.commandIndex = 0;
-		    ftp.sendListCommand();
+		    ftp.sendCommand();
 		  } else if ( cmd.indexOf('cd') !== -1 || cmd.indexOf("CWD") !== -1 ) {
 		    cmd = cmd.replace('cd', 'CWD');
 		    ftp.commandList = ftp.listDir;
 		    ftp.commandIndex = 0;
-  			ftp.sendCommand(cmd, function(info) {
-  				console.log(JSON.stringify(info));
-  			});
+  			ftp.sendCommand();
 		  } else {
-  			ftp.sendCommand(cmd, function(info) {
-  				console.log(JSON.stringify(info));
-  			});
+		    ftp.commandList = [cmd];
+		    ftp.commandIndex = 0;
+		    ftp.sendCommand();
 		  }
 		}
 		return false;
@@ -72,6 +70,4 @@ window.onload = function() {
 		ftp.resultData.innerHTML = "";
 		return false;
 	});
-
-
 };
