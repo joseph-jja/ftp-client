@@ -61,8 +61,8 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
       if ( host === "0.0.0.0" ) {
         host = this.hostname.value;
       }
-      mediator.connect('data', { host: host, port: +port }, this.defaultReceiveCallback);
       this.channel = 'data';
+      mediator.connect('data', { host: host, port: +port }, this.defaultReceiveCallback);
     } else if ( this.commandIndex < this.commandList.length ) {
       this.sendCommand();
     } else if ( this.commandIndex >= this.commandList.length ) {
