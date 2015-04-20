@@ -48,6 +48,7 @@ FtpMediator.prototype.connect = function(channel, data, callback) {
 
   this.receiveCB = callback;
   
+  //Logger.log("FtpMediator connect: " + ftpChannel.id + " " + channel + " " + JSON.stringify(data) );
   this.ps.publish('connect'+ftpChannel.id, data);
 };
 
@@ -55,7 +56,7 @@ FtpMediator.prototype.connect = function(channel, data, callback) {
 FtpMediator.prototype.receive = function(data) {
 
   // pass the data to the client
-  Logger.log("FtpMediator receive: " + JSON.stringify(data) );
+  //Logger.log("FtpMediator receive: " + JSON.stringify(data) );
   if ( this.receiveCB ) {
     //Logger.log("FtpMediator callback: " + this.receiveCB );
     this.receiveCB.call(this.receiveHandler, data);
@@ -71,7 +72,7 @@ FtpMediator.prototype.send = function(channel, data, callback) {
   
   this.receiveCB = callback;
   
-  Logger.log("FtpMediator send: " + ftpChannel.id + " " + JSON.stringify(data) );
+  //Logger.log("FtpMediator send: " + ftpChannel.id + " " + JSON.stringify(data) );
   this.ps.publish('sendCommand'+ftpChannel.id, data);
 };
 
