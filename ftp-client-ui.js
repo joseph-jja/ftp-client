@@ -93,7 +93,7 @@ FtpClient.prototype.connect = function() {
         this.commandList[0] = 'USER ' + this.username.value;
   		  this.commandList[1] = 'PASS ' + this.password.value;
         this.commandList = this.commandList.concat(this.logonCommands);
-        Logger.log.call(this, "Commands: " + this.commandList.length);
+        //Logger.log.call(this, "Commands: " + this.commandList.length);
       }
       mediator.connect("command", { host: this.hostname.value, port: port }, this.defaultReceiveCallback);
     }
