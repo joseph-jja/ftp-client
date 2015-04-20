@@ -61,8 +61,8 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
       if ( host === "0.0.0.0" ) {
         host = this.hostname.value;
       }
-      this.channel = 'data';
       mediator.connect('data', { host: host, port: +port }, this.defaultReceiveCallback);
+      this.channel = 'data';
     } else if ( this.commandIndex < this.commandList.length ) {
       this.sendCommand();
     } else if ( this.commandIndex >= this.commandList.length ) {
@@ -70,7 +70,7 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
       this.commandIndex = 0;
       // if we are doing a store now we send the data
       if ( this.uploadData ) {
-        mediator.sendData('data', { 'msg': this.uploadData }, function(info) {
+        mediator.send('data', { 'filedata': this.uploadData }, function(info) {
           Logger.log.call(self, "Data sent: " + JSON.stringify(info));
           self.uploadData = undefined;
         	// close socket because we should be done with the passive port
