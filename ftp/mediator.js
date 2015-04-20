@@ -64,7 +64,7 @@ FtpMediator.prototype.receive = function(data) {
   }
 };
 
-// send data
+// send command
 FtpMediator.prototype.send = function(channel, data, callback) {
   var ftpChannel;
   
@@ -74,6 +74,18 @@ FtpMediator.prototype.send = function(channel, data, callback) {
   // alway send commands on command channel
   //Logger.log("FtpMediator send: " + ftpChannel.id + " " + JSON.stringify(data) );
   this.ps.publish('sendCommand'+this.ftpCommandChannel.id, data);
+};
+
+// send data
+FtpMediator.prototype.sendData = function(channel, data, callback) {
+  var ftpChannel;
+  
+  ftpChannel = this.getChannel(channel);
+  
+  this.receiveCB = callback;
+  // alway send data for fileuploads on data channel
+  //Logger.log("FtpMediator send: " + ftpChannel.id + " " + JSON.stringify(data) );
+  this.ps.publish('sendCommand'+this.ftpDataChannel.id, data);
 };
 
 // disconnect
