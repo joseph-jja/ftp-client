@@ -12,7 +12,7 @@ function FtpMediator(recvHdlr) {
   
   this.ps.subscribe('receive', function(data) {
     var channelName = this.getChannel(this.activeChannel);
-    Logger.log.call(this, "FtpMediator receive channel id " + channelName.id);
+    Logger.log("FtpMediator receive channel id " + channelName.id);
     channelName.receiveData(data);
   }, this);
   
@@ -55,9 +55,9 @@ FtpMediator.prototype.connect = function(channel, data, callback) {
 FtpMediator.prototype.receive = function(data) {
 
   // pass the data to the client
-  Logger.log.call(this, "FtpMediator receive: " + JSON.stringify(data) );
+  Logger.log("FtpMediator receive: " + JSON.stringify(data) );
   if ( this.receiveCB ) {
-    //Logger.log.call(this, "FtpMediator callback: " + this.receiveCB );
+    //Logger.log("FtpMediator callback: " + this.receiveCB );
     this.receiveCB.call(this.receiveHandler, data);
     //this.receiveCB = undefined;
   }
@@ -71,7 +71,7 @@ FtpMediator.prototype.send = function(channel, data, callback) {
   
   this.receiveCB = callback;
   
-  Logger.log.call(this, "FtpMediator send: " + ftpChannel.id + " " + JSON.stringify(data) );
+  Logger.log("FtpMediator send: " + ftpChannel.id + " " + JSON.stringify(data) );
   this.ps.publish('sendCommand'+ftpChannel.id, data);
 };
 
