@@ -20,7 +20,7 @@ function TcpWrapper(id, addListeners) {
     // add listener to tcp for receiving data and errors
     // we only want to add this once though
     this.tcp.onReceive.addListener(function(info) {
-      Logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
+      //Logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
       self.ps.publish('receive', info);
     });
   
@@ -59,7 +59,7 @@ TcpWrapper.prototype.connect = function(data) {
 TcpWrapper.prototype.sendCommand = function(dataObj) {
   var self = this, data = dataObj.msg,
     message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
-  Logger.log("TcpWrapper sendCommand: " + this.id + " " + BufferConverter.decode(message, this.arrayBufferType));
+  //Logger.log("TcpWrapper sendCommand: " + this.id + " " + BufferConverter.decode(message, this.arrayBufferType));
   this.tcp.send(this.socketID, message, function(info) {
     self.ps.publish('sendData'+self.id, info);
   });
@@ -70,7 +70,7 @@ TcpWrapper.prototype.receiveData = function(info) {
   var resultData;
 
   // compare socket ids and log
-  Logger.log("TcpWrapper receiveData sockets: " + this.socketID + " " + info.socketId);
+  //Logger.log("TcpWrapper receiveData sockets: " + this.socketID + " " + info.socketId);
   if ( this.socketID && info.socketId !== this.socketID ) {
     this.disconnect();
     return;
@@ -78,7 +78,7 @@ TcpWrapper.prototype.receiveData = function(info) {
 
   // conversion event
   resultData = BufferConverter.decode(info.data, this.arrayBufferType);
-  Logger.log("TcpWrapper receiveData data: " + resultData);
+  //Logger.log("TcpWrapper receiveData data: " + resultData);
 
   this.ps.publish('receiveData'+this.id, { rawInfo: info, message: resultData } );
 };
@@ -87,7 +87,7 @@ TcpWrapper.prototype.disconnect = function() {
   var self = this;
   if ( this.socketID ) {
     this.tcp.disconnect(self.socketID, function(info) {
-	    Logger.log(self.id + " socket disconnected!");
+	    //Logger.log(self.id + " socket disconnected!");
       self.ps.publish('disconnected'+self.id, info);
   	});
   }
