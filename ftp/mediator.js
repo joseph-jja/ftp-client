@@ -28,7 +28,12 @@ function FtpMediator(recvHdlr) {
   this.ps.subscribe('sendCommand'+this.ftpDataChannel.id, this.ftpDataChannel.sendCommand, this.ftpDataChannel);
   this.ps.subscribe('receiveData'+this.ftpDataChannel.id, this.receive, this);
   
+  // listen for connections and log
   this.ps.subscribe('connected'+this.ftpCommandChannel.id, function(data) {
+    Logger.log("connected " + JSON.stringify(data));
+  });
+  
+  this.ps.subscribe('connected'+this.ftpDataChannel.id, function(data) {
     Logger.log("connected " + JSON.stringify(data));
   });
 }
