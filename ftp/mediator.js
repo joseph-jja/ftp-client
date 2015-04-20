@@ -12,7 +12,7 @@ function FtpMediator(recvHdlr) {
   
   this.ps.subscribe('receive', function(data) {
     var channelName = this.getChannel(this.activeChannel);
-    Logger.log.call(this, "FtpMediator receive callback " + channelName.id);
+    Logger.log.call(this, "FtpMediator receive channel id " + channelName.id);
     channelName.receiveData(data);
   }, this);
   
