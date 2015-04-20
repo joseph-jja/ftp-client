@@ -87,11 +87,13 @@ FtpClient.prototype.connect = function() {
       port = (this.port.value && this.port.value.length > 0) ? this.port.value : 21;
 
       if (this.username.value && this.username.value.length > 0 && this.password.value && this.password.value.length > 0) {
+        this.channel = 'command';
         this.commandIndex = 0;
-  		  this.commandList[0] = 'USER ' + this.username.value;
+        this.commandList = [];
+        this.commandList[0] = 'USER ' + this.username.value;
   		  this.commandList[1] = 'PASS ' + this.password.value;
         this.commandList = this.commandList.concat(this.logonCommands);
-        //Logger.log.call(this, "Commands: " + JSON.stringify(this.commandList));
+        Logger.log.call(this, "Commands: " + this.commandList.length);
       }
       mediator.connect("command", { host: this.hostname.value, port: port }, this.defaultReceiveCallback);
     }
