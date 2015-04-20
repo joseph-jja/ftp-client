@@ -40,6 +40,11 @@ FtpClient.prototype.sendCommand = function() {
   Logger.log.call(this, "FtpClient Index: " + this.commandIndex + " next command: " + this.commandList[this.commandIndex]);
 };
 
+FtpClient.prototype.connectDataPort = function(data) {
+      this.channel = 'data';
+      mediator.connect('data', { host: host, port: +port }, this.defaultReceiveCallback);
+};
+
 FtpClient.prototype.defaultReceiveCallback = function(info) {
     var buffer, result, self = this,
         pasvHost, portData, port, host;
@@ -61,8 +66,7 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
       if ( host === "0.0.0.0" ) {
         host = this.hostname.value;
       }
-      this.channel = 'data';
-      mediator.connect('data', { host: host, port: +port }, this.defaultReceiveCallback);
+      this.connectDataPort( { host: host, port: +port } );
     } else if ( this.commandIndex < this.commandList.length ) {
       this.sendCommand();
     } else if ( this.commandIndex >= this.commandList.length ) {

@@ -20,7 +20,7 @@ function TcpWrapper(id, addListeners) {
     // add listener to tcp for receiving data and errors
     // we only want to add this once though
     this.tcp.onReceive.addListener(function(info) {
-      //Logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
+      Logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
       self.ps.publish('receive', info);
     });
   

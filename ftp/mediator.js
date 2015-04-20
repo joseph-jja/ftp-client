@@ -1,7 +1,7 @@
 // man in the middle for mediating between UI and tcp code
 function FtpMediator(recvHdlr) {
   
-  this.ftpCommandChannel = new TcpWrapper("cmd", true);
+  this.ftpCommandChannel = new TcpWrapper("command", true);
 	this.ftpDataChannel = new TcpWrapper("data", false);
 
   this.ps = PublishSubscribe;
