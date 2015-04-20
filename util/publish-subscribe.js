@@ -11,10 +11,10 @@ var PublishSubscribe = {
     end = s.topics[topic].length;
     for ( i = 0; i < end; i++ ) {
       topicFM = s.topics[topic][i];
-      if ( topicFM.caller ) {
+      if ( typeof topicFM.caller !== 'undefined' ) {
         topicFM.cb.call(topicFM.caller, data);
       } else {
-        topicFM(data);
+        topicFM.cb(data);
       }
     }
   },

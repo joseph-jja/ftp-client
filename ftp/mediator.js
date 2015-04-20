@@ -27,6 +27,10 @@ function FtpMediator(recvHdlr) {
   this.ps.subscribe('disconnect'+this.ftpDataChannel.id, this.ftpDataChannel.disconnect, this.ftpDataChannel);
   this.ps.subscribe('sendCommand'+this.ftpDataChannel.id, this.ftpDataChannel.sendCommand, this.ftpDataChannel);
   this.ps.subscribe('receiveData'+this.ftpDataChannel.id, this.receive, this);
+  
+  this.ps.subscribe('connected'+this.ftpCommandChannel.id, function(data) {
+    Logger.log("connected " + JSON.stringify(data));
+  });
 }
 
 // utility method to switch between data and command channels
