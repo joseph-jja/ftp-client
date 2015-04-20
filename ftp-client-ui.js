@@ -55,6 +55,11 @@ FtpClient.prototype.defaultReceiveCallback = function(info) {
     Logger.log("FtpClient " + result);
     buffer = this.resultData.innerHTML;
     this.resultData.innerHTML = buffer + result;
+    
+    if ( this.channel === 'data' ) {
+      mediator.disconnect('data');
+      this.channel = 'command';
+    }
 
     if (result.toLowerCase().indexOf("227 entering passive mode") === 0) {
     	// find the 6 digits - TODO better regexp here
