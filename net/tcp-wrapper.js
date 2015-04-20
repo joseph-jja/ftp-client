@@ -59,7 +59,7 @@ TcpWrapper.prototype.connect = function(data) {
 TcpWrapper.prototype.sendCommand = function(dataObj) {
   var self = this, data = dataObj.msg,
     message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
-  Logger.log("TcpWrapper sendCommand: " + BufferConverter.decode(message, this.arrayBufferType));
+  Logger.log("TcpWrapper sendCommand: " + this.id + " " + BufferConverter.decode(message, this.arrayBufferType));
   this.tcp.send(this.socketID, message, function(info) {
     self.ps.publish('sendData'+self.id, info);
   });

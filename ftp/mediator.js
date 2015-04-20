@@ -71,9 +71,9 @@ FtpMediator.prototype.send = function(channel, data, callback) {
   ftpChannel = this.getChannel(channel);
   
   this.receiveCB = callback;
-  
+  // alway send commands on command channel
   //Logger.log("FtpMediator send: " + ftpChannel.id + " " + JSON.stringify(data) );
-  this.ps.publish('sendCommand'+ftpChannel.id, data);
+  this.ps.publish('sendCommand'+this.ftpCommandChannel.id, data);
 };
 
 // disconnect
