@@ -36,8 +36,14 @@ function FtpMediator(receiver, receiveHandler) {
     Logger.log("connected " + JSON.stringify(data));
   });
   
+  // on connect to the data port no data is actually sent 
+  // so the onReceive is not fired
   this.ps.subscribe('connected'+this.ftpDataChannel.id, function(data) {
     Logger.log("connected " + JSON.stringify(data));
+    if ( self.receiveCB ) {
+      //Logger.log("FtpMediator callback: " + this.receiveCB );
+      self.receiveCB.call(self.receiveHandler, data);
+    }
   });
 }
 
