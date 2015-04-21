@@ -47,7 +47,7 @@ FtpClient.prototype.receiveCallback = function(info) {
     
     if ( info.message ) {
       result = info.message;
-      Logger.log("FtpClient " + result);
+      //Logger.log("FtpClient " + result);
       buffer = this.resultData.innerHTML;
       this.resultData.innerHTML = buffer + result;
     }
@@ -58,7 +58,7 @@ FtpClient.prototype.receiveCallback = function(info) {
       portData = pasvHost.split(",");
       port = ( parseInt(portData[4], 10) * 256) + parseInt(portData[5], 10);
       host = portData[0] + "." + portData[1] + "." + portData[2] + "." + portData[3];
-      Logger.log("FtpClient " + host + " " + port + " " + JSON.stringify(portData));
+      //Logger.log("FtpClient " + host + " " + port + " " + JSON.stringify(portData));
       if ( host === "0.0.0.0" ) {
         host = this.hostname.value;
       }
