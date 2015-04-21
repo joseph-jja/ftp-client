@@ -32,19 +32,6 @@ FtpClient.prototype.initialize = function() {
     this.resultData.innerHTML = "";
 };
 
-// for ftp send
-FtpClient.prototype.sendCommand = function() {
-  mediator.send(this.channel, {msg: this.commandList[this.commandIndex] }, this.receiveCallback);
-  this.commandIndex++;
-  //Logger.log.call(this, "FtpClient Channel: " + this.channel);
-  Logger.log("FtpClient Index: " + this.commandIndex + " next command: " + this.commandList[this.commandIndex]);
-};
-
-FtpClient.prototype.connectDataPort = function(data) {
-      this.channel = 'data';
-      mediator.connect('data', { host: data.host, port: +data.port }, this.receiveCallback);
-};
-
 FtpClient.prototype.receiveCallback = function(info) {
     var buffer, result, self = this,
         pasvHost, portData, port, host;
@@ -71,9 +58,13 @@ FtpClient.prototype.receiveCallback = function(info) {
       if ( host === "0.0.0.0" ) {
         host = this.hostname.value;
       }
-      this.connectDataPort( { host: host, port: +port } );
+      this.channel = 'data';
+      mediator.connect('data', { host: data.host, port: +data.port });
     } else if ( this.commandIndex < this.commandList.length ) {
-      this.sendCommand();
+      mediator.send(this.channel, {msg: this.commandList[this.commandIndex] });
+      this.commandIndex++;
+      //Logger.log.call(this, "FtpClient Channel: " + this.channel);
+      Logger.log("FtpClient Index: " + this.commandIndex + " next command: " + this.commandList[this.commandIndex]);
     } else if ( this.commandIndex >= this.commandList.length ) {
       this.commandList = [];
       this.commandIndex = 0;
@@ -104,7 +95,7 @@ FtpClient.prototype.connect = function() {
         this.commandList = this.commandList.concat(this.logonCommands);
         //Logger.log("FtpClient Commands: " + this.commandList.length);
       }
-      mediator.connect("command", { host: this.hostname.value, port: port }, this.receiveCallback);
+      mediator.connect("command", { host: this.hostname.value, port: port });
     }
 };
 
