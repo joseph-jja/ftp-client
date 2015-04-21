@@ -32,6 +32,13 @@ FtpClient.prototype.initialize = function() {
     this.resultData.innerHTML = "";
 };
 
+FtpClient.prototype.sendCommand = function() {
+  mediator.send(this.channel, {msg: this.commandList[this.commandIndex] });
+  this.commandIndex++;
+  //Logger.log.call(this, "FtpClient Channel: " + this.channel);
+  Logger.log("FtpClient Index: " + this.commandIndex + " next command: " + this.commandList[this.commandIndex]);
+};
+
 FtpClient.prototype.receiveCallback = function(info) {
     var buffer, result, self = this,
         pasvHost, portData, port, host;
@@ -59,7 +66,7 @@ FtpClient.prototype.receiveCallback = function(info) {
         host = this.hostname.value;
       }
       this.channel = 'data';
-      mediator.connect('data', { host: data.host, port: +data.port });
+      mediator.connect('data', { host: host, port: +port });
     } else if ( this.commandIndex < this.commandList.length ) {
       mediator.send(this.channel, {msg: this.commandList[this.commandIndex] });
       this.commandIndex++;
