@@ -1,5 +1,5 @@
 // man in the middle for mediating between UI and tcp code
-function FtpMediator(recvHdlr) {
+function FtpMediator(receiver, receiveHandler) {
   
   var self = this;
   
@@ -10,7 +10,8 @@ function FtpMediator(recvHdlr) {
   this.receiveCB = undefined;
   this.activeChannel = "command";
   
-  this.receiveHandler = recvHdlr;
+  this.receiveHandler = receiver;
+  this.receiveCB = receiveHandler;
   
   this.ps.subscribe('receive', function(data) {
     var channelName = this.getChannel(this.activeChannel);
@@ -52,13 +53,11 @@ FtpMediator.prototype.getChannel = function(channel) {
 };
 
 // connect and on which channel
-FtpMediator.prototype.connect = function(channel, data, callback) {
+FtpMediator.prototype.connect = function(channel, data) {
   var ftpChannel;
   
   ftpChannel = this.getChannel(channel);
 
-  this.receiveCB = callback;
-  
   //Logger.log("FtpMediator connect: " + ftpChannel.id + " " + channel + " " + JSON.stringify(data) );
   this.ps.publish('connect'+ftpChannel.id, data);
 };
@@ -71,18 +70,15 @@ FtpMediator.prototype.receive = function(data) {
   if ( this.receiveCB ) {
     //Logger.log("FtpMediator callback: " + this.receiveCB );
     this.receiveCB.call(this.receiveHandler, data);
-    //this.receiveCB = undefined;
   }
 };
 
 // send command
-FtpMediator.prototype.send = function(channel, data, callback) {
+FtpMediator.prototype.send = function(channel, data) {
   var ftpChannel;
   
   ftpChannel = this.getChannel(channel);
   
-  this.receiveCB = callback;
-
   // always send commands on command channel
   // so we peek into the message looking for a file upload
   if ( typeof data.filedata !== 'undefined' ) {
@@ -93,12 +89,10 @@ FtpMediator.prototype.send = function(channel, data, callback) {
 };
 
 // disconnect
-FtpMediator.prototype.disconnect = function(channel, callback) {
+FtpMediator.prototype.disconnect = function(channel) {
   var ftpChannel;
   
   ftpChannel = this.getChannel(channel);
-  
-  this.receiveCB = callback;
   
   this.ps.publish('disconnect'+ftpChannel.id, { });
 };

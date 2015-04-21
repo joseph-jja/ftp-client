@@ -6,7 +6,7 @@ window.onload = function() {
 	ftp = new FtpClient();
 	ftp.initialize();
 	
-	mediator = new FtpMediator(ftp);
+	mediator = new FtpMediator(ftp, ftp.receiveCallback);
 
 	document.getElementById('connectID').addEventListener('click', function(e) {
 
