@@ -36,17 +36,15 @@ FtpClient.prototype.sendCommand = function() {
   mediator.send(this.channel, {msg: this.commandList[this.commandIndex] });
   this.commandIndex++;
   //Logger.log.call(this, "FtpClient Channel: " + this.channel);
-  Logger.log("FtpClient Index: " + this.commandIndex + " next command: " + this.commandList[this.commandIndex]);
+  //Logger.log("FtpClient Index: " + this.commandIndex + " next command: " + this.commandList[this.commandIndex]);
 };
 
 FtpClient.prototype.receiveCallback = function(info) {
     var buffer, result, self = this,
         pasvHost, portData, port, host;
 
-    if ( info.rawInfo ) {
-      Logger.log("FtpClient " + JSON.stringify(info.rawInfo));
-    }
-
+    //Logger.log("FtpClient " + JSON.stringify(info.rawInfo));
+    
     if ( info.message ) {
       result = info.message;
       Logger.log("FtpClient " + result);
@@ -54,11 +52,6 @@ FtpClient.prototype.receiveCallback = function(info) {
       this.resultData.innerHTML = buffer + result;
     }
     
-    if ( this.commandIndex >= this.commandList.length && this.channel === 'data' ) {
-      mediator.disconnect('data');
-      this.channel = 'command';
-    }
-
     if (result && result.toLowerCase().indexOf("227 entering passive mode") === 0) {
     	// find the 6 digits - TODO better regexp here
     	pasvHost = result.match(/(\d*\,\d*\,\d*\,\d*)(\,)(\d*\,\d*)/gi)[0];
@@ -81,11 +74,11 @@ FtpClient.prototype.receiveCallback = function(info) {
         mediator.send('data', { 'filedata': this.uploadData }, function(info) {
           Logger.log("FtpClient Data sent: " + JSON.stringify(info));
           self.uploadData = undefined;
-        	// close socket because we should be done with the passive port
-        	mediator.disconnect('data');
-          this.channel = 'command';
         });
       }
+    	// close socket because we should be done with the passive port
+      mediator.disconnect('data');
+      this.channel = 'command';
     }
 };
 
