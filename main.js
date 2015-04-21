@@ -38,7 +38,8 @@ window.onload = function() {
 		    ftp.sendCommand();
 		  } else if ( cmd.indexOf('cd') !== -1 || cmd.indexOf("CWD") !== -1 ) {
 		    cmd = cmd.replace('cd', 'CWD');
-		    ftp.commandList = ftp.listDir;
+		    ftp.commandList = [cmd];
+		    ftp.commandList = ftp.commandList.concat(ftp.listDir);
 		    ftp.commandIndex = 0;
   			ftp.sendCommand();
 		  } else {
