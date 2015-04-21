@@ -68,10 +68,7 @@ FtpClient.prototype.receiveCallback = function(info) {
       this.channel = 'data';
       mediator.connect('data', { host: host, port: +port });
     } else if ( this.commandIndex < this.commandList.length ) {
-      mediator.send(this.channel, {msg: this.commandList[this.commandIndex] });
-      this.commandIndex++;
-      //Logger.log.call(this, "FtpClient Channel: " + this.channel);
-      Logger.log("FtpClient Index: " + this.commandIndex + " next command: " + this.commandList[this.commandIndex]);
+      this.sendCommand();
     } else if ( this.commandIndex >= this.commandList.length ) {
       this.commandList = [];
       this.commandIndex = 0;
