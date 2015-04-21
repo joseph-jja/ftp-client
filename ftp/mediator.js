@@ -1,6 +1,8 @@
 // man in the middle for mediating between UI and tcp code
 function FtpMediator(recvHdlr) {
   
+  var self = this;
+  
   this.ftpCommandChannel = new TcpWrapper("command", true);
 	this.ftpDataChannel = new TcpWrapper("data", false);
 
@@ -13,7 +15,7 @@ function FtpMediator(recvHdlr) {
   this.ps.subscribe('receive', function(data) {
     var channelName = this.getChannel(this.activeChannel);
     Logger.log("FtpMediator receive channel id " + channelName.id);
-    channelName.receiveData(data);
+    self.ps.publish('receive'+ channelName.id, data);
   }, this);
   
   // setup command channel

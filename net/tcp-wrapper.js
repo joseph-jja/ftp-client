@@ -15,7 +15,8 @@ function TcpWrapper(id, addListeners) {
 
   // our reference to the pub sub for pub - sub 
   this.ps = PublishSubscribe;
-
+  this.ps.subscribe("receive" + this.id, this.receiveData, this);
+  
  if ( addListeners ) {
     // add listener to tcp for receiving data and errors
     // we only want to add this once though
