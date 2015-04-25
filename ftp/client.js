@@ -1,7 +1,8 @@
-//ftp client library
-//TODO remove the dom access here and externalize it
-//we want this just doing FTP client stuff
-//http://www.ncftp.com/libncftp/doc/ftp_overview.html
+// ftp client library
+// ok so mediator and tcp-wrapper handle network communication
+// this now becomes the UI portion
+// so this object knows UI elements
+// http://www.ncftp.com/libncftp/doc/ftp_overview.html
 function FtpClient() {
 
     this.hostname = document.getElementById("ftpHost");
@@ -35,10 +36,8 @@ FtpClient.prototype.sendCommand = function() {
 
 FtpClient.prototype.receiveCallback = function(info) {
     var buffer, result, self = this,
-        pasvHost, portData, port, host;
+        portData;
 
-    //Logger.log("FtpClient " + JSON.stringify(info.rawInfo));
-    
     if ( info.message ) {
       result = info.message;
       //Logger.log("FtpClient " + result);
@@ -48,16 +47,9 @@ FtpClient.prototype.receiveCallback = function(info) {
     
     if (result && result.toLowerCase().indexOf("227 entering passive mode") === 0) {
     	// find the 6 digits - TODO better regexp here
-    	pasvHost = result.match(/(\d*\,\d*\,\d*\,\d*)(\,)(\d*\,\d*)/gi)[0];
-      portData = pasvHost.split(",");
-      port = ( parseInt(portData[4], 10) * 256) + parseInt(portData[5], 10);
-      host = portData[0] + "." + portData[1] + "." + portData[2] + "." + portData[3];
-      //Logger.log("FtpClient " + host + " " + port + " " + JSON.stringify(portData));
-      if ( host === "0.0.0.0" ) {
-        host = this.hostname.value;
-      }
+    	portData = ResponseParser.parsePasvMode(result, this.hostname.value);
       this.channel = 'data';
-      mediator.connect('data', { host: host, port: +port });
+      mediator.connect('data', { host: portData.host, port: +portData.port });
     } else if ( this.commandIndex < this.commandList.length ) {
       this.sendCommand();
     } else if ( this.commandIndex >= this.commandList.length ) {
