@@ -28,18 +28,18 @@ window.onload = function() {
 		if ( cmd && cmd.length > 0 ) {
 		  cmd = cmd.replace(/^\s/g,'').replace(/\s$/g,'');
 		  if ( cmd === 'ls' ) {
-		    ftp.commandList = ftp.listDir;
+		    ftp.commandList = FtpCommandSets.listDir;
 		    ftp.commandIndex = 0;
 		    ftp.sendCommand();
 		  } else if ( cmd.indexOf('get') !== -1 ) {
-		    ftp.commandList = ftp.getFile;
-		    ftp.getFile[ftp.getFile.length-1] = 'RETR ' + cmd.substring(4);
+		    ftp.commandList = FtpCommandSets.getFile;
+		    ftp.commandList[ftp.commandList.length-1] = 'RETR ' + cmd.substring(4);
 		    ftp.commandIndex = 0;
 		    ftp.sendCommand();
 		  } else if ( cmd.indexOf('cd') !== -1 || cmd.indexOf("CWD") !== -1 ) {
 		    cmd = cmd.replace('cd', 'CWD');
 		    ftp.commandList = [cmd];
-		    ftp.commandList = ftp.commandList.concat(ftp.listDir);
+		    ftp.commandList = ftp.commandList.concat(FtpCommandSets.listDir);
 		    ftp.commandIndex = 0;
   			ftp.sendCommand();
 		  } else {
@@ -57,9 +57,9 @@ window.onload = function() {
 
       parts = filename.split(/\/|\\/g);
       filename = parts[parts.length-1];
-      console.log(filename);
+      Logger.log(filename);
 		  ftp.commandIndex = 0;
-		  ftp.commandList = ftp.uploadFile;
+		  ftp.commandList = FtpCommandSets.uploadFile;
       ftp.commandList[1] = "STOR " + filename;
       ftp.uploadData = data;
 		  ftp.sendListCommand();

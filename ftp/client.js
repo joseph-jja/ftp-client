@@ -14,12 +14,6 @@ function FtpClient() {
 
     this.channel = 'command';
 
-    // command sets
-    this.logonCommands = ['SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV', 'LIST -aL'];
-    this.listDir = [ 'PASV', 'LIST -aL' ];
-    this.getFile = [ 'PASV', 'RETR' ];
-    this.uploadFile = [ 'PASV', 'STOR' ];
-
     this.commandList = [];
     this.commandIndex = 0;
 
@@ -90,11 +84,7 @@ FtpClient.prototype.connect = function() {
       if (this.username.value && this.username.value.length > 0 && this.password.value && this.password.value.length > 0) {
         this.channel = 'command';
         this.commandIndex = 0;
-        this.commandList = [];
-        this.commandList[0] = 'USER ' + this.username.value;
-  		  this.commandList[1] = 'PASS ' + this.password.value;
-        this.commandList = this.commandList.concat(this.logonCommands);
-        //Logger.log("FtpClient Commands: " + this.commandList.length);
+        this.commandList = FtpCommandSets.getLoginCommandSet(this.username.value, this.password.value);
       }
       mediator.connect("command", { host: this.hostname.value, port: port });
     }
