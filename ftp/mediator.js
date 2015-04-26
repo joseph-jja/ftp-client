@@ -16,10 +16,11 @@ function FtpMediator(receiver, receiveHandler) {
   this.receiveCB = receiveHandler;
   
   this.ps.subscribe('receive', function(data) {
-    var channelName, activeChannel;
+    var channelName, 
+      activeChannel;
     activeChannel = ( data.socketId === self.ftpCommandChannel.socketID ) ? 'command' : 'data';
     channelName = this.getChannel(activeChannel);
-    Logger.log("FtpMediator receive channel id " + channelName.id + " " + JSON.stringify(data));
+    //Logger.log("FtpMediator receive channel id " + channelName.id + " " + JSON.stringify(data));
     self.ps.publish('receive'+ channelName.id, data);
   }, this);
   
@@ -38,13 +39,13 @@ function FtpMediator(receiver, receiveHandler) {
   // listen for connections and log
   this.ps.subscribe('connected'+this.ftpCommandChannel.id, function(data) {
     self.ftpCommandSockID = self.ftpCommandChannel.socketID;
-    Logger.log("connected " + JSON.stringify(data) + " " + self.ftpCommandSockID);
+    //Logger.log("connected " + JSON.stringify(data) + " " + self.ftpCommandSockID);
   });
   
   // on connect to the data port no data is actually sent 
   // so the onReceive is not fired
   this.ps.subscribe('connected'+this.ftpDataChannel.id, function(data) {
-    Logger.log("connected " + JSON.stringify(data) + " " + self.ftpDataSockID);
+    //Logger.log("connected " + JSON.stringify(data) + " " + self.ftpDataSockID);
     self.ftpDataSockID = self.ftpDataChannel.socketID;
     if ( self.receiveCB ) {
       //Logger.log("FtpMediator callback: " + this.receiveCB );
@@ -77,7 +78,7 @@ FtpMediator.prototype.connect = function(channel, data) {
 FtpMediator.prototype.receive = function(data) {
 
   // pass the data to the client
-  Logger.log("FtpMediator receive: " + JSON.stringify(data) );
+  //Logger.log("FtpMediator receive: " + JSON.stringify(data) );
   if ( this.receiveCB ) {
     //Logger.log("FtpMediator callback: " + this.receiveCB );
     this.receiveCB.call(this.receiveHandler, data);

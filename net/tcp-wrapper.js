@@ -78,7 +78,7 @@ TcpWrapper.prototype.receiveData = function(info) {
 
   // conversion event
   resultData = BufferConverter.decode(info.data, this.arrayBufferType);
-  Logger.log("TcpWrapper receiveData data: " + resultData);
+  //Logger.log("TcpWrapper receiveData data: " + resultData);
 
   this.ps.publish('receiveData'+this.id, { rawInfo: info, message: resultData } );
 };
@@ -87,7 +87,7 @@ TcpWrapper.prototype.disconnect = function() {
   var self = this;
   if ( this.socketID ) {
     this.tcp.disconnect(self.socketID, function(info) {
-	    Logger.log(self.id + " socket disconnected!");
+	    //Logger.log(self.id + " socket disconnected!");
       self.ps.publish('disconnected'+self.id, info);
       try {
         self.tcp.close(self.socketID, function() {
