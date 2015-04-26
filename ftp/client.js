@@ -27,18 +27,27 @@ FtpClient.prototype.initialize = function() {
     this.resultData.innerHTML = "";
 };
 
+// commands are always sent on the command channel
 FtpClient.prototype.sendCommand = function() {
-  mediator.send(this.channel, {msg: this.commandList[this.commandIndex] });
+  mediator.send("command", {msg: this.commandList[this.commandIndex] });
   this.commandIndex++;
-  //Logger.log.call(this, "FtpClient Channel: " + this.channel);
-  //Logger.log("FtpClient Index: " + this.commandIndex + " next command: " + this.commandList[this.commandIndex]);
+};
+
+// data is always sent on the data channel
+FtpClient.prototype.sendData = function(data) {
+  mediator.send('data', { 'filedata': data }, function(info) {
+    Logger.log("FtpClient Data sent: " + JSON.stringify(info));
+    self.uploadData = undefined;
+    // close socket because we should be done with the passive port
+    mediator.disconnect('data');
+  });
 };
 
 FtpClient.prototype.receiveCallback = function(info) {
     var buffer, result, self = this,
         portData;
 
-    //Logger.log("FtpClient " + info);
+    Logger.log("FtpClient " + JSON.stringify(info));
     if ( info && info.message ) {
       result = info.message;
       //Logger.log("FtpClient " + result);
@@ -59,13 +68,7 @@ FtpClient.prototype.receiveCallback = function(info) {
       this.commandIndex = 0;
       // if we are doing a store now we send the data
       if ( this.uploadData ) {
-        mediator.send('data', { 'filedata': this.uploadData }, function(info) {
-          Logger.log("FtpClient Data sent: " + JSON.stringify(info));
-          self.uploadData = undefined;
-        });
-      	// close socket because we should be done with the passive port
-        mediator.disconnect('data');
-        this.channel = 'command';
+        this.sendData('data', this.uploadData);
       }
     }
 };
