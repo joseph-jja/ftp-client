@@ -3,8 +3,8 @@ function FtpMediator(receiver, receiveHandler) {
   
   var self = this;
   
-  this.ftpCommandChannel = new TcpWrapper("command", true);
-	this.ftpDataChannel = new TcpWrapper("data", false);
+  this.ftpCommandChannel = new TcpWrapper("command");
+	this.ftpDataChannel = new TcpWrapper("data");
 
   this.ps = PublishSubscribe;
   this.receiveCB = undefined;

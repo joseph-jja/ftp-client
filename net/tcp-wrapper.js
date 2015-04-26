@@ -3,7 +3,7 @@
 // and then react
 // id can be an empty string or something to identify the different sockets
 // that may be in use
-function TcpWrapper(id, addListeners) {
+function TcpWrapper(id) {
 
   var self = this;
 
@@ -17,7 +17,7 @@ function TcpWrapper(id, addListeners) {
   this.ps = PublishSubscribe;
   this.ps.subscribe("receive" + this.id, this.receiveData, this);
   
- if ( addListeners ) {
+ if ( ! this.tcp.onReceive.hasListeners() ) {
     // add listener to tcp for receiving data and errors
     // we only want to add this once though
     this.tcp.onReceive.addListener(function(info) {
