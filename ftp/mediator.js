@@ -3,19 +3,23 @@ function FtpMediator(receiver, receiveHandler) {
   
   var self = this;
   
+  // the channels and their sockets
   this.ftpCommandChannel = new TcpWrapper("command");
 	this.ftpDataChannel = new TcpWrapper("data");
+  this.ftpCommandSockID = undefined;
+	this.ftpDataSockID = undefined;
 
   this.ps = PublishSubscribe;
   this.receiveCB = undefined;
-  this.activeChannel = "command";
-  
+
   this.receiveHandler = receiver;
   this.receiveCB = receiveHandler;
   
   this.ps.subscribe('receive', function(data) {
-    var channelName = this.getChannel(this.activeChannel);
-    //Logger.log("FtpMediator receive channel id " + channelName.id);
+    var channelName, activeChannel;
+    activeChannel = ( data.socketId === self.ftpCommandChannel.socketID ) ? 'command' : 'data';
+    channelName = this.getChannel(activeChannel);
+    Logger.log("FtpMediator receive channel id " + channelName.id + " " + JSON.stringify(data));
     self.ps.publish('receive'+ channelName.id, data);
   }, this);
   
@@ -33,13 +37,15 @@ function FtpMediator(receiver, receiveHandler) {
   
   // listen for connections and log
   this.ps.subscribe('connected'+this.ftpCommandChannel.id, function(data) {
-    Logger.log("connected " + JSON.stringify(data));
+    self.ftpCommandSockID = self.ftpCommandChannel.socketID;
+    Logger.log("connected " + JSON.stringify(data) + " " + self.ftpCommandSockID);
   });
   
   // on connect to the data port no data is actually sent 
   // so the onReceive is not fired
   this.ps.subscribe('connected'+this.ftpDataChannel.id, function(data) {
-    Logger.log("connected " + JSON.stringify(data));
+    Logger.log("connected " + JSON.stringify(data) + " " + self.ftpDataSockID);
+    self.ftpDataSockID = self.ftpDataChannel.socketID;
     if ( self.receiveCB ) {
       //Logger.log("FtpMediator callback: " + this.receiveCB );
       self.receiveCB.call(self.receiveHandler, data);
@@ -54,7 +60,6 @@ FtpMediator.prototype.getChannel = function(channel) {
   cname = channel.substring(0,1).toUpperCase() + channel.substring(1).toLowerCase();
   ftpChannel = this["ftp" + cname + "Channel"];
   
-  this.activeChannel = channel;
   return ftpChannel;
 };
 
