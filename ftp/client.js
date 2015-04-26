@@ -47,7 +47,7 @@ FtpClient.prototype.receiveCallback = function(info) {
     var buffer, result, self = this,
         portData;
 
-    //Logger.log("FtpClient " + JSON.stringify(info));
+    Logger.log("FtpClient " + ResponseParser.parseStatusCode(info));
     if ( info && info.message ) {
       result = info.message;
       //Logger.log("FtpClient " + result);

@@ -22,7 +22,7 @@ function TcpWrapper(id) {
     // add listener to tcp for receiving data and errors
     // we only want to add this once though
     this.tcp.onReceive.addListener(function(info) {
-      Logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
+      //Logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
       self.ps.publish('receive', info);
     });
   }
@@ -48,7 +48,7 @@ TcpWrapper.prototype.connect = function(data) {
       self.ps.publish('created'+self.id, createInfo);
       // now actually connect
       self.tcp.connect(self.socketID, host, +port, function(result) {
-        Logger.log.call(self, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
+        //Logger.log.call(self, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
         self.ps.publish('connected'+self.id, result);
       });
     });

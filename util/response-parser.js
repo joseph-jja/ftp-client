@@ -2,15 +2,17 @@
 
 var ResponseParser = { 
   
-  parseStatusCode: function(responseText) {
+  parseStatusCode: function(response) {
     var code, i;
     
-    i = responseText.indexOf(" ");
-    if ( i !== -1 ) {
-        code = responseText.substring(0, i);
-        if ( isNaN(code) ) {
-          code = undefined;
-        }
+    if ( response && response.message ) {
+      i = response.message.indexOf(" ");
+      if ( i !== -1 ) {
+          code = response.message.substring(0, i);
+          if ( isNaN(code) ) {
+            code = undefined;
+          }
+      }
     }
     return code;
   }, 
