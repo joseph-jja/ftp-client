@@ -73,9 +73,8 @@ TcpWrapper.prototype.receiveData = function(info) {
   var resultData;
 
   // compare socket ids and log
-  //Logger.log("TcpWrapper receiveData sockets: " + this.socketID + " " + info.socketId);
   if ( this.socketID && info.socketId !== this.socketID ) {
-    this.disconnect();
+    Logger.log("TcpWrapper receiveData sockets don't match: " + this.socketID + " " + info.socketId);
     return;
   }
 

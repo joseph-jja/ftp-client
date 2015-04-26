@@ -38,11 +38,17 @@ FtpClient.prototype.receiveCallback = function(info) {
     var buffer, result, self = this,
         portData;
 
-    if ( info.message ) {
+    //Logger.log("FtpClient " + info);
+    if ( info && info.message ) {
       result = info.message;
       //Logger.log("FtpClient " + result);
       buffer = this.resultData.innerHTML;
       this.resultData.innerHTML = buffer + result;
+      if ( this.channel === 'data' ) {
+      	// close socket because we should be done with the passive port
+        mediator.disconnect('data');
+        this.channel = 'command';
+      }
     }
     
     if (result && result.toLowerCase().indexOf("227 entering passive mode") === 0) {
@@ -62,10 +68,10 @@ FtpClient.prototype.receiveCallback = function(info) {
           Logger.log("FtpClient Data sent: " + JSON.stringify(info));
           self.uploadData = undefined;
         });
+      	// close socket because we should be done with the passive port
+        mediator.disconnect('data');
+        this.channel = 'command';
       }
-    	// close socket because we should be done with the passive port
-      mediator.disconnect('data');
-      this.channel = 'command';
     }
 };
 
