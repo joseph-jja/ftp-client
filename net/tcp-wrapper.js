@@ -36,7 +36,7 @@ function TcpWrapper(id) {
 
 // connect and raise events
 // object should contain { host: string, port: number }
-TcpWrapper.prototype.create = function(data) {
+TcpWrapper.prototype.create = function() {
   var self = this;
   
   this.tcp.create({}, function(createInfo) {
@@ -56,13 +56,15 @@ TcpWrapper.prototype.connect = function(data) {
     //Logger.log("TcpWrapper connect port: " + (""+port).length + "/" + port);
     port = (port && (""+port).length > 0) ? port : 21;
     if ( ! this.socketID ) {
-      this.ps.subscribe('created'+this.id, function(data) {
+      this.ps.subscribe('created'+this.id, function(createInfo) {
         self.socketID = createInfo.socketId;
         self.tcp.connect(self.socketID, host, +port, function(result) {
           //Logger.log("TcpWrapper connect tcp.connect: " + JSON.stringify(result));
           self.ps.publish('connected'+self.id, result);
         });
       }, this);
+      // create a socket to use
+      this.create();
     } else {
       // just connect
       this.tcp.connect(this.socketID, host, +port, function(result) {
