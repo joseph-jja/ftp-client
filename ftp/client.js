@@ -44,11 +44,6 @@ FtpClient.prototype.receiveCallback = function(info) {
       //Logger.log("FtpClient " + result);
       buffer = this.resultData.innerHTML;
       this.resultData.innerHTML = buffer + result;
-      if ( this.channel === 'data' ) {
-      	// close socket because we should be done with the passive port
-        mediator.disconnect('data');
-        this.channel = 'command';
-      }
     }
     
     if (result && result.toLowerCase().indexOf("227 entering passive mode") === 0) {
