@@ -15,24 +15,18 @@ FtpResponseCodes = {
   213: 'File status.',
   214: 'Help message. On how to use the server or the meaning of a particular non-standard command.  This reply is useful only to the human user.',
   215: 'NAME system type. Where NAME is an official system name from the list in the Assigned Numbers document.',
-  /*
-
-         120: Service ready in nnn minutes.
-         220: Service ready for new user.
-         221: Service closing control connection.
-             Logged out if appropriate.
-         421: Service not available, closing control connection.
-             This may be a reply to any command if the service knows it
-             must shut down.
-         125: Data connection already open; transfer starting.
-         225: Data connection open; no transfer in progress.
-         425: Can't open data connection.
-         226: Closing data connection.
-             Requested file action successful (for example, file
-             transfer or file abort).
-         426: Connection closed; transfer aborted.
-         227: Entering Passive Mode (h1,h2,h3,h4,p1,p2).
-  */
+  
+  120: 'Service ready in nnn minutes.',
+  220: 'Service ready for new user.',
+  221: 'Service closing control connection. Logged out if appropriate.',
+  421: 'Service not available, closing control connection. This may be a reply to any command if the service knows it must shut down.',
+  125: 'Data connection already open; transfer starting.',
+  225: 'Data connection open; no transfer in progress.',
+  425: 'Can\'t open data connection.',
+  226: 'Closing data connection. Requested file action successful (for example, file transfer or file abort).',
+  426: 'Connection closed; transfer aborted.',
+  227: 'Entering Passive Mode (h1,h2,h3,h4,p1,p2).',
+  
   230: 'User logged in, proceed.',
   530: 'Not logged in.',
   331: 'User name okay, need password.',
