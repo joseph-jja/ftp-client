@@ -23,10 +23,10 @@ var ResponseParser = {
     portData = pasvHost.split(",");
     port = ( parseInt(portData[4], 10) * 256) + parseInt(portData[5], 10);
     host = portData[0] + "." + portData[1] + "." + portData[2] + "." + portData[3];
-    //Logger.log("FtpClient " + host + " " + port + " " + JSON.stringify(portData));
+    //Logger.log("ResponseParser " + host + " " + port + " " + JSON.stringify(portData));
     if ( host === "0.0.0.0" ) {
       host = defaultHost;
     }
-    return { host: host, port: port };
+    return { "host": host, "port": port };
   }
 };
