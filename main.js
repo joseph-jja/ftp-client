@@ -42,6 +42,14 @@ window.onload = function() {
 		    ftp.commandList = ftp.commandList.concat(FtpCommandSets.listDir);
 		    ftp.commandIndex = 0;
   			ftp.sendCommand();
+		  } else if ( cmd.indexOf('del ') !== -1 || cmd.indexOf("DELE") !== -1 ) {
+		    if ( cmd.indexOf('del ') !== -1 ) {
+		      cmd = cmd.replace('del ', 'DELE ');
+		    }
+		    ftp.commandList = [cmd];
+		    ftp.commandList = ftp.commandList.concat(FtpCommandSets.listDir);
+		    ftp.commandIndex = 0;
+  			ftp.sendCommand();
 		  } else {
 		    ftp.commandList = [cmd];
 		    ftp.commandIndex = 0;
@@ -62,7 +70,7 @@ window.onload = function() {
 		  ftp.commandList = FtpCommandSets.uploadFile;
       ftp.commandList[1] = "STOR " + filename;
       ftp.uploadData = data;
-		  ftp.sendListCommand();
+		  ftp.sendCommand();
     });
   });
 

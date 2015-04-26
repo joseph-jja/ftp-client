@@ -45,9 +45,13 @@ FtpClient.prototype.sendData = function(data) {
 
 FtpClient.prototype.receiveCallback = function(info) {
     var buffer, result, self = this,
-        portData;
+        portData, statusCode;
 
-    Logger.log("FtpClient " + ResponseParser.parseStatusCode(info));
+    // we now have status codes from commands sent on command channel
+    statusCode = ResponseParser.parseStatusCode(info);
+    Logger.log("FtpClient " + this.commandList[this.commandIndex-1] + " " + statusCode);
+    
+    //Logger.log("FtpClient " + JSON.stringify(info));
     if ( info && info.message ) {
       result = info.message;
       //Logger.log("FtpClient " + result);

@@ -2,21 +2,26 @@
 
 var ResponseParser = { 
   
+  // parse the response from the server 
+  // basically status codes
   parseStatusCode: function(response) {
-    var code, i;
+    var code, i = -1;
     
     if ( response && response.message ) {
       i = response.message.indexOf(" ");
-      if ( i !== -1 ) {
-          code = response.message.substring(0, i);
-          if ( isNaN(code) ) {
-            code = undefined;
-          }
-      }
     }
+    if ( i !== -1 ) {
+        code = response.message.substring(0, i);
+        // response code must be a number and be 3 digits in length
+        if ( isNaN(code) || (""+code).length !== 3 ) {
+          code = undefined;
+        }
+    }
+    
     return code;
   }, 
   
+  // get host and port from server when we send passive mode
   parsePasvMode: function(responseText, defaultHost) {
     var pasvHost, portData, port, host;
     
