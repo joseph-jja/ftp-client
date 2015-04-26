@@ -36,6 +36,18 @@ function TcpWrapper(id) {
 
 // connect and raise events
 // object should contain { host: string, port: number }
+TcpWrapper.prototype.create = function(data) {
+  var self = this;
+  
+  this.tcp.create({}, function(createInfo) {
+    self.socketID = createInfo.socketId;
+    //Logger.log("TcpWrapper connect tcp.create: " + JSON.stringify(data));
+    self.ps.publish('created'+self.id, createInfo);
+  });
+};
+
+// connect and raise events
+// object should contain { host: string, port: number }
 TcpWrapper.prototype.connect = function(data) {
   var self = this, host, port;
   host = data.host; 
@@ -43,17 +55,21 @@ TcpWrapper.prototype.connect = function(data) {
   if (host && host.length > 0) {
     //Logger.log("TcpWrapper connect port: " + (""+port).length + "/" + port);
     port = (port && (""+port).length > 0) ? port : 21;
-    //Logger.log("TcpWrapper connect host/port: " + host + "/" + port);
-    this.tcp.create({}, function(createInfo) {
-      self.socketID = createInfo.socketId;
-      //Logger.log("TcpWrapper connect tcp.create: " + JSON.stringify(data));
-      self.ps.publish('created'+self.id, createInfo);
-      // now actually connect
-      self.tcp.connect(self.socketID, host, +port, function(result) {
+    if ( ! this.socketID ) {
+      this.ps.subscribe('created'+this.id, function(data) {
+        self.socketID = createInfo.socketId;
+        self.tcp.connect(self.socketID, host, +port, function(result) {
+          //Logger.log("TcpWrapper connect tcp.connect: " + JSON.stringify(result));
+          self.ps.publish('connected'+self.id, result);
+        });
+      }, this);
+    } else {
+      // just connect
+      this.tcp.connect(this.socketID, host, +port, function(result) {
         //Logger.log("TcpWrapper connect tcp.connect: " + JSON.stringify(result));
         self.ps.publish('connected'+self.id, result);
       });
-    });
+    }
   }
 };
 
