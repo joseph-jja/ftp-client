@@ -89,9 +89,28 @@ window.onload = function() {
   
   document.getElementById('saveDataButton').addEventListener('click', function(e) {
     
-    chrome.fileSystem.chooseEntry({type: 'saveFile'}, function(readOnlyEntry) { 
-      if ( readOnlyEntry ) {
-        console.log(readOnlyEntry); 
+    // bring up the save file selection dialog box
+    chrome.fileSystem.chooseEntry({type: 'saveFile'}, function(chosenFileEntry) { 
+      if ( chosenFileEntry ) {
+        // get the entry from the file save dialog box
+        chrome.fileSystem.getWritableEntry(chosenFileEntry, function(writableFileEntry) {
+          // we now have a FIleEntry from HTML 5 specs
+          writableFileEntry.createWriter(function(writer) {
+            writer.onerror = function(err) {
+              Logger.log("Save error " + JSON.stringify(err));
+            };
+            writer.onwriteend = function(end) {
+              Logger.log("File saved " + JSON.stringify(end));
+            };
+            chosenFileEntry.file(function(file) {
+              Logger.log("File " + file);
+              writer.write(file);
+            });
+          }, 
+          function(err) {
+            Logger.log("Save error " + JSON.stringify(err));
+          });
+        });
       }
     });
   });
