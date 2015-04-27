@@ -59,6 +59,7 @@ FtpClient.prototype.receiveCallback = function(info) {
       //Logger.log("FtpClient " + result);
       buffer = this.resultData.innerHTML;
       this.resultData.innerHTML = buffer + result;
+      this.resultData.scrollTop = this.resultData.scrollHeight; 
     }
     
     if (result && result.toLowerCase().indexOf("227 entering passive mode") === 0) {
