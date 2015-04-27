@@ -97,27 +97,15 @@ window.onload = function() {
     // bring up the save file selection dialog box
     chrome.fileSystem.chooseEntry({type: 'saveFile'}, function(chosenFileEntry) { 
       if ( chosenFileEntry ) {
-        // get the entry from the file save dialog box
-        chrome.fileSystem.getWritableEntry(chosenFileEntry, function(writableFileEntry) {
-          // we now have a FIleEntry from HTML 5 specs
-          writableFileEntry.createWriter(function(writer) {
-            writer.onerror = function(err) {
-              Logger.log("Save error " + JSON.stringify(err));
-            };
-            writer.onwriteend = function(err) {
-              Logger.log("File saved " + JSON.stringify(err));
-            };
-            // TODO get this working
-            chosenFileEntry.file(function(file) { 
-              Logger.log("File " + file);
-              writer.write(file);
-              writer.seek(writer.length);
-              writer.write(new Blob([contents], { type: 'text/plain' }));
-            });
-          }, 
-          function(err) {
+        // we now have a FIleEntry from HTML 5 specs
+        chosenFileEntry.createWriter(function(writer) {
+          writer.onerror = function(err) {
             Logger.log("Save error " + JSON.stringify(err));
-          });
+          };
+          writer.onwriteend = function(err) {
+            Logger.log("File saved " + JSON.stringify(err));
+          };
+          writer.write(new Blob([contents], { type: 'text/plain' }));
         });
       }
     });
