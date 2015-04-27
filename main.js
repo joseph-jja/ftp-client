@@ -6,9 +6,8 @@ window.onload = function() {
 	ftp = new FtpClient();
 
 	mediator = new FtpMediator(ftp, ftp.receiveCallback);
-
+	
 	document.getElementById('connectID').addEventListener('click', function(e) {
-
 		var txt = this.innerHTML;
 		if ( txt === 'Connect' ) {
 			ftp.connect();
@@ -17,7 +16,20 @@ window.onload = function() {
 			ftp.quit();
 			this.innerHTML = "Connect";
 		}
-
+		return false;
+	});
+	
+	document.getElementById("uploadDateToggle").addEventListener('click', function(e) {
+		var txt = this.innerHTML;
+		if ( txt.indexOf("Received") !== -1 ) {
+			this.innerHTML = txt.replace("Received", "Console");
+			ftp.resultData.style.display = 'none';
+			ftp.receivedFile.style.display = '';
+		} else {
+			this.innerHTML = txt.replace("Console", "Received");
+			ftp.resultData.style.display = '';
+			ftp.receivedFile.style.display = 'none';
+		}
 		return false;
 	});
 

@@ -17,6 +17,7 @@ input[type="file"] {
 fieldset {
   border: 1px solid #000;
   margin: 5px 0px;
+  border-radius: 5px;
 }
 fieldset.listings button,fieldset.listings label, fieldset.listings select {
   display: inline-block;
@@ -31,6 +32,11 @@ div.right {
   margin-left: 5em;
 }
 #resultData {
+  width: 98%;
+  height: 18em;
+  overflow: auto;
+}
+#receivedFile { 
   width: 98%;
   height: 18em;
   overflow: auto;

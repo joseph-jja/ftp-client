@@ -10,6 +10,7 @@ function FtpClient() {
     this.username = document.getElementById("username");
     this.password = document.getElementById("password");
     this.resultData = document.getElementById("resultData");
+    this.receivedFile = document.getElementById("receivedFile");
 
     this.channel = 'command';
 
@@ -51,7 +52,11 @@ FtpClient.prototype.receiveCallback = function(info) {
       result = info.message;
       buffer = this.resultData.innerHTML;
       this.resultData.innerHTML = buffer + result;
-      this.resultData.scrollTop = this.resultData.scrollHeight; 
+      this.resultData.scrollTop = this.resultData.scrollHeight;
+      //Logger.log("FtpClient " + JSON.stringify(info));
+      if ( info.channel && info.channel === 'data' ) {
+        this.receivedFile.value = result;
+      }
     }
     
     if (result && result.toLowerCase().indexOf("227 entering passive mode") === 0) {
