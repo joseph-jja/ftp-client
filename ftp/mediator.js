@@ -77,9 +77,12 @@ FtpMediator.prototype.connect = function(channel, data) {
 // receive data
 FtpMediator.prototype.receive = function(data) {
 
+  var activeChannel = ( data && data.socketId && data.socketId === self.ftpCommandChannel.socketID ) ? 'command' : 'data';
+
   // pass the data to the client
-  //Logger.log("FtpMediator receive: " + JSON.stringify(data) );
+  Logger.log("FtpMediator receive: " + JSON.stringify(data) );
   if ( this.receiveCB ) {
+    data.channel = activeChannel;
     //Logger.log("FtpMediator callback: " + this.receiveCB );
     this.receiveCB.call(this.receiveHandler, data);
   }

@@ -64,7 +64,7 @@ FtpClient.prototype.receiveCallback = function(info) {
     if (result && result.toLowerCase().indexOf("227 entering passive mode") === 0) {
     	// find the 6 digits - TODO better regexp here
     	portData = ResponseParser.parsePasvMode(result, this.hostname.value);
-    	Logger.log("FtpClient " + JSON.stringify(portData));
+    	//Logger.log("FtpClient " + JSON.stringify(portData));
       this.channel = 'data';
       mediator.connect('data', { host: portData.host, port: +portData.port });
     } else if ( this.commandIndex < this.commandList.length ) {
