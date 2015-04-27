@@ -89,6 +89,11 @@ window.onload = function() {
   
   document.getElementById('saveDataButton').addEventListener('click', function(e) {
     
+    var contents = ftp.receivedFile.value;
+    if ( ! contents ) {
+      // TODO raise error
+      return;
+    }
     // bring up the save file selection dialog box
     chrome.fileSystem.chooseEntry({type: 'saveFile'}, function(chosenFileEntry) { 
       if ( chosenFileEntry ) {
@@ -99,12 +104,15 @@ window.onload = function() {
             writer.onerror = function(err) {
               Logger.log("Save error " + JSON.stringify(err));
             };
-            writer.onwriteend = function(end) {
-              Logger.log("File saved " + JSON.stringify(end));
+            writer.onwriteend = function(err) {
+              Logger.log("File saved " + JSON.stringify(err));
             };
-            chosenFileEntry.file(function(file) {
+            // TODO get this working
+            chosenFileEntry.file(function(file) { 
               Logger.log("File " + file);
               writer.write(file);
+              writer.seek(writer.length);
+              writer.write(new Blob([contents], { type: 'text/plain' }));
             });
           }, 
           function(err) {
