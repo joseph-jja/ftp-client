@@ -25,7 +25,6 @@ function FtpClient() {
 FtpClient.prototype.sendCommand = function() {
   mediator.send("command", {msg: this.commandList[this.commandIndex] });
   this.commandIndex++;
-  this.receivedFile.value = '';
 };
 
 // data is always sent on the data channel
@@ -56,7 +55,7 @@ FtpClient.prototype.receiveCallback = function(info) {
       this.resultData.scrollTop = this.resultData.scrollHeight;
       //Logger.log("FtpClient " + JSON.stringify(info));
       if ( info.channel && info.channel === 'data' ) {
-        buffer = this.receivedFile.innerHTML;
+        buffer = this.receivedFile.value;
         this.receivedFile.value = buffer + result;
       }
     }
@@ -65,6 +64,7 @@ FtpClient.prototype.receiveCallback = function(info) {
     	// find the 6 digits - TODO better regexp here
     	portData = ResponseParser.parsePasvMode(result, this.hostname.value);
     	//Logger.log("FtpClient " + JSON.stringify(portData));
+      this.receivedFile.value = '';
       this.channel = 'data';
       mediator.connect('data', { host: portData.host, port: +portData.port });
     } else if ( this.commandIndex < this.commandList.length ) {
