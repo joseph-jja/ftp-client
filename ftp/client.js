@@ -56,7 +56,6 @@ FtpClient.prototype.receiveCallback = function(info) {
     //Logger.log("FtpClient " + JSON.stringify(info));
     if ( info && info.message ) {
       result = info.message;
-      //Logger.log("FtpClient " + result);
       buffer = this.resultData.innerHTML;
       this.resultData.innerHTML = buffer + result;
       this.resultData.scrollTop = this.resultData.scrollHeight; 
