@@ -9,8 +9,6 @@ function FtpClient() {
     this.port = document.getElementById("ftpPort");
     this.username = document.getElementById("username");
     this.password = document.getElementById("password");
-
-    this.fileListID = document.getElementById("remoteFiles");
     this.resultData = document.getElementById("resultData");
 
     this.channel = 'command';
@@ -19,13 +17,8 @@ function FtpClient() {
     this.commandIndex = 0;
 
     this.uploadData = undefined;
-}
-
-FtpClient.prototype.initialize = function() {
-    var self = this;
-    
     this.resultData.innerHTML = "";
-};
+}
 
 // commands are always sent on the command channel
 FtpClient.prototype.sendCommand = function() {

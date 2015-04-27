@@ -4,8 +4,7 @@ window.onload = function() {
 	document.querySelector('#greeting').innerText = 'ftp-client';
 
 	ftp = new FtpClient();
-	ftp.initialize();
-	
+
 	mediator = new FtpMediator(ftp, ftp.receiveCallback);
 
 	document.getElementById('connectID').addEventListener('click', function(e) {
