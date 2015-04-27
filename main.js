@@ -20,15 +20,17 @@ window.onload = function() {
 	});
 	
 	document.getElementById("uploadDateToggle").addEventListener('click', function(e) {
-		var txt = this.innerHTML;
+		var txt = this.innerHTML, 
+		  receivedData = document.getElementById("receivedData");
 		if ( txt.indexOf("Received") !== -1 ) {
 			this.innerHTML = txt.replace("Received", "Console");
 			ftp.resultData.style.display = 'none';
-			ftp.receivedFile.style.display = '';
+			receivedData.style.display = '';
+			ftp.receivedFile.style.height = '16em';
 		} else {
 			this.innerHTML = txt.replace("Console", "Received");
 			ftp.resultData.style.display = '';
-			ftp.receivedFile.style.display = 'none';
+			receivedData.style.display = 'none';
 		}
 		return false;
 	});
@@ -82,6 +84,15 @@ window.onload = function() {
       ftp.commandList[1] = "STOR " + filename;
       ftp.uploadData = data;
 		  ftp.sendCommand();
+    });
+  });
+  
+  document.getElementById('saveDataButton').addEventListener('click', function(e) {
+    
+    chrome.fileSystem.chooseEntry({type: 'saveFile'}, function(readOnlyEntry) { 
+      if ( readOnlyEntry ) {
+        console.log(readOnlyEntry); 
+      }
     });
   });
 

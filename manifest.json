@@ -16,7 +16,7 @@
     }
   },
   "permissions": [
-    "fileSystem"
+    { "fileSystem": ["write", "retainEntries", "directory"] }
   ],
   "sockets": {
     "tcp": { "connect" : "*:*" }

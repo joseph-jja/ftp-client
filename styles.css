@@ -38,6 +38,6 @@ div.right {
 }
 #receivedFile { 
   width: 98%;
-  height: 18em;
+  height: 1em;
   overflow: auto;
 }
