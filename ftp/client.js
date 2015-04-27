@@ -25,6 +25,7 @@ function FtpClient() {
 FtpClient.prototype.sendCommand = function() {
   mediator.send("command", {msg: this.commandList[this.commandIndex] });
   this.commandIndex++;
+  this.receivedFile.value = '';
 };
 
 // data is always sent on the data channel
@@ -55,7 +56,8 @@ FtpClient.prototype.receiveCallback = function(info) {
       this.resultData.scrollTop = this.resultData.scrollHeight;
       //Logger.log("FtpClient " + JSON.stringify(info));
       if ( info.channel && info.channel === 'data' ) {
-        this.receivedFile.value = result;
+        buffer = this.receivedFile.innerHTML;
+        this.receivedFile.value = buffer + result;
       }
     }
     
