@@ -44,6 +44,14 @@ window.onload = function() {
 		    ftp.commandList = FtpCommandSets.listDir;
 		    ftp.commandIndex = 0;
 		    ftp.sendCommand();
+		  } else if ( cmd.indexOf('bin') !== -1 ) {
+		    ftp.commandList = ['TYPE i'];
+		    ftp.commandIndex = 0;
+		    ftp.sendCommand();
+		  } else if ( cmd.indexOf('ascii') !== -1 ) {
+		    ftp.commandList = ['TYPE a'];
+		    ftp.commandIndex = 0;
+		    ftp.sendCommand();
 		  } else if ( cmd.indexOf('get') !== -1 ) {
 		    ftp.commandList = FtpCommandSets.getFile;
 		    ftp.commandList[ftp.commandList.length-1] = 'RETR ' + cmd.substring(4);
