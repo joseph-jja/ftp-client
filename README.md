@@ -15,4 +15,3 @@ There are some 'alias' coded in:
 - updated to match version 0.1.2 version but woth better separation 
 and modularity of code
 - fix a bunch of bugs in previous version
-- NOTE: branch 0.1.1 is not the correct branch it should be the release-0.1.1
