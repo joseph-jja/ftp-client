@@ -29,6 +29,9 @@ FtpClient.prototype.sendCommand = function() {
 
 // data is always sent on the data channel
 FtpClient.prototype.sendData = function(data) {
+  //chrome.sockets.tcp.getSockets(function(socks) {
+  //  Logger.log("Sending data " + JSON.stringify(socks));
+  //});
   mediator.send('data', { 'filedata': data }, function(info) {
     Logger.log("FtpClient Data sent: " + JSON.stringify(info));
     self.uploadData = undefined;
@@ -73,8 +76,9 @@ FtpClient.prototype.receiveCallback = function(info) {
       this.commandList = [];
       this.commandIndex = 0;
       // if we are doing a store now we send the data
-      if ( this.uploadData ) {
-        this.sendData('data', this.uploadData);
+      //Logger.log("here we are with data? " + this.uploadData);
+      if ( typeof this.uploadData !== 'undefined' ) {
+        this.sendData(this.uploadData);
       }
     }
 };

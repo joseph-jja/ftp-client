@@ -97,7 +97,6 @@ FtpMediator.prototype.send = function(channel, data) {
   var ftpChannel;
   
   ftpChannel = this.getChannel(channel);
-  
   // always send commands on command channel
   // so we peek into the message looking for a file upload
   if ( typeof data.filedata !== 'undefined' ) {

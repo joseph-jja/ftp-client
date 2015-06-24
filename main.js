@@ -83,7 +83,7 @@ window.onload = function() {
   document.getElementById("sendFileID").addEventListener('change', function(event) {
     FS.openFile(event, function(data) {
       var parts, filename = document.getElementById("sendFileID").value;
-
+      
       parts = filename.split(/\/|\\/g);
       filename = parts[parts.length-1];
       Logger.log(filename);
