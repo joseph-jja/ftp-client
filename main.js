@@ -19,7 +19,7 @@ window.onload = function() {
 		return false;
 	});
 	
-	document.getElementById("uploadDateToggle").addEventListener('click', function(e) {
+	document.getElementById("uploadDataToggle").addEventListener('click', function(e) {
 		var txt = this.innerHTML, 
 		  receivedData = document.getElementById("receivedData");
 		if ( txt.indexOf("Received") !== -1 ) {

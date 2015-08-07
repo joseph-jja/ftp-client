@@ -91,6 +91,7 @@ FtpClient.prototype.connect = function() {
       if (this.username.value && this.username.value.length > 0 && this.password.value && this.password.value.length > 0) {
         this.channel = 'command';
         this.commandIndex = 0;
+        this.uploadData = undefined;
         this.commandList = FtpCommandSets.getLoginCommandSet(this.username.value, this.password.value);
       }
       mediator.connect("command", { host: this.hostname.value, port: port });
