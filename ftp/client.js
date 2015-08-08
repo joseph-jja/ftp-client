@@ -30,12 +30,7 @@ FtpClient.prototype.sendCommand = function() {
 // data is always sent on the data channel
 FtpClient.prototype.sendData = function(data) {
   //Logger.log("FtpClient Data " + data);
-  mediator.send('data', { 'filedata': data }, function(info) {
-    Logger.log("FtpClient Data sent: " + JSON.stringify(info));
-    self.uploadData = undefined;
-    // close socket because we should be done with the passive port
-    mediator.disconnect('data');
-  });
+  mediator.send('data', { 'filedata': data });
 };
 
 FtpClient.prototype.receiveCallback = function(info) {

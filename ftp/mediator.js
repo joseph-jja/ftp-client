@@ -52,6 +52,15 @@ function FtpMediator(receiver, receiveHandler) {
       self.receiveCB.call(self.receiveHandler, data);
     }
   });
+
+  // listen for data connection data sent
+  this.ps.subscribe('sendData'+this.ftpDataChannel.id, function(data) {
+    // when data channel sends data, no data is received
+    // notify client
+    Logger.log("FtpMediator data sent: " + JSON.stringify(data));
+    // close socket because we should be done with the passive port
+    self.disconnect(self.ftpDataChannel.id);
+  });
 }
 
 // utility method to switch between data and command channels
