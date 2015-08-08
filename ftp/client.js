@@ -19,6 +19,10 @@ function FtpClient() {
 
     this.uploadData = undefined;
     this.resultData.innerHTML = "";
+    
+    mediator.ps.subscribe('datauploaded' + mediator.ftpDataChannel.id, function(data) {
+        this.uploadData = undefined;
+    });
 }
 
 // commands are always sent on the command channel
