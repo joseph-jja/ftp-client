@@ -60,6 +60,8 @@ function FtpMediator(receiver, receiveHandler) {
     Logger.log("FtpMediator data sent: " + JSON.stringify(data));
     // close socket because we should be done with the passive port
     self.disconnect(self.ftpDataChannel.id);
+    
+    self.ps.publish('datauploaded' + self.ftpDataChannel.id, data);
   });
 }
 
