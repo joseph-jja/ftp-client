@@ -19,10 +19,6 @@ function FtpClient() {
 
     this.uploadData = undefined;
     this.resultData.innerHTML = "";
-    
-    mediator.ps.subscribe('datauploaded' + mediator.ftpDataChannel.id, function(data) {
-        this.uploadData = undefined;
-    });
 }
 
 // commands are always sent on the command channel
@@ -80,7 +76,14 @@ FtpClient.prototype.receiveCallback = function(info) {
     }
 };
 
+FtpClient.prototype.reset = function(data) {
+  this.uploadData = undefined;
+};
+
 FtpClient.prototype.connect = function() {
+    var self = this;
+    
+    mediator.ps.subscribe('datauploaded' + mediator.ftpDataChannel.id, self.reset, self);
 
     if (this.hostname.value && this.hostname.value.length > 0) {
       port = (this.port.value && this.port.value.length > 0) ? this.port.value : 21;
@@ -96,6 +99,8 @@ FtpClient.prototype.connect = function() {
 };
 
 FtpClient.prototype.quit = function() {
+  var self = this;
   mediator.disconnect('command');
   mediator.disconnect('data');
+  mediator.ps.unsubscribe('datauploaded' + mediator.ftpDataChannel.id, self.reset, self);
 };

@@ -25,7 +25,7 @@ var PublishSubscribe = {
     }
     s.topics[topic].push({cb: callback, caller: caller});
   },
-  unsubscibe: function(topic, callback, caller) {
+  unsubscribe: function(topic, callback, caller) {
     var s = PublishSubscribe;
     if ( ! s.topics[topic] ) {
       return;
