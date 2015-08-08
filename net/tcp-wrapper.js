@@ -29,7 +29,7 @@ function TcpWrapper(id) {
  
   if ( ! this.tcp.onReceiveError.hasListeners() ) {
     this.tcp.onReceiveError.addListener(function(info) {
-      Logger.log("TcpWrapper onReceiveError error: " + JSON.stringify(info));
+      Logger.error("TcpWrapper onReceiveError error: " + JSON.stringify(info));
       self.ps.publish('receiveError', info);
     });
   }
