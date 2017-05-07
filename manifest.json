@@ -16,10 +16,17 @@
     }
   },
   "permissions": [
-    { "fileSystem": ["write", "retainEntries", "directory"] }
+    { "fileSystem": ["write", "retainEntries", "directory"] }, 
+    "fileSystemProvider"
   ],
   "sockets": {
     "tcp": { "connect" : "*:*" }
+  },
+  "file_system_provider_capabilities": {
+    "configurable": true,
+    "watchable": true,
+    "multiple_mounts": true,
+    "source": "device"
   }
 }
 

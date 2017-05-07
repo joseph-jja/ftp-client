@@ -1,5 +1,5 @@
 var FS = {
-  openFile: function(event, callback) {
+  openFile: (event, callback) => {
     var input = event.target;
 
     var reader = new FileReader();
@@ -13,6 +13,21 @@ var FS = {
       };
       reader.readAsArrayBuffer( input.files[0] );
     }
+  }, 
+  mountFileSystem: () => {
+    chrome.fileSystemProvider.mount( { 
+      fileSystemId: "/", 
+      displayName: "/" 
+    }, () => { 
+      console.log( 'Filesystem mounted.' ); 
+    } );
+  }, 
+  unmountFileSystem: () => {
+    chrome.fileSystemProvider.unmount( { 
+      fileSystemId: "/" 
+    }, () => { 
+      console.log( 'Filesystem unmounted.' ); 
+    } );
   }
 };
 
