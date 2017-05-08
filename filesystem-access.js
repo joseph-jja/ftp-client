@@ -13,22 +13,6 @@ const FS = {
       };
       reader.readAsArrayBuffer( input.files[0] );
     }
-  }, 
-  ftpRoot: 'ftp-root',
-  mountFileSystem: () => {
-    chrome.fileSystemProvider.mount( { 
-      fileSystemId: FS.ftpRoot, 
-      displayName: FS.ftpRoot
-    }, () => { 
-      console.log( 'Filesystem mounted.' ); 
-    } );
-  }, 
-  unmountFileSystem: () => {
-    chrome.fileSystemProvider.unmount( { 
-      fileSystemId: FS.ftpRoot 
-    }, () => { 
-      console.log( 'Filesystem unmounted.' ); 
-    } );
   }
 };
 
