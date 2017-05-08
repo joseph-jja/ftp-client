@@ -1,11 +1,11 @@
-var FS = {
+const FS = {
   openFile: (event, callback) => {
-    var input = event.target;
+    let input = event.target;
 
-    var reader = new FileReader();
+    let reader = new FileReader();
     if ( input.files.length > 0 ) {
       reader.onload = function() {
-        var dataURL = reader.result,
+        let dataURL = reader.result,
           asciiFile;
 
         asciiFile = BufferConverter.decode( dataURL, Uint8Array );
