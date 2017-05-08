@@ -98,6 +98,7 @@ TcpWrapper.prototype.disconnect = function () {
             self.ps.publish('disconnected' + self.id, info);
             try {
                 self.tcp.close(self.socketID, function () {
+                    Logger.log(self.id + " socket close!");
                     self.ps.publish('closed' + self.id, {
                         socketID: self.socketID
                     });
