@@ -1,9 +1,10 @@
-var ResponseParser = {
+const PassiveModeRE = /(\d*\,\d*\,\d*\,\d*)(\,)(\d*\,\d*)/gi;
+const ResponseParser = {
 
     // parse the response from the server 
     // basically status codes
     parseStatusCode: function (response) {
-        var code, i = -1;
+        let code, i = -1;
 
         if (response && response.message) {
             i = response.message.indexOf(" ");
@@ -21,13 +22,11 @@ var ResponseParser = {
 
     // get host and port from server when we send passive mode
     parsePasvMode: function (responseText, defaultHost) {
-        var pasvHost, portData, port, host;
-
         // find the 6 digits - TODO better regexp here?
-        pasvHost = responseText.match(/(\d*\,\d*\,\d*\,\d*)(\,)(\d*\,\d*)/gi)[0];
-        portData = pasvHost.split(",");
-        port = (parseInt(portData[4], 10) * 256) + parseInt(portData[5], 10);
-        host = portData[0] + "." + portData[1] + "." + portData[2] + "." + portData[3];
+        const pasvHost = responseText.match(PassiveModeRE)[0], 
+              portData = pasvHost.split(","), 
+              port = (parseInt(portData[4], 10) * 256) + parseInt(portData[5], 10);
+        let host = portData[0] + "." + portData[1] + "." + portData[2] + "." + portData[3];
         //Logger.log("ResponseParser " + host + " " + port + " " + JSON.stringify(portData));
         if (host === "0.0.0.0") {
             host = defaultHost;
