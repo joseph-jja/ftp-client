@@ -36,15 +36,15 @@ function FtpMediator( receiver, receiveHandler ) {
 
     // listen for connections and log
     this.ps.subscribe( 'connected' + this.ftpCommandChannel.id, ( data ) => {
-        this.ftpCommandSockID = self.ftpCommandChannel.socketID;
-        //Logger.log("connected " + JSON.stringify(data) + " " + self.ftpCommandSockID);
+        this.ftpCommandSockID = this.ftpCommandChannel.socketID;
+        //Logger.log("connected " + JSON.stringify(data) + " " + this.ftpCommandSockID);
     } );
 
     // on connect to the data port no data is actually sent 
     // so the onReceive is not fired
     this.ps.subscribe( 'connected' + this.ftpDataChannel.id, ( data ) => {
-        //Logger.log("connected " + JSON.stringify(data) + " " + self.ftpDataSockID);
-        this.ftpDataSockID = self.ftpDataChannel.socketID;
+        //Logger.log("connected " + JSON.stringify(data) + " " + this.ftpDataSockID);
+        this.ftpDataSockID = this.ftpDataChannel.socketID;
         if ( this.receiveCB ) {
             //Logger.log("FtpMediator callback: " + this.receiveCB );
             this.receiveCB.call( this.receiveHandler, data );
@@ -57,7 +57,7 @@ function FtpMediator( receiver, receiveHandler ) {
         // notify client
         Logger.log( "FtpMediator data sent: " + JSON.stringify( data ) );
         // close socket because we should be done with the passive port
-        this.disconnect( self.ftpDataChannel.id );
+        this.disconnect( this.ftpDataChannel.id );
 
         this.ps.publish( 'datauploaded' + this.ftpDataChannel.id, data );
     } );
