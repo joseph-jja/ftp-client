@@ -5,7 +5,7 @@
 // that may be in use
 function TcpWrapper(id) {
 
-    var self = this;
+    let self = this;
 
     // constants
     this.tcp = chrome.sockets.tcp;
@@ -37,7 +37,7 @@ function TcpWrapper(id) {
 
 // connect and raise events
 TcpWrapper.prototype.connect = function (data) {
-    var self = this,
+    let self = this,
         host, port;
     host = data.host;
     port = data.port;
@@ -59,7 +59,7 @@ TcpWrapper.prototype.connect = function (data) {
 // send commands and raise notifications
 // object should contain { msg: string }
 TcpWrapper.prototype.sendCommand = function (dataObj) {
-    var self = this,
+    let self = this,
         data = dataObj.msg,
         message = BufferConverter.encode(data + "\r\n", this.arrayBufferType, 1);
     //Logger.log("TcpWrapper sendCommand: " + this.id + " " + BufferConverter.decode(message, this.arrayBufferType));
@@ -70,7 +70,7 @@ TcpWrapper.prototype.sendCommand = function (dataObj) {
 
 // receive data and raise events
 TcpWrapper.prototype.receiveData = function (info) {
-    var resultData;
+    let resultData;
 
     // compare socket ids and log
     if (this.socketID && info.socketId !== this.socketID) {
@@ -89,7 +89,7 @@ TcpWrapper.prototype.receiveData = function (info) {
 };
 
 TcpWrapper.prototype.disconnect = function () {
-    var self = this;
+    let self = this;
     if (this.socketID) {
         this.tcp.disconnect(self.socketID, function (info) {
             //Logger.log(self.id + " socket disconnected!");
