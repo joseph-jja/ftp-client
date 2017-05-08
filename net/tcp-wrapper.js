@@ -22,15 +22,17 @@ function TcpWrapper(id) {
         // add listener to tcp for receiving data and errors
         // we only want to add this once though
         this.tcp.onReceive.addListener( (info) => {
-            //Logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
-            this.ps.publish('receive', info);
+          //Logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
+          this.ps.publish('receive', info);
         });
     }
 
     if (!this.tcp.onReceiveError.hasListeners()) {
-        this.tcp.onReceiveError.addListener(function (info) {
+        this.tcp.onReceiveError.addListener( (info) => {
+          //if ( info.resultCode !== -1 ) {
             Logger.error("TcpWrapper onReceiveError error: " + JSON.stringify(info));
-            self.ps.publish('receiveError', info);
+            this.ps.publish('receiveError', info);
+          //}
         });
     }
 }
@@ -80,7 +82,7 @@ TcpWrapper.prototype.receiveData = function (info) {
 
     // conversion event
     resultData = BufferConverter.decode(info.data, this.arrayBufferType);
-    //Logger.log("TcpWrapper receiveData data: " + resultData);
+    //Logger.log(`TcpWrapper receiveData data: ${this.socketID} ` + resultData);
 
     this.ps.publish('receiveData' + this.id, {
         rawInfo: info,
@@ -92,7 +94,7 @@ TcpWrapper.prototype.disconnect = function () {
     let self = this;
     if (this.socketID) {
         this.tcp.disconnect(self.socketID, function (info) {
-            //Logger.log(self.id + " socket disconnected!");
+            Logger.log(self.id + " socket disconnected!");
             self.ps.publish('disconnected' + self.id, info);
             try {
                 self.tcp.close(self.socketID, function () {
