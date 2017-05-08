@@ -1,4 +1,4 @@
-var Logger = {
+const Logger = {
     log: function (message) {
 
         // don't log password

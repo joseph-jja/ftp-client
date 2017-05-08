@@ -1,7 +1,7 @@
-var PublishSubscribe = {
+const PublishSubscribe = {
     topics: {},
     publish: function (topic, data) {
-        var s = PublishSubscribe,
+        let s = PublishSubscribe,
             i, end, topicFM;
         // no listeners 
         if (!s.topics[topic]) {
@@ -19,7 +19,7 @@ var PublishSubscribe = {
         }
     },
     subscribe: function (topic, callback, caller) {
-        var s = PublishSubscribe;
+        let s = PublishSubscribe;
         if (!s.topics[topic]) {
             s.topics[topic] = [];
         }
@@ -29,7 +29,7 @@ var PublishSubscribe = {
         });
     },
     unsubscribe: function (topic, callback, caller) {
-        var s = PublishSubscribe, end;
+        let s = PublishSubscribe, end;
         if (!s.topics[topic]) {
             return;
         }
