@@ -25,7 +25,7 @@ function TcpWrapper( id ) {
         } );
     }
 
-    //
+    // taken from https://cs.chromium.org/chromium/src/net/base/net_error_list.h?sq=package:chromium&l=111
     // Ranges:
     //     0- 99 System related errors
     //   100-199 Connection related errors
@@ -38,10 +38,12 @@ function TcpWrapper( id ) {
     //   800-899 DNS resolver errors
     if ( !this.tcp.onReceiveError.hasListeners() ) {
         this.tcp.onReceiveError.addListener( ( info ) => {
-            //if ( info.resultCode !== -1 ) {
-            Logger.error( "TcpWrapper onReceiveError error: " + JSON.stringify( info ) );
-            this.ps.publish( 'receiveError', info );
-            //}
+            // error code -100 is connection closed in relation to TCP FIN
+            // this happens on the data channel
+            if ( info.resultCode !== -100 ) {
+                Logger.error( "TcpWrapper onReceiveError error: " + JSON.stringify( info ) );
+                this.ps.publish( 'receiveError', info );
+            }
         } );
     }
 }
