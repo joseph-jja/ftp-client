@@ -1,22 +1,22 @@
 const Logger = {
-    log: function (message) {
+    log: function ( message ) {
 
         // don't log password
-        if (typeof message !== 'undefined' &&
-            message.indexOf("PASS") === -1) {
-            console.log(message);
+        if ( typeof message !== 'undefined' &&
+            message.indexOf( "PASS" ) === -1 ) {
+            console.log( message );
         } else {
-            console.log("PASS command sent or none string logged.");
+            console.log( "PASS command sent or none string logged." );
         }
     },
-    error: function (message) {
+    error: function ( message ) {
 
         // don't log password
-        if (typeof message !== 'undefined' &&
-            message.indexOf("PASS") === -1) {
-            console.error(message);
+        if ( typeof message !== 'undefined' &&
+            message.indexOf( "PASS" ) === -1 ) {
+            console.error( message );
         } else {
-            console.error("PASS command sent or none string logged.");
+            console.error( "PASS command sent or none string logged." );
         }
     }
 };

@@ -43,5 +43,4 @@ FtpResponseCodes = {
     452: 'Requested action not taken. Insufficient storage space in system.',
     552: 'Requested file action aborted. Exceeded storage allocation (for current directory or dataset).',
     553: 'Requested action not taken. File name not allowed.'
-
 };

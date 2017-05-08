@@ -1,25 +1,26 @@
 {
-  "manifest_version": 2,
-  "name": "ftp-client",
-  "short_name": "ftp-client",
-  "description": "",
-  "version": "0.1.4",
-  "minimum_chrome_version": "38",
+    "manifest_version": 2,
+    "name": "ftp-client",
+    "short_name": "ftp-client",
+    "description": "",
+    "version": "0.1.4",
+    "minimum_chrome_version": "38",
 
-  "icons": {
-    "16": "assets/icon_16.png",
-    "128": "assets/icon_128.png"
-  },
-  "app": {
-    "background": {
-      "scripts": ["background.js"]
+    "icons": {
+        "16": "assets/icon_16.png",
+        "128": "assets/icon_128.png"
+    },
+    "app": {
+        "background": {
+            "scripts": ["background.js"]
+        }
+    },
+    "permissions": [{
+        "fileSystem": ["write", "retainEntries", "directory"]
+    }],
+    "sockets": {
+        "tcp": {
+            "connect": "*:*"
+        }
     }
-  },
-  "permissions": [
-    { "fileSystem": ["write", "retainEntries", "directory"] }
-  ],
-  "sockets": {
-    "tcp": { "connect" : "*:*" }
-  }
 }
-
