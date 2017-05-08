@@ -1,8 +1,6 @@
 // man in the middle for mediating between UI and tcp code
 function FtpMediator( receiver, receiveHandler ) {
 
-    var self = this;
-
     // the channels and their sockets
     this.ftpCommandChannel = new TcpWrapper( "command" );
     this.ftpDataChannel = new TcpWrapper( "data" );
@@ -15,13 +13,13 @@ function FtpMediator( receiver, receiveHandler ) {
     this.receiveHandler = receiver;
     this.receiveCB = receiveHandler;
 
-    this.ps.subscribe( 'receive', function ( data ) {
-        var channelName,
+    this.ps.subscribe( 'receive', ( data ) => {
+        let channelName,
             activeChannel;
-        activeChannel = ( data.socketId === self.ftpCommandChannel.socketID ) ? 'command' : 'data';
+        activeChannel = ( data.socketId === this.ftpCommandChannel.socketID ) ? 'command' : 'data';
         channelName = this.getChannel( activeChannel );
         //Logger.log("FtpMediator receive channel id " + channelName.id + " " + JSON.stringify(data));
-        self.ps.publish( 'receive' + channelName.id, data );
+        this.ps.publish( 'receive' + channelName.id, data );
     }, this );
 
     // setup command channel
@@ -37,49 +35,45 @@ function FtpMediator( receiver, receiveHandler ) {
     this.ps.subscribe( 'receiveData' + this.ftpDataChannel.id, this.receive, this );
 
     // listen for connections and log
-    this.ps.subscribe( 'connected' + this.ftpCommandChannel.id, function ( data ) {
-        self.ftpCommandSockID = self.ftpCommandChannel.socketID;
+    this.ps.subscribe( 'connected' + this.ftpCommandChannel.id, ( data ) => {
+        this.ftpCommandSockID = self.ftpCommandChannel.socketID;
         //Logger.log("connected " + JSON.stringify(data) + " " + self.ftpCommandSockID);
     } );
 
     // on connect to the data port no data is actually sent 
     // so the onReceive is not fired
-    this.ps.subscribe( 'connected' + this.ftpDataChannel.id, function ( data ) {
+    this.ps.subscribe( 'connected' + this.ftpDataChannel.id, ( data ) => {
         //Logger.log("connected " + JSON.stringify(data) + " " + self.ftpDataSockID);
-        self.ftpDataSockID = self.ftpDataChannel.socketID;
-        if ( self.receiveCB ) {
+        this.ftpDataSockID = self.ftpDataChannel.socketID;
+        if ( this.receiveCB ) {
             //Logger.log("FtpMediator callback: " + this.receiveCB );
-            self.receiveCB.call( self.receiveHandler, data );
+            this.receiveCB.call( this.receiveHandler, data );
         }
     } );
 
     // listen for data connection data sent
-    this.ps.subscribe( 'sendData' + this.ftpDataChannel.id, function ( data ) {
+    this.ps.subscribe( 'sendData' + this.ftpDataChannel.id, ( data ) => {
         // when data channel sends data, no data is received
         // notify client
         Logger.log( "FtpMediator data sent: " + JSON.stringify( data ) );
         // close socket because we should be done with the passive port
-        self.disconnect( self.ftpDataChannel.id );
+        this.disconnect( self.ftpDataChannel.id );
 
-        self.ps.publish( 'datauploaded' + self.ftpDataChannel.id, data );
+        this.ps.publish( 'datauploaded' + this.ftpDataChannel.id, data );
     } );
 }
 
 // utility method to switch between data and command channels
 FtpMediator.prototype.getChannel = function ( channel ) {
-    var cname, ftpChannel;
-
-    cname = channel.substring( 0, 1 ).toUpperCase() + channel.substring( 1 ).toLowerCase();
-    ftpChannel = this[ "ftp" + cname + "Channel" ];
+    const cname = channel.substring( 0, 1 ).toUpperCase() + channel.substring( 1 ).toLowerCase(),
+        ftpChannel = this[ "ftp" + cname + "Channel" ];
 
     return ftpChannel;
 };
 
 // connect and on which channel
 FtpMediator.prototype.connect = function ( channel, data ) {
-    var ftpChannel;
-
-    ftpChannel = this.getChannel( channel );
+    const ftpChannel = this.getChannel( channel );
 
     //Logger.log("FtpMediator connect: " + ftpChannel.id + " " + channel + " " + JSON.stringify(data) );
     this.ps.publish( 'connect' + ftpChannel.id, data );
@@ -88,7 +82,7 @@ FtpMediator.prototype.connect = function ( channel, data ) {
 // receive data
 FtpMediator.prototype.receive = function ( data ) {
 
-    var activeChannel;
+    let activeChannel;
 
     // pass the data to the client
     //Logger.log("FtpMediator receive: " + JSON.stringify(data) );
@@ -105,7 +99,7 @@ FtpMediator.prototype.receive = function ( data ) {
 
 // send command
 FtpMediator.prototype.send = function ( channel, data ) {
-    var ftpChannel;
+    let ftpChannel;
 
     ftpChannel = this.getChannel( channel );
     // always send commands on command channel
@@ -125,9 +119,7 @@ FtpMediator.prototype.send = function ( channel, data ) {
 
 // disconnect
 FtpMediator.prototype.disconnect = function ( channel ) {
-    var ftpChannel;
-
-    ftpChannel = this.getChannel( channel );
+    const ftpChannel = this.getChannel( channel );
 
     this.ps.publish( 'disconnect' + ftpChannel.id, {} );
 };

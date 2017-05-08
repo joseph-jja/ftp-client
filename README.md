@@ -11,6 +11,9 @@ There are some 'alias' coded in:
 - cd <dir> = CWD <dir> + PASV + LIST -aL
 - get <file> = PASV + RETR <file>
 
+# Version 0.1.5
+- use es6 
+
 # Version 0.1.2
 - updated to match version 0.1.2 version but woth better separation 
 and modularity of code
