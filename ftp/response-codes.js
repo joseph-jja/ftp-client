@@ -1,5 +1,5 @@
 // these status codes were taken straight from ftp rfc959
-FtpResponseCodes = {
+const FtpResponseCodes = {
 
     200: 'Command ok',
     500: 'Syntax error, command unrecognized. This may include errors such as command line too long.',

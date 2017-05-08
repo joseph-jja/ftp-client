@@ -5,8 +5,6 @@
 // that may be in use
 function TcpWrapper( id ) {
 
-    let self = this;
-
     // constants
     this.tcp = chrome.sockets.tcp;
     this.arrayBufferType = Int8Array;
@@ -27,6 +25,17 @@ function TcpWrapper( id ) {
         } );
     }
 
+    //
+    // Ranges:
+    //     0- 99 System related errors
+    //   100-199 Connection related errors
+    //   200-299 Certificate errors
+    //   300-399 HTTP errors
+    //   400-499 Cache errors
+    //   500-599 ?
+    //   600-699 FTP errors
+    //   700-799 Certificate manager errors
+    //   800-899 DNS resolver errors
     if ( !this.tcp.onReceiveError.hasListeners() ) {
         this.tcp.onReceiveError.addListener( ( info ) => {
             //if ( info.resultCode !== -1 ) {
@@ -39,20 +48,18 @@ function TcpWrapper( id ) {
 
 // connect and raise events
 TcpWrapper.prototype.connect = function ( data ) {
-    let self = this,
-        host, port;
-    host = data.host;
-    port = data.port;
+    let host = data.host,
+        port = data.port;
     if ( host && host.length > 0 ) {
         port = ( port && ( "" + port ).length > 0 ) ? port : 21;
-        this.tcp.create( {}, function ( createInfo ) {
-            self.socketID = createInfo.socketId;
-            //Logger.log.call(self, "TcpWrapper connect tcp.create: " + JSON.stringify(createInfo));
-            self.ps.publish( 'created' + self.id, createInfo );
+        this.tcp.create( {}, ( createInfo ) => {
+            this.socketID = createInfo.socketId;
+            //Logger.log.call(this, "TcpWrapper connect tcp.create: " + JSON.stringify(createInfo));
+            this.ps.publish( 'created' + this.id, createInfo );
             // now actually connect
-            self.tcp.connect( self.socketID, host, +port, function ( result ) {
-                //Logger.log.call(self, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
-                self.ps.publish( 'connected' + self.id, result );
+            this.tcp.connect( this.socketID, host, +port, ( result ) => {
+                //Logger.log.call(this, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
+                this.ps.publish( 'connected' + this.id, result );
             } );
         } );
     }
@@ -61,12 +68,11 @@ TcpWrapper.prototype.connect = function ( data ) {
 // send commands and raise notifications
 // object should contain { msg: string }
 TcpWrapper.prototype.sendCommand = function ( dataObj ) {
-    let self = this,
-        data = dataObj.msg,
+    let data = dataObj.msg,
         message = BufferConverter.encode( data + "\r\n", this.arrayBufferType, 1 );
     //Logger.log("TcpWrapper sendCommand: " + this.id + " " + BufferConverter.decode(message, this.arrayBufferType));
-    this.tcp.send( this.socketID, message, function ( info ) {
-        self.ps.publish( 'sendData' + self.id, info );
+    this.tcp.send( this.socketID, message, ( info ) => {
+        this.ps.publish( 'sendData' + this.id, info );
     } );
 };
 
@@ -91,18 +97,17 @@ TcpWrapper.prototype.receiveData = function ( info ) {
 };
 
 TcpWrapper.prototype.disconnect = function () {
-    let self = this;
     if ( this.socketID ) {
-        this.tcp.disconnect( self.socketID, function ( info ) {
-            Logger.log( self.id + " socket disconnected!" );
-            self.ps.publish( 'disconnected' + self.id, info );
+        this.tcp.disconnect( this.socketID, ( info ) => {
+            Logger.log( this.id + " socket disconnected!" );
+            this.ps.publish( 'disconnected' + this.id, info );
             try {
-                self.tcp.close( self.socketID, function () {
-                    Logger.log( self.id + " socket close!" );
-                    self.ps.publish( 'closed' + self.id, {
-                        socketID: self.socketID
+                this.tcp.close( this.socketID, () => {
+                    Logger.log( this.id + " socket close!" );
+                    this.ps.publish( 'closed' + this.id, {
+                        socketID: this.socketID
                     } );
-                    self.socketID = undefined;
+                    this.socketID = undefined;
                 } );
             } catch ( e ) {
                 Logger.log( "TcpWrapper exception closing socket " + e );
