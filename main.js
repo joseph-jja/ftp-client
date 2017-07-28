@@ -80,9 +80,10 @@ window.onload = function () {
         return false;
     } );
 
-    document.getElementById( "sendFileID" ).addEventListener( 'change', function ( event ) {
+    let sendFileElement = document.getElementById( "sendFileID" );
+    sendFileElement.addEventListener( 'change', function ( event ) {
         FS.openFile( event, function ( data ) {
-            var parts, filename = document.getElementById( "sendFileID" ).value;
+            var parts, filename = sendFileElement.value;
 
             parts = filename.split( /\/|\\/g );
             filename = parts[ parts.length - 1 ];
@@ -92,6 +93,7 @@ window.onload = function () {
             ftp.commandList[ 1 ] = "STOR " + filename;
             ftp.uploadData = data;
             ftp.sendCommand();
+            sendFileElement.value = '';
         } );
     } );
 
