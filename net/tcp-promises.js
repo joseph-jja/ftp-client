@@ -3,7 +3,7 @@
 // and then react
 // id can be an empty string or something to identify the different sockets
 // that may be in use
-function TcpWrapper() {
+function TcpPromises() {
 
     // constants
     this.tcp = chrome.sockets.tcp;
