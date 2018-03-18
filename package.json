@@ -1,1 +1,6 @@
-{}
+{
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-jsbeautifier": "^2.1.2"
+  }
+}
