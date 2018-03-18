@@ -48,7 +48,7 @@ function TcpWrapper() {
 TcpWrapper.prototype.connect = function ( data ) {
     const host = data.host,
         port = data.port;
-    const connection = (resolve, reject) => {
+    const connection = ( resolve, reject ) => {
         if ( host && host.length > 0 ) {
             port = ( port && ( "" + port ).length > 0 ) ? port : 21;
             this.tcp.create( {}, ( createInfo ) => {
@@ -61,7 +61,7 @@ TcpWrapper.prototype.connect = function ( data ) {
             } );
         }
     };
-    return new Promise(connection);
+    return new Promise( connection );
 };
 
 // send commands and raise notifications
@@ -69,19 +69,19 @@ TcpWrapper.prototype.connect = function ( data ) {
 TcpWrapper.prototype.sendCommand = function ( dataObj ) {
     let data = dataObj.msg,
         message = BufferConverter.encode( data + "\r\n", this.arrayBufferType, 1 );
-    let sendData = (resolve, reject) => {
+    let sendData = ( resolve, reject ) => {
         //Logger.log("TcpWrapper sendCommand: " + this.id + " " + BufferConverter.decode(message, this.arrayBufferType));
         this.tcp.send( this.socketID, message, ( info ) => {
             resolve( info );
         } );
     };
-    return new Promise(sendData);
+    return new Promise( sendData );
 };
 
 // receive data and raise events
 TcpWrapper.prototype.receiveData = function ( info ) {
-    
-    let recieve = (resolve, reject) => {
+
+    let recieve = ( resolve, reject ) => {
         let resultData;
 
         // compare socket ids and log
@@ -101,19 +101,19 @@ TcpWrapper.prototype.receiveData = function ( info ) {
             message: resultData
         } );
     };
-    return new Promse(revieve);
+    return new Promse( revieve );
 };
 
 TcpWrapper.prototype.disconnect = function () {
-    let disconnect = (resolve, reject) => {
+    let disconnect = ( resolve, reject ) => {
         if ( this.socketID ) {
             this.tcp.disconnect( this.socketID, ( info ) => {
                 Logger.log( this.id + " socket disconnected!" );
                 try {
-                     this.tcp.close( this.socketID, () => {
+                    this.tcp.close( this.socketID, () => {
                         Logger.log( this.id + " socket close!" );
                         resolve( {
-                             socketID: this.socketID
+                            socketID: this.socketID
                         } );
                         this.socketID = undefined;
                     } );
@@ -124,5 +124,5 @@ TcpWrapper.prototype.disconnect = function () {
             } );
         }
     };
-    return new Promise(disconnect);
+    return new Promise( disconnect );
 };
