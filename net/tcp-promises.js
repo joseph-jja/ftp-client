@@ -69,7 +69,7 @@ TcpWrapper.prototype.connect = function ( data ) {
 TcpWrapper.prototype.sendCommand = function ( dataObj ) {
     let data = dataObj.msg,
         message = BufferConverter.encode( data + "\r\n", this.arrayBufferType, 1 );
-    let sendData = ( resolve, reject ) => {
+    const sendData = ( resolve, reject ) => {
         //Logger.log("TcpWrapper sendCommand: " + this.id + " " + BufferConverter.decode(message, this.arrayBufferType));
         this.tcp.send( this.socketID, message, ( info ) => {
             resolve( info );
@@ -81,8 +81,7 @@ TcpWrapper.prototype.sendCommand = function ( dataObj ) {
 // receive data and raise events
 TcpWrapper.prototype.receiveData = function ( info ) {
 
-    let recieve = ( resolve, reject ) => {
-        let resultData;
+    const recieve = ( resolve, reject ) => {
 
         // compare socket ids and log
         if ( this.socketID && info.socketId !== this.socketID ) {
@@ -92,7 +91,7 @@ TcpWrapper.prototype.receiveData = function ( info ) {
         }
 
         // conversion event
-        resultData = BufferConverter.decode( info.data, this.arrayBufferType );
+        const resultData = BufferConverter.decode( info.data, this.arrayBufferType );
         //Logger.log(`TcpWrapper receiveData data: ${this.socketID} ` + resultData);
 
         resolve( {
@@ -105,7 +104,7 @@ TcpWrapper.prototype.receiveData = function ( info ) {
 };
 
 TcpWrapper.prototype.disconnect = function () {
-    let disconnect = ( resolve, reject ) => {
+    const disconnect = ( resolve, reject ) => {
         if ( this.socketID ) {
             this.tcp.disconnect( this.socketID, ( info ) => {
                 Logger.log( this.id + " socket disconnected!" );
