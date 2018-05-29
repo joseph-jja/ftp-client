@@ -23,12 +23,12 @@ window.onload = function () {
         var txt = this.innerHTML,
             receivedData = document.getElementById( "receivedData" );
         if ( txt.indexOf( "Received" ) !== -1 ) {
-            this.innerHTML = txt.replace( "Received", "Console" );
+            this.innerHTML = txt.replace( "Received", "Connection" );
             ftp.resultData.style.display = 'none';
             receivedData.style.display = '';
             ftp.receivedFile.style.height = '16em';
         } else {
-            this.innerHTML = txt.replace( "Console", "Received" );
+            this.innerHTML = txt.replace( "Connection", "Received" );
             ftp.resultData.style.display = '';
             receivedData.style.display = 'none';
         }
