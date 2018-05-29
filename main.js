@@ -20,17 +20,24 @@ window.onload = function () {
     } );
 
     document.getElementById( "uploadDataToggle" ).addEventListener( 'click', function ( e ) {
-        var txt = this.innerHTML,
-            receivedData = document.getElementById( "receivedData" );
-        if ( txt.indexOf( "Received" ) !== -1 ) {
-            this.innerHTML = txt.replace( "Received", "Connection" );
+        const tgt = e.target;
+        if ( tgt.nodeName !== 'span' ) {
+            return  
+        }
+        const txt = this.innerHTML;
+        if ( txt.indexOf( "Connection" ) !== -1 ) {
             ftp.resultData.style.display = 'none';
-            receivedData.style.display = '';
+            ftp.loggerData.style.display = 'none';
+            ftp.receivedData.style.display = '';
             ftp.receivedFile.style.height = '16em';
-        } else {
-            this.innerHTML = txt.replace( "Connection", "Received" );
+        } else if ( txt.indexOf( "Received" ) !== -1 ) {
+            ftp.loggerData.style.display = 'none';
+            ftp.receivedData.style.display = 'none';
             ftp.resultData.style.display = '';
-            receivedData.style.display = 'none';
+        } else if ( txt.indexOf( "Logger" ) !== -1 ) {
+            ftp.resultData.style.display = 'none';
+            ftp.receivedData.style.display = 'none';
+            ftp.loggerData.style.display = '';
         }
         return false;
     } );
