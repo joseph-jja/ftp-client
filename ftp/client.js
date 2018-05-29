@@ -16,7 +16,7 @@ function FtpClient() {
 
     this.loggerData.style.display = 'none';
     this.receivedData.style.display = 'none';
-            
+
     this.channel = 'command';
 
     this.commandList = [];
