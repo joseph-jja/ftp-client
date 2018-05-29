@@ -11,6 +11,8 @@ function FtpClient() {
     this.password = document.getElementById( "password" );
     this.resultData = document.getElementById( "resultData" );
     this.receivedFile = document.getElementById( "receivedFile" );
+    this.loggerData = document.getElementById( "loggerData" );
+    this.receivedData = document.getElementById( "receivedData" );
 
     this.channel = 'command';
 
