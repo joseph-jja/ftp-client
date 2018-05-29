@@ -45,3 +45,6 @@ div.right {
     margin: .15em;
     border: 1px solid black;
 }
+#receivedData, #loggerData {
+    display: none;  
+}
