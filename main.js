@@ -24,7 +24,7 @@ window.onload = function () {
         if ( tgt.nodeName !== 'span' ) {
             return  
         }
-        const txt = this.innerHTML;
+        const txt = tgt.innerHTML;
         if ( txt.indexOf( "Connection" ) !== -1 ) {
             ftp.resultData.style.display = 'none';
             ftp.loggerData.style.display = 'none';
