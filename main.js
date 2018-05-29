@@ -28,19 +28,17 @@ window.onload = function () {
         if ( txt.indexOf( "Connection" ) !== -1 ) {
             ftp.loggerData.style.display = 'none';
             ftp.receivedData.style.display = 'none';
-            ftp.receivedFile.style.display = 'none';
             ftp.resultData.style.display = '';
             ftp.resultData.style.height = '16em';
         } else if ( txt.indexOf( "Received" ) !== -1 ) {
             ftp.loggerData.style.display = 'none';
             ftp.resultData.style.display = 'none';
             ftp.receivedData.style.display = '';
-            ftp.receivedFile.style.display = '';
+            ftp.receivedData.style.height = '16em';
             ftp.receivedFile.style.height = '16em';
         } else if ( txt.indexOf( "Logger" ) !== -1 ) {
             ftp.resultData.style.display = 'none';
             ftp.receivedData.style.display = 'none';
-            ftp.receivedFile.style.display = 'none';
             ftp.loggerData.style.display = '';
             ftp.loggerData.style.height = '16em';
         }
