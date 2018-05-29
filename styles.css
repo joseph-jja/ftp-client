@@ -41,3 +41,7 @@ div.right {
   height: 1em;
   overflow: auto;
 }
+#uploadDataToggle span {
+    margin: .15em;
+    border: 1px solid black;
+}
