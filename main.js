@@ -22,7 +22,7 @@ window.onload = function () {
     document.getElementById( "uploadDataToggle" ).addEventListener( 'click', function ( e ) {
         const tgt = e.target;
         if ( tgt.nodeName.toLowerCase() !== 'span' ) {
-            return  
+            return;  
         }
         const txt = tgt.innerHTML;
         if ( txt.indexOf( "Connection" ) !== -1 ) {
