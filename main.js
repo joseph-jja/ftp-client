@@ -21,7 +21,7 @@ window.onload = function () {
 
     document.getElementById( "uploadDataToggle" ).addEventListener( 'click', function ( e ) {
         const tgt = e.target;
-        if ( tgt.nodeName !== 'span' ) {
+        if ( tgt.nodeName.toLowerCase() !== 'span' ) {
             return  
         }
         const txt = tgt.innerHTML;
@@ -29,14 +29,17 @@ window.onload = function () {
             ftp.resultData.style.display = 'none';
             ftp.loggerData.style.display = 'none';
             ftp.receivedData.style.display = '';
+            ftp.receivedFile.style.display = '';
             ftp.receivedFile.style.height = '16em';
         } else if ( txt.indexOf( "Received" ) !== -1 ) {
             ftp.loggerData.style.display = 'none';
             ftp.receivedData.style.display = 'none';
+            ftp.receivedFile.style.display = 'none';
             ftp.resultData.style.display = '';
         } else if ( txt.indexOf( "Logger" ) !== -1 ) {
             ftp.resultData.style.display = 'none';
             ftp.receivedData.style.display = 'none';
+            ftp.receivedFile.style.display = 'none';
             ftp.loggerData.style.display = '';
         }
         return false;
