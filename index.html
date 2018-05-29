@@ -42,12 +42,17 @@
       <br>Type HELP
     </fieldset>
     <fieldset>
-      <span id="uploadDataToggle">View Received Data</span>
+      <div id="uploadDataToggle">
+          <span>Connection Data</span>
+          <span>Received Data</span>
+          <span>Logger Data</span>
+       </div>
       <pre id="resultData"></pre>
       <div id="receivedData" style="display:none;">
         <textarea id="receivedFile"></textarea>
         <button id="saveDataButton" type="button">Save Data</button>
       </div>
+      <pre id="loggerData"></pre>
     </fieldset>
   </form>
   <script src="util/logger.js"></script>
