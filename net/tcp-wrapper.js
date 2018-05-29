@@ -51,9 +51,8 @@ function TcpWrapper( id ) {
 // connect and raise events
 TcpWrapper.prototype.connect = function ( data ) {
     let host = data.host,
-        port = data.port;
+        port = ( typeof data.port !== 'undefined' ? data.port : 21 );
     if ( host && host.length > 0 ) {
-        port = ( port && ( "" + port ).length > 0 ) ? port : 21;
         this.tcp.create( {}, ( createInfo ) => {
             this.socketID = createInfo.socketId;
             //Logger.log.call(this, "TcpWrapper connect tcp.create: " + JSON.stringify(createInfo));
