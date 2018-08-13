@@ -7,6 +7,13 @@ window.onload = function () {
 
     mediator = new FtpMediator( ftp, ftp.receiveCallback );
 
+    const resultDataObj = document.getElementById( 'resultData' );
+    function dataChangeEvent( list ) {
+         //console.log( list );
+    };
+    const mutated = new MutationObserver(dataChangeEvent);
+    mutated.observe(resultDataObj, { childList: true, subtree: true });
+    
     document.getElementById( 'connectID' ).addEventListener( 'click', function ( e ) {
         var txt = this.innerHTML;
         if ( txt === 'Connect' ) {
