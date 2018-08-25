@@ -1,14 +1,17 @@
 /* CSS file placeholder. */
+h1 {
+   font-size: 1.5em;
+}
 label {
   display: inline-block;
-  width: 6em;
+  width: 4.5em;
 }
 label.right {
-  margin-left: 3em;
+  margin-left: 2em;
 }
 input {
   display: inline-block;
-  margin-left: 2em;
+  margin-left: 1.25em;
 }
 input[type="file"] {
   border: 1px solid black;
@@ -28,12 +31,14 @@ div.right {
   float: right;
   top: 0px;
 }
-#clearBuffer {
+#connectID {
   margin-left: 5em;
+}
+#clearBuffer {
 }
 #resultData {
   width: 98%;
-  height: 18em;
+  height: 16em;
   overflow: auto;
 }
 #receivedFile { 
