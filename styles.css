@@ -46,7 +46,11 @@ div.right {
   height: 1em;
   overflow: auto;
 }
+#uploadDataToggle {
+    margin-top: 0.5em;
+}
 #uploadDataToggle span {
     padding: 0.35em;
     border: 1px solid black;
+    border-radius: 5px;
 }
