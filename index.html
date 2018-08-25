@@ -6,7 +6,7 @@
 </head>
 
 <body>
-  <h1 id="greeting"></h1>
+  <h1 id="greeting">ftp client</h1>
   <form>
     <fieldset>
       <label>FTP Host:</label>
@@ -19,25 +19,22 @@
       <input type="text" name="username" id="username" value="anonymous">
       <label class="right">Password:</label>
       <input type="password" name="password" id="password" value="j@m.com">
-    </fieldset>
-    <fieldset>
       <button id="connectID"type="button">Connect</button>
-      <button id="clearBuffer" type="button">Clear Console</button>
     </fieldset>
     <fieldset>
+      <button id="clearBuffer" type="button">Clear Console</button>
       <input type="file" id="sendFileID" value="Upload File">
+      select file to upload
     </fieldset>
     <fieldset>
       <label>Command:</label>
       <input type="text" name="command" id="command">
       <button id="sendCommand"type="button">Send</button>
       <div class="right">
-      upload file = select file above
-      <br>download file = get &lt;filename&gt;
+      download file = get &lt;filename&gt;
       <br>list dir = ls
       <br>change dir = cd &lt;dirname&gt;
       <br>delete file = del &lt;filename&gt;
-      <br>bin os asc
       </div>
       <br>Type HELP
     </fieldset>
