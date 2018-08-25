@@ -1,7 +1,6 @@
 var ftp, mediator;
 // main
 window.onload = function () {
-    document.querySelector( '#greeting' ).innerText = 'ftp-client';
 
     ftp = new FtpClient();
 
