@@ -23,13 +23,11 @@ function FtpMediator( receiver, receiveHandler ) {
     }, this );
 
     // setup command channel
-    this.ps.subscribe( 'connect' + this.ftpCommandChannel.id, this.ftpCommandChannel.connect, this.ftpCommandChannel );
     this.ps.subscribe( 'disconnect' + this.ftpCommandChannel.id, this.ftpCommandChannel.disconnect, this.ftpCommandChannel );
     this.ps.subscribe( 'sendCommand' + this.ftpCommandChannel.id, this.ftpCommandChannel.sendCommand, this.ftpCommandChannel );
     this.ps.subscribe( 'receiveData' + this.ftpCommandChannel.id, this.receive, this );
 
     // setup data channel
-    this.ps.subscribe( 'connect' + this.ftpDataChannel.id, this.ftpDataChannel.connect, this.ftpDataChannel );
     this.ps.subscribe( 'disconnect' + this.ftpDataChannel.id, this.ftpDataChannel.disconnect, this.ftpDataChannel );
     this.ps.subscribe( 'sendCommand' + this.ftpDataChannel.id, this.ftpDataChannel.sendCommand, this.ftpDataChannel );
     this.ps.subscribe( 'receiveData' + this.ftpDataChannel.id, this.receive, this );
@@ -76,7 +74,7 @@ FtpMediator.prototype.connect = function ( channel, data ) {
     const ftpChannel = this.getChannel( channel );
 
     //Logger.log("FtpMediator connect: " + ftpChannel.id + " " + channel + " " + JSON.stringify(data) );
-    this.ps.publish( 'connect' + ftpChannel.id, data );
+    ftpChannel.connect( data );
 };
 
 // receive data
