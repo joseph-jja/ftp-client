@@ -60,14 +60,22 @@ TcpWrapper.prototype.connect = function ( data ) {
     let host = data.host,
         port = ( typeof data.port !== 'undefined' ? data.port : 21 );
     if ( host && host.length > 0 ) {
-        TcpSockets.create( {}, ( createInfo ) => {
+        const connectCB = ( result ) => {
+            //Logger.log.call(this, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
+            TcpListeners.ps.publish( 'connected' + this.id, result );
+        };
+        
+        const create = new Promise( resolve => {
+            TcpSockets.create( {}, ( createInfo ) => {
+                resolve( createInfo );
+            } );
+        } );
+        
+        create.then( ( createInfo ) => {
             //Logger.log.call(this, "TcpWrapper connect tcp.create: " + JSON.stringify(createInfo));
             this.socketID = createInfo.socketId;
             // now actually connect
-            TcpSockets.connect( this.socketID, host, +port, ( result ) => {
-                //Logger.log.call(this, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
-                TcpListeners.ps.publish( 'connected' + this.id, result );
-            } );
+            TcpSockets.connect( this.socketID, host, +port, connectCB );
         } );
     }
 };
@@ -78,9 +86,12 @@ TcpWrapper.prototype.sendCommand = function ( dataObj ) {
     let data = dataObj.msg,
         message = BufferConverter.encode( data + "\r\n", ArrayBufferType, 1 );
     //Logger.log("TcpWrapper sendCommand: " + this.id + " " + BufferConverter.decode(message, ArrayBufferType));
-    TcpSockets.send( this.socketID, message, ( info ) => {
+    
+    const sendCB = ( info ) => {
         TcpListeners.ps.publish( 'sendData' + this.id, info );
-    } );
+    };
+    
+    TcpSockets.send( this.socketID, message, sendCB );
 };
 
 // receive data and raise events
