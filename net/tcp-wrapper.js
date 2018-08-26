@@ -32,26 +32,29 @@ const TcpListeners = {
     } 
 };
 
+// install listeners 
+if ( !TcpSockets.onReceive.hasListeners() ) {
+     TcpSockets.onReceive.addListener( TcpListeners.receive );
+}
+    
+if ( !TcpSockets.onReceiveError.hasListeners() ) {
+    TcpSockets.onReceiveError.addListener( TcpListeners.errorHandler );
+}
+
 // TCP wrapper that does pub sub instead of callbacks
 // this way we can have the ftp client listen for events
 // and then react
 // id can be an empty string or something to identify the different sockets
 // that may be in use
-function TcpWrapper( name ) {
+class TcpWrapper {
 
-    this.socketID = undefined;
-    this.name = name;
-    this.id = name;
+    constructor( name ) {
+        this.socketID = undefined;
+        this.name = name;
+        this.id = name;
 
-    // our reference to the pub sub for pub - sub 
-    TcpListeners.ps.subscribe( "receive" + this.id, this.receiveData, this );
-
-    if ( !TcpSockets.onReceive.hasListeners() ) {
-        TcpSockets.onReceive.addListener( TcpListeners.receive );
-    }
-    
-    if ( !TcpSockets.onReceiveError.hasListeners() ) {
-        TcpSockets.onReceiveError.addListener( TcpListeners.errorHandler );
+        // our reference to the pub sub for pub - sub 
+        TcpListeners.ps.subscribe( "receive" + this.id, this.receiveData, this );
     }
 }
 
