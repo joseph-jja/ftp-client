@@ -116,17 +116,25 @@ TcpWrapper.prototype.receiveData = function ( info ) {
 
 TcpWrapper.prototype.disconnect = function () {
     if ( this.socketID ) {
-        TcpSockets.disconnect( this.socketID, ( info ) => {
-            Logger.log( this.id + " socket disconnected!" );
-            TcpListeners.ps.publish( 'disconnected' + this.id, info );
+        const closeCB = () => {
+            Logger.log( this.id + " socket close!" );
+            TcpListeners.ps.publish( 'closed' + this.id, {
+                socketID: this.socketID
+            } );
+            this.socketID = undefined;
+        };
+        
+        const disconnect = new Promise( resolve => {
+            TcpSockets.disconnect( this.socketID, ( info ) => {
+                Logger.log( this.id + " socket disconnected!" );
+                TcpListeners.ps.publish( 'disconnected' + this.id, info );
+                resolve();
+            } );
+        } );
+
+        disconnect.then( () => {
             try {
-                TcpSockets.close( this.socketID, () => {
-                    Logger.log( this.id + " socket close!" );
-                    TcpListeners.ps.publish( 'closed' + this.id, {
-                        socketID: this.socketID
-                    } );
-                    this.socketID = undefined;
-                } );
+                TcpSockets.close( this.socketID, closeCB );
             } catch ( e ) {
                 Logger.log( "TcpWrapper exception closing socket " + e );
             }
