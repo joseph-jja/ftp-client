@@ -1,4 +1,4 @@
-var FtpCommandSets = {
+const FtpCommandSets = {
 
     // command sets
     listDir: [ 'PASV', 'LIST -aL' ],
@@ -6,11 +6,11 @@ var FtpCommandSets = {
     uploadFile: [ 'PASV', 'STOR' ],
 
     getLoginCommandSet: function ( user, pass ) {
-        var commands = [],
+        const commands = [],
             logonCommands = [ 'SYST', 'MODE S', 'TYPE A', 'PWD', 'PASV', 'LIST -aL' ];
 
-        commands[ 0 ] = 'USER ' + user;
-        commands[ 1 ] = 'PASS ' + pass;
+        commands.push( 'USER ' + user );
+        commands.push( 'PASS ' + pass );
         return commands.concat( logonCommands );
     }
 };
