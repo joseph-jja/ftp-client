@@ -38,7 +38,7 @@ FtpClient.prototype.sendCommand = function () {
 
 // data is always sent on the data channel
 FtpClient.prototype.sendData = function ( data ) {
-    //Logger.log(data);
+    //this.logger.log(data);
     mediator.send( 'data', {
         'filedata': data
     } );
@@ -54,16 +54,16 @@ FtpClient.prototype.receiveCallback = function ( info ) {
     this.logger.log( this.commandList[ this.commandIndex - 1 ] + " " + statusCode + " " + FtpResponseCodes[ statusCode ] );
     //}
 
-    //Logger.log( JSON.stringify(info));
+    //this.logger.log( JSON.stringify(info));
     if ( info && info.message ) {
         result = info.message;
         buffer = this.resultData.innerHTML;
         this.resultData.innerHTML = buffer + result;
         this.resultData.scrollTop = this.resultData.scrollHeight;
-        //Logger.log( JSON.stringify(info));
+        //this.logger.log( JSON.stringify(info));
         //    let directories = this.receivedFile.value.split( /\n/ );
         //    for ( let x = 0, end = directories.length; x < end; x++ ) {
-        //        Logger.log( directories[ x ] );
+        //        this.logger.log( directories[ x ] );
         //    }
         if ( info.channel && info.channel === 'data' ) {
             buffer = this.receivedFile.value;
@@ -74,7 +74,7 @@ FtpClient.prototype.receiveCallback = function ( info ) {
     if ( result && result.toLowerCase().indexOf( "227 entering passive mode" ) === 0 ) {
         // find the 6 digits - TODO better regexp here
         portData = ResponseParser.parsePasvMode( result, this.hostname.value );
-        //Logger.log( JSON.stringify(portData));
+        //this.logger.log( JSON.stringify(portData));
         this.receivedFile.value = '';
         this.channel = 'data';
         mediator.connect( 'data', {
@@ -87,7 +87,7 @@ FtpClient.prototype.receiveCallback = function ( info ) {
         this.commandList = [];
         this.commandIndex = 0;
         // if we are doing a store now we send the data
-        //Logger.log("here we are with data? " + this.uploadData);
+        //this.logger.log("here we are with data? " + this.uploadData);
         if ( typeof this.uploadData !== 'undefined' ) {
             this.sendData( this.uploadData );
         }
