@@ -20,7 +20,7 @@ function FtpMediator( receiver, receiveHandler ) {
             activeChannel;
         activeChannel = ( data.socketId === this.ftpCommandChannel.socketID ) ? 'command' : 'data';
         channelName = this.getChannel( activeChannel );
-        //Logger.log("FtpMediator receive channel id " + channelName.id + " " + JSON.stringify(data));
+        //this.logger.log("receive channel id " + channelName.id + " " + JSON.stringify(data));
         this.ps.publish( 'receive' + channelName.id, data );
     }, this );
 
@@ -37,16 +37,16 @@ function FtpMediator( receiver, receiveHandler ) {
     // listen for connections and log
     this.ps.subscribe( 'connected' + this.ftpCommandChannel.id, ( data ) => {
         this.ftpCommandSockID = this.ftpCommandChannel.socketID;
-        //Logger.log("connected " + JSON.stringify(data) + " " + this.ftpCommandSockID);
+        //this.logger.log("connected " + JSON.stringify(data) + " " + this.ftpCommandSockID);
     } );
 
     // on connect to the data port no data is actually sent 
     // so the onReceive is not fired
     this.ps.subscribe( 'connected' + this.ftpDataChannel.id, ( data ) => {
-        //Logger.log("connected " + JSON.stringify(data) + " " + this.ftpDataSockID);
+        //this.logger.log("connected " + JSON.stringify(data) + " " + this.ftpDataSockID);
         this.ftpDataSockID = this.ftpDataChannel.socketID;
         if ( this.receiveCB ) {
-            //Logger.log("callback: " + this.receiveCB );
+            //this.logger.log("callback: " + this.receiveCB );
             this.receiveCB.call( this.receiveHandler, data );
         }
     } );
@@ -55,7 +55,7 @@ function FtpMediator( receiver, receiveHandler ) {
     this.ps.subscribe( 'sendData' + this.ftpDataChannel.id, ( data ) => {
         // when data channel sends data, no data is received
         // notify client
-        this.logger.log( "FtpMediator data sent: " + JSON.stringify( data ) );
+        this.logger.log( "data sent: " + JSON.stringify( data ) );
         // close socket because we should be done with the passive port
         this.disconnect( this.ftpDataChannel.id );
 
@@ -75,7 +75,7 @@ FtpMediator.prototype.getChannel = function ( channel ) {
 FtpMediator.prototype.connect = function ( channel, data ) {
     const ftpChannel = this.getChannel( channel );
 
-    //Logger.log("FtpMediator connect: " + ftpChannel.id + " " + channel + " " + JSON.stringify(data) );
+    //this.logger.log("connect: " + ftpChannel.id + " " + channel + " " + JSON.stringify(data) );
     ftpChannel.connect( data );
 };
 
@@ -85,14 +85,14 @@ FtpMediator.prototype.receive = function ( data ) {
     let activeChannel;
 
     // pass the data to the client
-    //Logger.log("FtpMediator receive: " + JSON.stringify(data) );
+    //this.logger.log("receive: " + JSON.stringify(data) );
     if ( this.receiveCB ) {
         if ( data && data.rawInfo && data.rawInfo.socketId ) {
-            //Logger.log("FtpMediator receive: " + data.rawInfo.socketId + " " + this.ftpCommandChannel.socketID);
+            //this.logger.log("receive: " + data.rawInfo.socketId + " " + this.ftpCommandChannel.socketID);
             activeChannel = ( data.rawInfo.socketId === this.ftpCommandChannel.socketID ) ? 'command' : 'data';
             data.channel = activeChannel;
         }
-        //Logger.log("FtpMediator callback: " + this.receiveCB );
+        //this.logger.log("callback: " + this.receiveCB );
         this.receiveCB.call( this.receiveHandler, data );
     }
 };
@@ -105,7 +105,7 @@ FtpMediator.prototype.send = function ( channel, data ) {
     // always send commands on command channel
     // so we peek into the message looking for a file upload
     if ( typeof data.filedata !== 'undefined' ) {
-        //Logger.log("FtpMediator Got data? " + data.filedata);
+        //this.logger.log("Got data? " + data.filedata);
         // the socket just needs a message to send, but the mediator uses filedata 
         // as an identifier as the type of message which translates into the channel to use
         // OMG what was I thinking?
