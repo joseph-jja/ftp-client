@@ -79,7 +79,7 @@ TcpWrapper.prototype.connect = function ( data ) {
         } );
         
         create.then( ( createInfo ) => {
-            //Logger.log.call(this, "TcpWrapper connect tcp.create: " + JSON.stringify(createInfo));
+            //this.logger.log.call(this, "TcpWrapper connect tcp.create: " + JSON.stringify(createInfo));
             this.socketID = createInfo.socketId;
             // now actually connect
             TcpSockets.connect( this.socketID, host, +port, connectCB );
@@ -92,7 +92,7 @@ TcpWrapper.prototype.connect = function ( data ) {
 TcpWrapper.prototype.sendCommand = function ( dataObj ) {
     let data = dataObj.msg,
         message = BufferConverter.encode( data + "\r\n", ArrayBufferType, 1 );
-    //Logger.log("TcpWrapper sendCommand: " + this.id + " " + BufferConverter.decode(message, ArrayBufferType));
+    //this.logger.log("TcpWrapper sendCommand: " + this.id + " " + BufferConverter.decode(message, ArrayBufferType));
     
     const sendCB = ( info ) => {
         TcpListeners.ps.publish( 'sendData' + this.id, info );
