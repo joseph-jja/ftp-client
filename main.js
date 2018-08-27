@@ -103,7 +103,7 @@ window.onload = function () {
 
             parts = filename.split( /\/|\\/g );
             filename = parts[ parts.length - 1 ];
-            Logger.log( filename );
+            new Logger('sendFileElement').log( filename );
             ftp.commandIndex = 0;
             ftp.commandList = FtpCommandSets.uploadFile;
             ftp.commandList[ 1 ] = "STOR " + filename;
@@ -128,10 +128,10 @@ window.onload = function () {
                 // we now have a FIleEntry from HTML 5 specs
                 chosenFileEntry.createWriter( function ( writer ) {
                     writer.onerror = function ( err ) {
-                        Logger.log( "Save error " + JSON.stringify( err ) );
+                        new Logger('writer.onerror').log( "Save error " + JSON.stringify( err ) );
                     };
                     writer.onwriteend = function ( err ) {
-                        Logger.log( "File saved " + JSON.stringify( err ) );
+                        new Logger('writer.onerror').log( "File saved " + JSON.stringify( err ) );
                     };
                     writer.write( new Blob( [ contents ], {
                         type: 'text/plain'
