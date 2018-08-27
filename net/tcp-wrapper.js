@@ -10,7 +10,7 @@ const TcpListeners = {
     // add listener to tcp for receiving data and errors
     // we only want to add this once though    
     receive: function ( info ) {
-        //this.logger.log("onReceive: " + JSON.stringify(info));
+        //this.logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
         TcpListeners.ps.publish( 'receive', info );
     }, 
     // taken from https://cs.chromium.org/chromium/src/net/base/net_error_list.h?sq=package:chromium&l=111
@@ -28,7 +28,7 @@ const TcpListeners = {
         // error code -100 is connection closed in relation to TCP FIN
         // this happens on the data channel
         if ( info.resultCode !== -100 ) {
-            this.logger.error( "onReceiveError error: " + JSON.stringify( info ) );
+            TcpListeners.logger.error( "TcpWrapper onReceiveError error: " + JSON.stringify( info ) );
             TcpListeners.ps.publish( 'receiveError', info );
         }
     } 
@@ -68,7 +68,7 @@ TcpWrapper.prototype.connect = function ( data ) {
         port = ( typeof data.port !== 'undefined' ? data.port : 21 );
     if ( host && host.length > 0 ) {
         const connectCB = ( result ) => {
-            //this.logger.log.call(this, "connect tcp.connect: " + JSON.stringify(result));
+            //this.logger.log.call(this, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
             TcpListeners.ps.publish( 'connected' + this.id, result );
         };
         
@@ -79,7 +79,7 @@ TcpWrapper.prototype.connect = function ( data ) {
         } );
         
         create.then( ( createInfo ) => {
-            //this.logger.log.call(this, "connect tcp.create: " + JSON.stringify(createInfo));
+            //Logger.log.call(this, "TcpWrapper connect tcp.create: " + JSON.stringify(createInfo));
             this.socketID = createInfo.socketId;
             // now actually connect
             TcpSockets.connect( this.socketID, host, +port, connectCB );
@@ -92,7 +92,7 @@ TcpWrapper.prototype.connect = function ( data ) {
 TcpWrapper.prototype.sendCommand = function ( dataObj ) {
     let data = dataObj.msg,
         message = BufferConverter.encode( data + "\r\n", ArrayBufferType, 1 );
-    //this.logger.log("sendCommand: " + this.id + " " + BufferConverter.decode(message, ArrayBufferType));
+    //Logger.log("TcpWrapper sendCommand: " + this.id + " " + BufferConverter.decode(message, ArrayBufferType));
     
     const sendCB = ( info ) => {
         TcpListeners.ps.publish( 'sendData' + this.id, info );
@@ -107,13 +107,13 @@ TcpWrapper.prototype.receiveData = function ( info ) {
 
     // compare socket ids and log
     if ( this.socketID && info.socketId !== this.socketID ) {
-        this.logger.log( "receiveData sockets don't match: " + this.socketID + " " + info.socketId );
+        this.logger.log( "TcpWrapper receiveData sockets don't match: " + this.socketID + " " + info.socketId );
         return;
     }
 
     // conversion event
     resultData = BufferConverter.decode( info.data, ArrayBufferType );
-    //this.logger.log(`receiveData data: ${this.socketID} ` + resultData);
+    //this.logger.log(`TcpWrapper receiveData data: ${this.socketID} ` + resultData);
 
     TcpListeners.ps.publish( 'receiveData' + this.id, {
         rawInfo: info,
@@ -143,7 +143,7 @@ TcpWrapper.prototype.disconnect = function () {
             try {
                 TcpSockets.close( this.socketID, closeCB );
             } catch ( e ) {
-                this.logger.log( "exception closing socket " + e );
+                this.logger.log( "TcpWrapper exception closing socket " + e );
             }
         } );
     }
