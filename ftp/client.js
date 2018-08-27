@@ -57,15 +57,16 @@ FtpClient.prototype.receiveCallback = function ( info ) {
     //this.logger.log( JSON.stringify(info));
     if ( info && info.message ) {
         result = info.message;
+        this.logger.log( 'x ' + JSON.stringify( info.channel ) );
         buffer = this.resultData.innerHTML;
         this.resultData.innerHTML = buffer + result;
         this.resultData.scrollTop = this.resultData.scrollHeight;
         //this.logger.log( JSON.stringify(info));
         //    let directories = this.receivedFile.value.split( /\n/ );
         //    for ( let x = 0, end = directories.length; x < end; x++ ) {
-        //        this.logger.log( directories[ x ] );
+        //        Logger.log( directories[ x ] );
         //    }
-        if ( info.channel && info.channel === 'data' ) {
+        if ( info.channel && info.channel.name === 'data' ) {
             buffer = this.receivedFile.value;
             this.receivedFile.value = buffer + result;
         }
