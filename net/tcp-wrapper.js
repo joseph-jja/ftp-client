@@ -5,12 +5,12 @@ const TcpSockets = chrome.sockets.tcp,
 
 const TcpListeners = {
     ps: PublishSubscribe,
-    log: new Logger( 'TcpListeners' ),
+    logger: new Logger( 'TcpListeners' ),
     
     // add listener to tcp for receiving data and errors
     // we only want to add this once though    
     receive: function ( info ) {
-        //Logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
+        //this.logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
         TcpListeners.ps.publish( 'receive', info );
     }, 
     // taken from https://cs.chromium.org/chromium/src/net/base/net_error_list.h?sq=package:chromium&l=111
@@ -28,7 +28,7 @@ const TcpListeners = {
         // error code -100 is connection closed in relation to TCP FIN
         // this happens on the data channel
         if ( info.resultCode !== -100 ) {
-            log.error( "TcpWrapper onReceiveError error: " + JSON.stringify( info ) );
+            this.logger.error( "TcpWrapper onReceiveError error: " + JSON.stringify( info ) );
             TcpListeners.ps.publish( 'receiveError', info );
         }
     } 
@@ -68,7 +68,7 @@ TcpWrapper.prototype.connect = function ( data ) {
         port = ( typeof data.port !== 'undefined' ? data.port : 21 );
     if ( host && host.length > 0 ) {
         const connectCB = ( result ) => {
-            //Logger.log.call(this, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
+            //this.logger.log.call(this, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
             TcpListeners.ps.publish( 'connected' + this.id, result );
         };
         
@@ -113,7 +113,7 @@ TcpWrapper.prototype.receiveData = function ( info ) {
 
     // conversion event
     resultData = BufferConverter.decode( info.data, ArrayBufferType );
-    //Logger.log(`TcpWrapper receiveData data: ${this.socketID} ` + resultData);
+    //this.logger.log(`TcpWrapper receiveData data: ${this.socketID} ` + resultData);
 
     TcpListeners.ps.publish( 'receiveData' + this.id, {
         rawInfo: info,
