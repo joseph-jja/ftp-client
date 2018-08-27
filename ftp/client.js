@@ -14,9 +14,11 @@ function FtpClient() {
     this.loggerData = document.getElementById( "loggerData" );
     this.receivedData = document.getElementById( "receivedData" );
 
+    this.logger = new Logger( 'FtpClient' );
+    
     this.loggerData.style.display = 'none';
     this.receivedData.style.display = 'none';
-
+            
     this.channel = 'command';
 
     this.commandList = [];
@@ -36,7 +38,7 @@ FtpClient.prototype.sendCommand = function () {
 
 // data is always sent on the data channel
 FtpClient.prototype.sendData = function ( data ) {
-    //Logger.log("FtpClient Data " + data);
+    //Logger.log(data);
     mediator.send( 'data', {
         'filedata': data
     } );
@@ -49,16 +51,16 @@ FtpClient.prototype.receiveCallback = function ( info ) {
     // we now have status codes from commands sent on command channel
     statusCode = ResponseParser.parseStatusCode( info );
     //if ( statusCode ) {
-    Logger.log( "FtpClient " + this.commandList[ this.commandIndex - 1 ] + " " + statusCode + " " + FtpResponseCodes[ statusCode ] );
+    this.logger.log( this.commandList[ this.commandIndex - 1 ] + " " + statusCode + " " + FtpResponseCodes[ statusCode ] );
     //}
 
-    //Logger.log("FtpClient " + JSON.stringify(info));
+    //Logger.log( JSON.stringify(info));
     if ( info && info.message ) {
         result = info.message;
         buffer = this.resultData.innerHTML;
         this.resultData.innerHTML = buffer + result;
         this.resultData.scrollTop = this.resultData.scrollHeight;
-        //Logger.log("FtpClient " + JSON.stringify(info));
+        //Logger.log( JSON.stringify(info));
         //    let directories = this.receivedFile.value.split( /\n/ );
         //    for ( let x = 0, end = directories.length; x < end; x++ ) {
         //        Logger.log( directories[ x ] );
@@ -72,7 +74,7 @@ FtpClient.prototype.receiveCallback = function ( info ) {
     if ( result && result.toLowerCase().indexOf( "227 entering passive mode" ) === 0 ) {
         // find the 6 digits - TODO better regexp here
         portData = ResponseParser.parsePasvMode( result, this.hostname.value );
-        //Logger.log("FtpClient " + JSON.stringify(portData));
+        //Logger.log( JSON.stringify(portData));
         this.receivedFile.value = '';
         this.channel = 'data';
         mediator.connect( 'data', {

@@ -8,7 +8,9 @@ function FtpMediator( receiver, receiveHandler ) {
     this.ftpDataSockID = undefined;
 
     this.ps = PublishSubscribe;
-    this.receiveCB = undefined;
+    this.receiveCB = undefined
+    
+    this.logger = new Logger( 'FtpMediator' );
 
     this.receiveHandler = receiver;
     this.receiveCB = receiveHandler;
@@ -44,7 +46,7 @@ function FtpMediator( receiver, receiveHandler ) {
         //Logger.log("connected " + JSON.stringify(data) + " " + this.ftpDataSockID);
         this.ftpDataSockID = this.ftpDataChannel.socketID;
         if ( this.receiveCB ) {
-            //Logger.log("FtpMediator callback: " + this.receiveCB );
+            //Logger.log("callback: " + this.receiveCB );
             this.receiveCB.call( this.receiveHandler, data );
         }
     } );
@@ -53,7 +55,7 @@ function FtpMediator( receiver, receiveHandler ) {
     this.ps.subscribe( 'sendData' + this.ftpDataChannel.id, ( data ) => {
         // when data channel sends data, no data is received
         // notify client
-        Logger.log( "FtpMediator data sent: " + JSON.stringify( data ) );
+        this.logger.log( "FtpMediator data sent: " + JSON.stringify( data ) );
         // close socket because we should be done with the passive port
         this.disconnect( this.ftpDataChannel.id );
 

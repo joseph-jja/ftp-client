@@ -1,22 +1,29 @@
-const Logger = {
-    log: function ( message ) {
+class Logger {
+    
+    constructor( callerName ) {
+        this.callingName = callerName;    
+    }
+    
+    log( message ) {
 
         // don't log password
         if ( typeof message !== 'undefined' &&
             message.indexOf( "PASS" ) === -1 ) {
-            console.log( message );
+            console.log( this.callingName, message );
         } else {
-            console.log( "PASS command sent or none string logged." );
+            console.log( this.callingName, 'PASS command sent or none string logged.' );
         }
-    },
-    error: function ( message ) {
+    }
+    
+    error( message ) {
 
         // don't log password
         if ( typeof message !== 'undefined' &&
             message.indexOf( "PASS" ) === -1 ) {
-            console.error( message );
+            console.error( this.callingName, message );
         } else {
-            console.error( "PASS command sent or none string logged." );
+            console.error( this.callingName, 'PASS command sent or none string logged.' );
         }
     }
 };
+

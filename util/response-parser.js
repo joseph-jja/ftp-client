@@ -1,6 +1,8 @@
 const PassiveModeRE = /(\d*\,\d*\,\d*\,\d*)(\,)(\d*\,\d*)/gi;
 const ResponseParser = {
 
+    log: new Logger( 'ResponseParser' ),
+    
     // parse the response from the server 
     // basically status codes
     parseStatusCode: function ( response ) {

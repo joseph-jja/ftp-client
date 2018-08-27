@@ -5,6 +5,8 @@ const TcpSockets = chrome.sockets.tcp,
 
 const TcpListeners = {
     ps: PublishSubscribe,
+    log: new Logger( 'TcpListeners' ),
+    
     // add listener to tcp for receiving data and errors
     // we only want to add this once though    
     receive: function ( info ) {
@@ -26,7 +28,7 @@ const TcpListeners = {
         // error code -100 is connection closed in relation to TCP FIN
         // this happens on the data channel
         if ( info.resultCode !== -100 ) {
-            Logger.error( "TcpWrapper onReceiveError error: " + JSON.stringify( info ) );
+            log.error( "TcpWrapper onReceiveError error: " + JSON.stringify( info ) );
             TcpListeners.ps.publish( 'receiveError', info );
         }
     } 
@@ -52,6 +54,8 @@ class TcpWrapper {
         this.socketID = undefined;
         this.name = name;
         this.id = name;
+        
+        this.logger = new Logger ( 'TcpWrapper' );
 
         // our reference to the pub sub for pub - sub 
         TcpListeners.ps.subscribe( "receive" + this.id, this.receiveData, this );
@@ -103,7 +107,7 @@ TcpWrapper.prototype.receiveData = function ( info ) {
 
     // compare socket ids and log
     if ( this.socketID && info.socketId !== this.socketID ) {
-        Logger.log( "TcpWrapper receiveData sockets don't match: " + this.socketID + " " + info.socketId );
+        this.logger.log( "TcpWrapper receiveData sockets don't match: " + this.socketID + " " + info.socketId );
         return;
     }
 
@@ -120,7 +124,7 @@ TcpWrapper.prototype.receiveData = function ( info ) {
 TcpWrapper.prototype.disconnect = function () {
     if ( this.socketID ) {
         const closeCB = () => {
-            Logger.log( this.id + " socket close!" );
+            this.logger.log( this.id + " socket close!" );
             TcpListeners.ps.publish( 'closed' + this.id, {
                 socketID: this.socketID
             } );
@@ -129,7 +133,7 @@ TcpWrapper.prototype.disconnect = function () {
         
         const disconnect = new Promise( resolve => {
             TcpSockets.disconnect( this.socketID, ( info ) => {
-                Logger.log( this.id + " socket disconnected!" );
+                this.logger.log( this.id + " socket disconnected!" );
                 TcpListeners.ps.publish( 'disconnected' + this.id, info );
                 resolve();
             } );
@@ -139,7 +143,7 @@ TcpWrapper.prototype.disconnect = function () {
             try {
                 TcpSockets.close( this.socketID, closeCB );
             } catch ( e ) {
-                Logger.log( "TcpWrapper exception closing socket " + e );
+                this.logger.log( "TcpWrapper exception closing socket " + e );
             }
         } );
     }
