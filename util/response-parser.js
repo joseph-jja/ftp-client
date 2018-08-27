@@ -1,7 +1,7 @@
 const PassiveModeRE = /(\d*\,\d*\,\d*\,\d*)(\,)(\d*\,\d*)/gi;
 const ResponseParser = {
 
-    log: new Logger( 'ResponseParser' ),
+    logger: new Logger( 'ResponseParser' ),
     
     // parse the response from the server 
     // basically status codes
@@ -29,7 +29,7 @@ const ResponseParser = {
             portData = pasvHost.split( "," ),
             port = ( parseInt( portData[ 4 ], 10 ) * 256 ) + parseInt( portData[ 5 ], 10 );
         let host = portData[ 0 ] + "." + portData[ 1 ] + "." + portData[ 2 ] + "." + portData[ 3 ];
-        //Logger.log("ResponseParser " + host + " " + port + " " + JSON.stringify(portData));
+        //this.logger.log("ResponseParser " + host + " " + port + " " + JSON.stringify(portData));
         if ( host === "0.0.0.0" ) {
             host = defaultHost;
         }
