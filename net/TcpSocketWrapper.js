@@ -63,9 +63,9 @@ class TcpWrapper {
 }
 
 // connect and raise events
-TcpWrapper.prototype.connect = async function ( data ) {
+TcpWrapper.prototype.connect = async function ( data ) {   
     
-    let host = data.host,
+    const host = data.host,
         port = ( typeof data.port !== 'undefined' ? data.port : 21 );
     if ( host && host.length > 0 ) {
         
@@ -83,9 +83,7 @@ TcpWrapper.prototype.connect = async function ( data ) {
 
             // now actually connect
             return new Promise( resolve => {
-                TcpSockets.connect( this.socketID, host, +port, ( result ) => {
-                    resolve(Object.assign({}, { socketId: createInfo.socketId }, result) );  
-                });
+                TcpSockets.connect( this.socketID, host, +port, resolve );
             });
         }
         
