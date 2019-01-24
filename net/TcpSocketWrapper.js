@@ -72,9 +72,7 @@ TcpWrapper.prototype.connect = async function ( data ) {
         async function create() { 
             // wrap create in a promise
             return new Promise( resolve => {
-               TcpSockets.create( {}, ( createInfo ) => {
-                   resolve( createInfo );
-                } );
+               TcpSockets.create( {}, resolve );
             } );
         }
         
