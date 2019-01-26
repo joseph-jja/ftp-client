@@ -64,8 +64,10 @@ class TcpWrapper {
 
 // connect and raise events
 TcpWrapper.prototype.connect = function ( data ) {
-    let host = data.host,
+
+    const host = data.host,
         port = ( typeof data.port !== 'undefined' ? data.port : 21 );
+
     if ( host && host.length > 0 ) {
         const connectCB = ( result ) => {
             //this.logger.log.call(this, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
@@ -90,8 +92,8 @@ TcpWrapper.prototype.connect = function ( data ) {
 // send commands and raise notifications
 // object should contain { msg: string }
 TcpWrapper.prototype.sendCommand = function ( dataObj ) {
-    let data = dataObj.msg,
-        message = BufferConverter.encode( data + "\r\n", ArrayBufferType, 1 );
+
+    const message = BufferConverter.encode( dataObj.msg + "\r\n", ArrayBufferType, 1 );
     //Logger.log("TcpWrapper sendCommand: " + this.id + " " + BufferConverter.decode(message, ArrayBufferType));
     
     const sendCB = ( info ) => {
@@ -103,7 +105,6 @@ TcpWrapper.prototype.sendCommand = function ( dataObj ) {
 
 // receive data and raise events
 TcpWrapper.prototype.receiveData = function ( info ) {
-    let resultData;
 
     // compare socket ids and log
     if ( this.socketID && info.socketId !== this.socketID ) {
@@ -111,8 +112,8 @@ TcpWrapper.prototype.receiveData = function ( info ) {
         return;
     }
 
-    // conversion event
-    resultData = BufferConverter.decode( info.data, ArrayBufferType );
+    // conversion 
+    const resultData = BufferConverter.decode( info.data, ArrayBufferType );
     //this.logger.log(`TcpWrapper receiveData data: ${this.socketID} ` + resultData);
 
     TcpListeners.ps.publish( 'receiveData' + this.id, {
