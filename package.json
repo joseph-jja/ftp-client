@@ -6,6 +6,5 @@
     },
     "scripts": {
         "beauty": "node_modules/.bin/js-beautify"
-        `
-  }
+    }
 }
