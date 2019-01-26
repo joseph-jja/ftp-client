@@ -3,8 +3,7 @@ const COMMAND_CHANNEL_NAME = 'command',
 
 const channelNames = {
     [ COMMAND_CHANNEL_NAME ]: 'ftpCommandChannel',
-    [ DATA_CHANNEL_NAME ];
-    'ftpDataChannel'
+    [ DATA_CHANNEL_NAME ]: 'ftpDataChannel'
 };
 
 // man in the middle for mediating between UI and tcp code
