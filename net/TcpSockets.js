@@ -11,24 +11,15 @@ class TcpSockets {
         this.socketID = undefined;
         this.name = name;
         this.id = name;
-        this.receveChannel = `receive_${name}`;
+        this.receiveChannel = `receive_${name}`;
         this.errorChannel = `error_{name}`;
-
-        // install listeners 
-        if ( !tcp.onReceive.hasListeners() ) {
-            tcp.onReceive.addListener( this.receive );
-        }
-
-        if ( !tcp.onReceiveError.hasListeners() ) {
-            tcp.onReceiveError.addListener( TcpListeners.errorHandler );
-        }
     }
 
     // add listener to tcp for receiving data and errors
     // we only want to add this once though    
     receive( info ) {
         //logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
-        ps.publish( 'receive', info );
+        ps.publish( this.receiveChannel, info );
     }
 
     // taken from https://cs.chromium.org/chromium/src/net/base/net_error_list.h?sq=package:chromium&l=111
@@ -47,7 +38,7 @@ class TcpSockets {
         // this happens on the data channel
         if ( info.resultCode !== -100 ) {
             logger.error( "TcpWrapper onReceiveError error: " + JSON.stringify( info ) );
-            ps.publish( 'receiveError', info );
+            ps.publish( this.errorChannel, info );
         }
     }
 
@@ -58,6 +49,11 @@ class TcpSockets {
             port = ( typeof data.port !== 'undefined' ? data.port : 21 );
 
         if ( host && host.length > 0 ) {
+
+            // install listeners 
+            tcp.onReceive.addListener( this.receive );
+            tcp.onReceiveError.addListener( this.errorHandler );
+
             const connectCB = ( result ) => {
                 //logger.log.call(this, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
                 ps.publish( 'connected' + this.id, result );
@@ -135,5 +131,8 @@ class TcpSockets {
                     }
                 } );
             }
+            // uninstall listeners 
+            tcp.onReceive.removeListener( this.receive );
+            tcp.onReceiveError.removeListener( this.errorHandler );
         }
     };
