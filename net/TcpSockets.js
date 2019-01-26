@@ -85,54 +85,55 @@ class TcpSockets {
                 ps.publish( 'sendData' + this.id, info );
             };
         }
+    }
 
-        // receive data and raise events
-        receiveData( info ) {
+    // receive data and raise events
+    receiveData( info ) {
 
-            // compare socket ids and log
-            if ( this.socketID && info.socketId !== this.socketID ) {
-                logger.log( "receiveData sockets don't match: " + this.socketID + " " + info.socketId );
-                return;
-            }
+        // compare socket ids and log
+        if ( this.socketID && info.socketId !== this.socketID ) {
+            logger.log( "receiveData sockets don't match: " + this.socketID + " " + info.socketId );
+            return;
+        }
 
-            // conversion 
-            const resultData = BufferConverter.decode( info.data, ArrayBufferType );
-            //logger.log(`TcpWrapper receiveData data: ${this.socketID} ` + resultData);
+        // conversion 
+        const resultData = BufferConverter.decode( info.data, ArrayBufferType );
+        //logger.log(`TcpWrapper receiveData data: ${this.socketID} ` + resultData);
 
-            ps.publish( 'receiveData' + this.id, {
-                rawInfo: info,
-                message: resultData
+        ps.publish( 'receiveData' + this.id, {
+            rawInfo: info,
+            message: resultData
+        } );
+    }
+
+    disconnect() {
+        if ( this.socketID ) {
+            const closeCB = () => {
+                logger.log( this.id + " socket close!" );
+                ps.publish( 'closed' + this.id, {
+                    socketID: this.socketID
+                } );
+                this.socketID = undefined;
+            };
+
+            const disconnect = new Promise( resolve => {
+                tcp.disconnect( this.socketID, ( info ) => {
+                    logger.log( this.id + " socket disconnected!" );
+                    ps.publish( 'disconnected' + this.id, info );
+                    resolve();
+                } );
+            } );
+
+            disconnect.then( () => {
+                try {
+                    tcp.close( this.socketID, closeCB );
+                } catch ( e ) {
+                    logger.log( "TcpWrapper exception closing socket " + e );
+                }
             } );
         }
-
-        disconnect() {
-            if ( this.socketID ) {
-                const closeCB = () => {
-                    logger.log( this.id + " socket close!" );
-                    ps.publish( 'closed' + this.id, {
-                        socketID: this.socketID
-                    } );
-                    this.socketID = undefined;
-                };
-
-                const disconnect = new Promise( resolve => {
-                    tcp.disconnect( this.socketID, ( info ) => {
-                        logger.log( this.id + " socket disconnected!" );
-                        ps.publish( 'disconnected' + this.id, info );
-                        resolve();
-                    } );
-                } );
-
-                disconnect.then( () => {
-                    try {
-                        tcp.close( this.socketID, closeCB );
-                    } catch ( e ) {
-                        logger.log( "TcpWrapper exception closing socket " + e );
-                    }
-                } );
-            }
-            // uninstall listeners 
-            tcp.onReceive.removeListener( this.receive );
-            tcp.onReceiveError.removeListener( this.errorHandler );
-        }
-    };
+        // uninstall listeners 
+        tcp.onReceive.removeListener( this.receive );
+        tcp.onReceiveError.removeListener( this.errorHandler );
+    }
+};
