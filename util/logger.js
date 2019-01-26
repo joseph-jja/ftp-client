@@ -1,9 +1,9 @@
 class Logger {
-    
+
     constructor( callerName ) {
-        this.callingName = callerName;    
+        this.callingName = callerName;
     }
-    
+
     log( message ) {
 
         // don't log password
@@ -14,7 +14,7 @@ class Logger {
             console.log( this.callingName, 'PASS command sent or none string logged.' );
         }
     }
-    
+
     error( message ) {
 
         // don't log password
@@ -26,4 +26,3 @@ class Logger {
         }
     }
 };
-

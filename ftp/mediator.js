@@ -1,9 +1,11 @@
 const COMMAND_CHANNEL_NAME = 'command',
     DATA_CHANNEL_NAME = 'data';
 
-const channelNames = {};
-channelNames[ COMMAND_CHANNEL_NAME ] = 'ftpCommandChannel';
-channelNames[ DATA_CHANNEL_NAME ] = 'ftpDataChannel';
+const channelNames = {
+    [ COMMAND_CHANNEL_NAME ]: 'ftpCommandChannel',
+    [ DATA_CHANNEL_NAME ];
+    'ftpDataChannel'
+};
 
 // man in the middle for mediating between UI and tcp code
 function FtpMediator( receiver, receiveHandler ) {
@@ -13,7 +15,7 @@ function FtpMediator( receiver, receiveHandler ) {
     this.ftpDataChannel = new TcpWrapper( DATA_CHANNEL_NAME );
 
     this.ps = PublishSubscribe;
-    
+
     this.logger = new Logger( 'FtpMediator' );
 
     this.receiveHandler = receiver;
@@ -82,7 +84,9 @@ FtpMediator.prototype.receive = function ( data ) {
             //this.logger.log("receive: " + data.rawInfo.socketId + " " + this.ftpCommandChannel.socketID);
             const activeChannel = ( data.rawInfo.socketId === this.ftpCommandChannel.socketID ) ? 'command' : 'data';
             const ftpChannel = this[ channelNames[ activeChannel ] ];
-            result = Object.assign( {}, data, { channel: ftpChannel } );
+            result = Object.assign( {}, data, {
+                channel: ftpChannel
+            } );
         }
         //this.logger.log("callback: " + this.receiveCB );
         this.receiveCB.call( this.receiveHandler, result );

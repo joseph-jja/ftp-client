@@ -1,18 +1,18 @@
 // constants
 // things that we know wont change :) 
-const TcpSockets = chrome.sockets.tcp, 
+const TcpSockets = chrome.sockets.tcp,
     ArrayBufferType = Int8Array;
 
 const TcpListeners = {
     ps: PublishSubscribe,
     logger: new Logger( 'TcpListeners' ),
-    
+
     // add listener to tcp for receiving data and errors
     // we only want to add this once though    
     receive: function ( info ) {
         //this.logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
         TcpListeners.ps.publish( 'receive', info );
-    }, 
+    },
     // taken from https://cs.chromium.org/chromium/src/net/base/net_error_list.h?sq=package:chromium&l=111
     // Ranges:
     //     0- 99 System related errors
@@ -31,14 +31,14 @@ const TcpListeners = {
             TcpListeners.logger.error( "TcpWrapper onReceiveError error: " + JSON.stringify( info ) );
             TcpListeners.ps.publish( 'receiveError', info );
         }
-    } 
+    }
 };
 
 // install listeners 
 if ( !TcpSockets.onReceive.hasListeners() ) {
-     TcpSockets.onReceive.addListener( TcpListeners.receive );
+    TcpSockets.onReceive.addListener( TcpListeners.receive );
 }
-    
+
 if ( !TcpSockets.onReceiveError.hasListeners() ) {
     TcpSockets.onReceiveError.addListener( TcpListeners.errorHandler );
 }
@@ -54,8 +54,8 @@ class TcpWrapper {
         this.socketID = undefined;
         this.name = name;
         this.id = name;
-        
-        this.logger = new Logger ( 'TcpWrapper' );
+
+        this.logger = new Logger( 'TcpWrapper' );
 
         // our reference to the pub sub for pub - sub 
         TcpListeners.ps.subscribe( "receive" + this.id, this.receiveData, this );
@@ -73,13 +73,13 @@ TcpWrapper.prototype.connect = function ( data ) {
             //this.logger.log.call(this, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
             TcpListeners.ps.publish( 'connected' + this.id, result );
         };
-        
+
         const create = new Promise( resolve => {
             TcpSockets.create( {}, ( createInfo ) => {
                 resolve( createInfo );
             } );
         } );
-        
+
         create.then( ( createInfo ) => {
             //Logger.log.call(this, "TcpWrapper connect tcp.create: " + JSON.stringify(createInfo));
             this.socketID = createInfo.socketId;
@@ -95,11 +95,11 @@ TcpWrapper.prototype.sendCommand = function ( dataObj ) {
 
     const message = BufferConverter.encode( dataObj.msg + "\r\n", ArrayBufferType, 1 );
     //Logger.log("TcpWrapper sendCommand: " + this.id + " " + BufferConverter.decode(message, ArrayBufferType));
-    
+
     const sendCB = ( info ) => {
         TcpListeners.ps.publish( 'sendData' + this.id, info );
     };
-    
+
     TcpSockets.send( this.socketID, message, sendCB );
 };
 
@@ -131,7 +131,7 @@ TcpWrapper.prototype.disconnect = function () {
             } );
             this.socketID = undefined;
         };
-        
+
         const disconnect = new Promise( resolve => {
             TcpSockets.disconnect( this.socketID, ( info ) => {
                 this.logger.log( this.id + " socket disconnected!" );
