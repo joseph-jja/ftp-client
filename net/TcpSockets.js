@@ -17,7 +17,7 @@ class TcpSockets {
 
     // add listener to tcp for receiving data and errors
     // we only want to add this once though    
-    receive( info ) {
+    receiveHandler( info ) {
         //logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
         ps.publish( this.receiveChannel, info );
     }
@@ -51,7 +51,7 @@ class TcpSockets {
         if ( host && host.length > 0 ) {
 
             // install listeners 
-            tcp.onReceive.addListener( this.receive );
+            tcp.onReceive.addListener( this.receiveHandler );
             tcp.onReceiveError.addListener( this.errorHandler );
 
             const connectCB = ( result ) => {
