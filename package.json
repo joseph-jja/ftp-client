@@ -1,6 +1,8 @@
 {
     "devDependencies": {
+        "eslint": "^5.12.1",
         "gulp": "^3.9.1",
+        "gulp-eslint": "^5.0.0",
         "gulp-jsbeautifier": "^2.1.2",
         "js-beautify": "^1.8.1"
     },

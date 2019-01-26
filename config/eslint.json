@@ -1,0 +1,76 @@
+{
+    "parserOptions": {
+        "sourceType": "module"
+    },
+    "env": {
+        "browser": true,
+        "node": true,
+        "es6": true
+    },
+
+    "globals": {
+        "window": true,
+        "alert": true,
+        "document": true,
+        "navigator": true,
+        "XMLHttpRequest": true,
+        "HTMLElement": true,
+        "FileReader": true,
+        "clearTimeout": true,
+        "setTimeout": true,
+        "DOMParser": true,
+        "XSLTProcessor": true,
+        "performance": true,
+        "crypto": true,
+        "console": true,
+        "expect": true,
+        "it": true,
+        "xit": true,
+        "describe": true,
+        "spyOn": true,
+        "afterEach": true,
+        "beforeEach": true
+    },
+
+    "rules": {
+        "no-bitwise": 1,
+        "camelcase": 1,
+        "curly": 1,
+        "eqeqeq": 2,
+        "guard-for-in": 0,
+        "no-extend-native": 0,
+        "wrap-iife": 1,
+        "indent": 2,
+        "no-undef": 2,
+        "new-cap": 1,
+        "no-caller": 1,
+        "no-empty": 1,
+        "no-irregular-whitespace": 1,
+        "no-new": 1,
+        "no-plusplus": 0,
+        "no-unused-vars": 1,
+        "strict": 0,
+        "comma-dangle": 1,
+        "no-trailing-spaces": 0,
+        "max-params": [ 1, {
+            "max": 5
+        } ],
+        "max-depth": 1,
+        "max-statements": [ 1, {
+            "max": 15
+        } ],
+        "complexity": 1,
+        "max-len": 0,
+
+        "semi": 1,
+        "no-cond-assign": 0,
+        "no-debugger": 0,
+        "no-eq-null": 1,
+        "no-eval": 1,
+        "quotes": 0,
+        "no-underscore-dangle": 0,
+        "dot-notation": 0,
+
+        "space-unary-ops": 0
+    }
+}
