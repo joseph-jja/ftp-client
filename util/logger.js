@@ -2,7 +2,7 @@ class Logger {
 
     constructor( callerName, options = {} ) {
         this.callingName = callerName;
-        this.logLevel = options.logLevel || 'info';
+        this.logLevel = options.logLevel || 'debug';
     }
 
     // TODO make this private
@@ -21,16 +21,16 @@ class Logger {
     }
 
     log( message ) {
-        console.log( this.callingName, filterMessage( message ) );
+        console.log( this.callingName, this.filterMessage( message ) );
     }
 
     debug( message ) {
         if ( this.logLevel === 'debug' ) {
-            console.debug( this.callingName, filterMessage( message ) );
+            console.debug( this.callingName, this.filterMessage( message ) );
         }
     }
 
     error( message ) {
-        console.error( this.callingName, filterMessage( message ) );
+        console.error( this.callingName, this.filterMessage( message ) );
     }
 };
