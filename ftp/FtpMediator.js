@@ -27,15 +27,18 @@ class FtpMediator {
             this.ftpCommandChannel.disconnect();
             this.ftpCommandChannel.removeListeners();
         }, this.ftpCommandChannel );
-        this.ps.subscribe( 'receiveData' + this.ftpCommandChannel.id, this.receive, this );
+        this.ps.subscribe( this.ftpCommandChannel.receiveChannel, this.receive, this );
+        this.ps.subscribe( this.ftpCommandChannel.errorChannel, this.logger.error, this );
 
         // setup data channel
         this.ps.subscribe( 'disconnect' + this.ftpDataChannel.id, () => {
             this.ftpDataChannel.disconnect();
             this.ftpCommandChannel.removeListeners();
         }, this.ftpDataChannel );
-        this.ps.subscribe( 'receiveData' + this.ftpDataChannel.id, this.receive, this );
+        this.ps.subscribe( this.ftpDataChannel.receiveChannel, this.receive, this );
+        this.ps.subscribe( this.ftpDataChannel.errorChannel, this.logger.error, this );
 
+        
         // listen for connections and log
         if ( this.logger.logLevel === 'debug' ) {
             this.ps.subscribe( 'connected' + this.ftpCommandChannel.id, ( data ) => {
