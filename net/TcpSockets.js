@@ -1,12 +1,10 @@
-
-
 // constants
 // things that we know wont change :) 
 // I wish they could be private properties in chrome 70 :( 
 const tcp = chrome.sockets.tcp,
     ArrayBufferType = Int8Array,
     ps = PublishSubscribe;
-    
+
 class TcpSockets {
 
     constructor( name ) {
@@ -16,20 +14,20 @@ class TcpSockets {
         this.logger = new Logger( 'TcpSockets' );
         this.receiveChannel = `receive_${name}`;
         this.errorChannel = `error_{name}`;
-        
+
         // install listeners 
         const self = this;
-        const rcb = (info) => {
-                self.receiveHandler(info);
-            }, 
-              ecb = (info) => {
-                self.errorHandler(info);
+        const rcb = ( info ) => {
+                self.receiveHandler( info );
+            },
+            ecb = ( info ) => {
+                self.errorHandler( info );
             };
-            tcp.onReceive.addListener(rcb );
-            tcp.onReceiveError.addListener( ecb);
+        tcp.onReceive.addListener( rcb );
+        tcp.onReceiveError.addListener( ecb );
         this.removeListeners = () => {
-            tcp.onReceive.removeListener(rcb );
-            tcp.onReceiveError.removeListener( ecb);
+            tcp.onReceive.removeListener( rcb );
+            tcp.onReceiveError.removeListener( ecb );
         };
     }
 
