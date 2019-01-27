@@ -15,10 +15,10 @@ function FtpClient() {
     this.receivedData = document.getElementById( "receivedData" );
 
     this.logger = new Logger( 'FtpClient' );
-
+    
     this.loggerData.style.display = 'none';
     this.receivedData.style.display = 'none';
-
+            
     this.channel = 'command';
 
     this.commandList = [];
@@ -30,7 +30,7 @@ function FtpClient() {
 
 // commands are always sent on the command channel
 FtpClient.prototype.sendCommand = function () {
-    mediator.send( "command", {
+    mediator.send( {
         msg: this.commandList[ this.commandIndex ]
     } );
     this.commandIndex++;
@@ -39,7 +39,7 @@ FtpClient.prototype.sendCommand = function () {
 // data is always sent on the data channel
 FtpClient.prototype.sendData = function ( data ) {
     //this.logger.log(data);
-    mediator.send( 'data', {
+    mediator.send( {
         'filedata': data
     } );
 };
