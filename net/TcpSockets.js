@@ -1,10 +1,3 @@
-// constants
-// things that we know wont change :) 
-// I wish they could be private properties in chrome 70 :( 
-const tcp = chrome.sockets.tcp,
-    ArrayBufferType = Int8Array,
-    ps = PublishSubscribe;
-
 class TcpSockets {
 
     constructor( name ) {
@@ -15,6 +8,13 @@ class TcpSockets {
         this.receiveChannel = `receive_${name}`;
         this.errorChannel = `error_{name}`;
 
+        // constants
+        // things that we know wont change :) 
+        // I wish they could be private properties in chrome 70 :( 
+        this.tcp = chrome.sockets.tcp;
+        this.ArrayBufferType = Int8Array;
+        this.ps = PublishSubscribe;
+
         // install listeners 
         const self = this;
         const rcb = ( info ) => {
@@ -23,11 +23,11 @@ class TcpSockets {
             ecb = ( info ) => {
                 self.errorHandler( info );
             };
-        tcp.onReceive.addListener( rcb );
-        tcp.onReceiveError.addListener( ecb );
+        this.tcp.onReceive.addListener( rcb );
+        this.tcp.onReceiveError.addListener( ecb );
         this.removeListeners = () => {
-            tcp.onReceive.removeListener( rcb );
-            tcp.onReceiveError.removeListener( ecb );
+            this.tcp.onReceive.removeListener( rcb );
+            this.tcp.onReceiveError.removeListener( ecb );
         };
     }
 
@@ -37,9 +37,9 @@ class TcpSockets {
 
         if ( this.socketID && info.socketId && this.socketID === info.socketId ) {
             // conversion 
-            const resultData = ( info.data ? BufferConverter.decode( info.data, ArrayBufferType ) : '' );
+            const resultData = ( info.data ? BufferConverter.decode( info.data, this.ArrayBufferType ) : '' );
             this.logger.debug( `receiveData data: ${this.socketID} ${resultData}.` );
-            ps.publish( 'receiveData' + this.id, {
+            this.ps.publish( 'receiveData' + this.id, {
                 rawInfo: info,
                 message: resultData
             } );
@@ -63,7 +63,7 @@ class TcpSockets {
             // this happens on the data channel
             if ( info.resultCode !== -100 ) {
                 this.logger.error( "onReceiveError error: " + JSON.stringify( info ) );
-                ps.publish( this.errorChannel, info );
+                this.ps.publish( this.errorChannel, info );
             }
         }
     }
@@ -78,11 +78,11 @@ class TcpSockets {
 
             const connectCB = ( result ) => {
                 this.logger.debug( "connect tcp.connect: " + JSON.stringify( result ) );
-                ps.publish( 'connected' + this.id, result );
+                this.ps.publish( 'connected' + this.id, result );
             };
 
             const create = new Promise( resolve => {
-                tcp.create( {}, ( createInfo ) => {
+                this.tcp.create( {}, ( createInfo ) => {
                     this.socketID = createInfo.socketId;
                     this.logger.debug( "connect tcp.create: " + JSON.stringify( createInfo ) );
                     resolve();
@@ -91,7 +91,7 @@ class TcpSockets {
 
             create.then( () => {
                 // now actually connect
-                tcp.connect( this.socketID, host, +port, connectCB );
+                this.tcp.connect( this.socketID, host, +port, connectCB );
             } );
         }
     }
@@ -101,10 +101,10 @@ class TcpSockets {
     sendCommand( dataObj ) {
 
         // convert data to be sent
-        const message = BufferConverter.encode( dataObj.msg + "\r\n", ArrayBufferType, 1 );
+        const message = BufferConverter.encode( dataObj.msg + "\r\n", this.ArrayBufferType, 1 );
 
-        tcp.send( this.socketID, message, ( info ) => {
-            ps.publish( 'sendData' + this.id, info );
+        this.tcp.send( this.socketID, message, ( info ) => {
+            this.ps.publish( 'sendData' + this.id, info );
         } );
     }
 
@@ -112,23 +112,23 @@ class TcpSockets {
         if ( this.socketID ) {
             const closeCB = () => {
                 this.logger.debug( this.id + " socket close!" );
-                ps.publish( 'closed' + this.id, {
+                this.ps.publish( 'closed' + this.id, {
                     socketID: this.socketID
                 } );
                 this.socketID = undefined;
             };
 
             const disconnect = new Promise( resolve => {
-                tcp.disconnect( this.socketID, ( info ) => {
+                this.tcp.disconnect( this.socketID, ( info ) => {
                     this.logger.debug( this.id + " socket disconnected!" );
-                    ps.publish( 'disconnected' + this.id, info );
+                    this.ps.publish( 'disconnected' + this.id, info );
                     resolve();
                 } );
             } );
 
             disconnect.then( () => {
                 try {
-                    tcp.close( this.socketID, closeCB );
+                    this.tcp.close( this.socketID, closeCB );
                 } catch ( e ) {
                     this.logger.log( "exception closing socket " + e );
                 }
