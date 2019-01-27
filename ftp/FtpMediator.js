@@ -113,7 +113,6 @@ FtpMediator.prototype.send = function ( data ) {
             'msg': data.filedata
         } );
     } else {
-        this.ftpCommandChannel.sendCommand
-        this.ps.publish( 'sendCommand' + this.ftpCommandChannel.id, data );
+        this.ftpCommandChannel.sendCommand( data );
     }
 };
