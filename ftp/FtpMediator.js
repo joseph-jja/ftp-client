@@ -108,6 +108,6 @@ FtpMediator.prototype.send = function ( channel, data ) {
     const ftpChannel = this[ channelNames[ channel ] ];
 
     ftpChannel.sendCommand( {
-        'msg': data.filedata
+        'msg': data
     } );
 };
