@@ -1,11 +1,9 @@
-
-
 // constants
 // things that we know wont change :) 
 // I wish they could be private properties in chrome 70 :( 
 const tcp = chrome.sockets.tcp,
     ArrayBufferType = Int8Array,
-    ps = PublishSubscribe,
+    ps = PublishSubscribe;
     
 class TcpSockets {
 
