@@ -38,7 +38,7 @@ class FtpMediator {
         this.ps.subscribe( this.ftpDataChannel.receiveChannel, this.receive, this );
         this.ps.subscribe( this.ftpDataChannel.errorChannel, this.logger.error, this );
 
-        
+
         // listen for connections and log
         if ( this.logger.logLevel === 'debug' ) {
             this.ps.subscribe( 'connected' + this.ftpCommandChannel.id, ( data ) => {
