@@ -11,9 +11,9 @@ class Logger {
         let resultMessage = '';
 
         // don't log password
-        if ( typeof message !== 'undefined' &&
-            message.indexOf( "PASS" ) === -1 ) {
-            resultMessage = message;
+        if ( typeof messageIn !== 'undefined' &&
+            messageIn.indexOf( "PASS" ) === -1 ) {
+            resultMessage = messageIn;
         } else {
             resultMessage = 'PASS command sent or no data to log.';
         }
