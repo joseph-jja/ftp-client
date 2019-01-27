@@ -59,7 +59,7 @@ class FtpMediator {
         this.ps.subscribe( 'sendData' + this.ftpDataChannel.id, ( data ) => {
             // when data channel sends data, no data is received
             // notify client
-            this.logger.log( "data sent: " + JSON.stringify( data ) );
+            this.logger.debug( "data sent: " + JSON.stringify( data ) );
             // close socket because we should be done with the passive port
             this.disconnect( this.ftpDataChannel.id );
 
@@ -96,7 +96,7 @@ FtpMediator.prototype.receive = function ( data ) {
                 channel: ftpChannel
             } );
         }
-        this.logger.debug( "callback: " + this.receiveCB );
+        //this.logger.debug( "callback: " + this.receiveCB );
         this.receiveCB.call( this.receiveHandler, result );
     }
 };
