@@ -17,55 +17,50 @@ class TcpSockets {
 
         // install listeners 
         const self = this;
-        const rcb = ( info ) => {
-                self.receiveHandler( info );
-            },
-            ecb = ( info ) => {
-                self.errorHandler( info );
-            };
-        this.tcp.onReceive.addListener( rcb );
-        this.tcp.onReceiveError.addListener( ecb );
-        this.removeListeners = () => {
-            this.tcp.onReceive.removeListener( rcb );
-            this.tcp.onReceiveError.removeListener( ecb );
+
+        // add listener to tcp for receiving data and errors
+        // each socket gets it's own listener on connect
+        const receiveHandler = ( info ) {
+
+            if ( self.socketID && info.socketId && self.socketID === info.socketId ) {
+                // conversion 
+                const resultData = ( info.data ? BufferConverter.decode( info.data, self.ArrayBufferType ) : '' );
+                self.logger.debug( `receiveData data: ${self.socketID} ${resultData}.` );
+                self.ps.publish( 'receiveData' + self.id, {
+                    rawInfo: info,
+                    message: resultData
+                } );
+            }
         };
-    }
 
-    // add listener to tcp for receiving data and errors
-    // each socket gets it's own listener on connect
-    receiveHandler( info ) {
-
-        if ( this.socketID && info.socketId && this.socketID === info.socketId ) {
-            // conversion 
-            const resultData = ( info.data ? BufferConverter.decode( info.data, this.ArrayBufferType ) : '' );
-            this.logger.debug( `receiveData data: ${this.socketID} ${resultData}.` );
-            this.ps.publish( 'receiveData' + this.id, {
-                rawInfo: info,
-                message: resultData
-            } );
-        }
-    }
-
-    // taken from https://cs.chromium.org/chromium/src/net/base/net_error_list.h?sq=package:chromium&l=111
-    // Ranges:
-    //     0- 99 System related errors
-    //   100-199 Connection related errors
-    //   200-299 Certificate errors
-    //   300-399 HTTP errors
-    //   400-499 Cache errors
-    //   500-599 ?
-    //   600-699 FTP errors
-    //   700-799 Certificate manager errors
-    //   800-899 DNS resolver errors
-    errorHandler( info ) {
-        if ( this.socketID && info.socketId && this.socketID == info.socketID ) {
-            // error code -100 is connection closed in relation to TCP FIN
-            // this happens on the data channel
-            if ( info.resultCode !== -100 ) {
-                this.logger.error( "onReceiveError error: " + JSON.stringify( info ) );
-                this.ps.publish( this.errorChannel, info );
+        // taken from https://cs.chromium.org/chromium/src/net/base/net_error_list.h?sq=package:chromium&l=111
+        // Ranges:
+        //     0- 99 System related errors
+        //   100-199 Connection related errors
+        //   200-299 Certificate errors
+        //   300-399 HTTP errors
+        //   400-499 Cache errors
+        //   500-599 ?
+        //   600-699 FTP errors
+        //   700-799 Certificate manager errors
+        //   800-899 DNS resolver errors
+        const errorHandler = ( info ) {
+            if ( self.socketID && info.socketId && self.socketID === info.socketId ) {
+                // error code -100 is connection closed in relation to TCP FIN
+                // this happens on the data channel
+                if ( info.resultCode !== -100 ) {
+                    self.logger.error( "onReceiveError error: " + JSON.stringify( info ) );
+                    self.ps.publish( self.errorChannel, info );
+                }
             }
         }
+
+        this.tcp.onReceive.addListener( receiveHandler );
+        this.tcp.onReceiveError.addListener( errorHandler );
+        this.removeListeners = () => {
+            this.tcp.onReceive.removeListener( receiveHandler );
+            this.tcp.onReceiveError.removeListener( errorHandler );
+        };
     }
 
     // connect and raise events
