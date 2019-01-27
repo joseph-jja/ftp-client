@@ -1,3 +1,5 @@
+
+
 // constants
 // things that we know wont change :) 
 // I wish they could be private properties in chrome 70 :( 
@@ -7,7 +9,6 @@ const tcp = chrome.sockets.tcp,
     
 class TcpSockets {
 
-
     constructor( name ) {
         this.socketID = undefined;
         this.name = name;
@@ -15,13 +16,28 @@ class TcpSockets {
         this.logger = new Logger( 'TcpSockets' );
         this.receiveChannel = `receive_${name}`;
         this.errorChannel = `error_{name}`;
+        
+        // install listeners 
+        const self = this;
+        const rcb = (info) => {
+                self.receiveHandler(info);
+            }, 
+              ecb = (info) => {
+                self.errorHandler(info);
+            };
+            tcp.onReceive.addListener(rcb );
+            tcp.onReceiveError.addListener( ecb);
+        this.removeListeners = () => {
+            tcp.onReceive.removeListener(rcb );
+            tcp.onReceiveError.removeListener( ecb);
+        };
     }
 
     // add listener to tcp for receiving data and errors
     // each socket gets it's own listener on connect
     receiveHandler( info ) {
 
-        if ( this.socketID && info.socketId && this.socketID == info.socketID ) {
+        if ( this.socketID && info.socketId && this.socketID === info.socketId ) {
             // conversion 
             const resultData = ( info.data ? BufferConverter.decode( info.data, ArrayBufferType ) : '' );
             this.logger.debug( `receiveData data: ${this.socketID} ${resultData}.` );
@@ -61,10 +77,6 @@ class TcpSockets {
             port = ( typeof data.port !== 'undefined' ? data.port : 21 );
 
         if ( host && host.length > 0 ) {
-
-            // install listeners 
-            tcp.onReceive.addListener( this.receiveHandler );
-            tcp.onReceiveError.addListener( this.errorHandler );
 
             const connectCB = ( result ) => {
                 this.logger.debug( "connect tcp.connect: " + JSON.stringify( result ) );
@@ -124,8 +136,5 @@ class TcpSockets {
                 }
             } );
         }
-        // uninstall listeners 
-        tcp.onReceive.removeListener( this.receive );
-        tcp.onReceiveError.removeListener( this.errorHandler );
     }
 };
