@@ -103,19 +103,11 @@ FtpMediator.prototype.receive = function ( data ) {
 };
 
 // send command
-FtpMediator.prototype.send = function ( data ) {
+FtpMediator.prototype.send = function ( channel, data ) {
 
-    // always send commands on command channel
-    // so we peek into the message looking for a file upload
-    if ( typeof data.filedata !== 'undefined' ) {
-        this.logger.debug( "Got data? " + data.filedata );
-        // the socket just needs a message to send, but the mediator uses filedata 
-        // as an identifier as the type of message which translates into the channel to use
-        // OMG what was I thinking?
-        this.ftpDataChannel.sendCommand( {
-            'msg': data.filedata
-        } );
-    } else {
-        this.ftpCommandChannel.sendCommand( data );
-    }
+    const ftpChannel = this[ channelNames[ channel ] ];
+
+    ftpChannel.sendCommand( {
+        'msg': data.filedata
+    } );
 };
