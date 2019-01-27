@@ -6,7 +6,7 @@ class TcpSockets {
         this.id = name;
         this.logger = new Logger( 'TcpSockets' );
         this.receiveChannel = `receive_${name}`;
-        this.errorChannel = `error_{name}`;
+        this.errorChannel = `error_${name}`;
 
         // constants
         // things that we know wont change :) 
@@ -26,7 +26,7 @@ class TcpSockets {
                 // conversion 
                 const resultData = ( info.data ? BufferConverter.decode( info.data, self.ArrayBufferType ) : '' );
                 self.logger.debug( `receiveData data: ${self.socketID} ${resultData}.` );
-                self.ps.publish( 'receiveData' + self.id, {
+                self.ps.publish( self.receiveChannel, {
                     rawInfo: info,
                     message: resultData
                 } );
