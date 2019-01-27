@@ -27,7 +27,6 @@ class FtpMediator {
             this.ftpCommandChannel.disconnect();
             this.ftpCommandChannel.removeListeners();
         }, this.ftpCommandChannel );
-        this.ps.subscribe( 'sendCommand' + this.ftpCommandChannel.id, this.ftpCommandChannel.sendCommand, this.ftpCommandChannel );
         this.ps.subscribe( 'receiveData' + this.ftpCommandChannel.id, this.receive, this );
 
         // setup data channel
@@ -35,7 +34,6 @@ class FtpMediator {
             this.ftpDataChannel.disconnect();
             this.ftpCommandChannel.removeListeners();
         }, this.ftpDataChannel );
-        this.ps.subscribe( 'sendCommand' + this.ftpDataChannel.id, this.ftpDataChannel.sendCommand, this.ftpDataChannel );
         this.ps.subscribe( 'receiveData' + this.ftpDataChannel.id, this.receive, this );
 
         // listen for connections and log
@@ -102,7 +100,7 @@ FtpMediator.prototype.receive = function ( data ) {
 };
 
 // send command
-FtpMediator.prototype.send = function ( channel, data ) {
+FtpMediator.prototype.send = function ( data ) {
 
     // always send commands on command channel
     // so we peek into the message looking for a file upload
@@ -111,10 +109,11 @@ FtpMediator.prototype.send = function ( channel, data ) {
         // the socket just needs a message to send, but the mediator uses filedata 
         // as an identifier as the type of message which translates into the channel to use
         // OMG what was I thinking?
-        this.ps.publish( 'sendCommand' + this.ftpDataChannel.id, {
+        this.ftpDataChannel.sendCommand( {
             'msg': data.filedata
         } );
     } else {
+        this.ftpCommandChannel.sendCommand
         this.ps.publish( 'sendCommand' + this.ftpCommandChannel.id, data );
     }
 };
