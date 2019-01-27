@@ -15,10 +15,10 @@ function FtpClient() {
     this.receivedData = document.getElementById( "receivedData" );
 
     this.logger = new Logger( 'FtpClient' );
-    
+
     this.loggerData.style.display = 'none';
     this.receivedData.style.display = 'none';
-            
+
     this.channel = 'command';
 
     this.commandList = [];
