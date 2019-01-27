@@ -24,7 +24,9 @@ class Logger {
     }
 
     debug( message ) {
-        console.debug( this.callingName, filterMessage( message ) );
+        if ( this.logLevel === 'debug' ) {
+            console.debug( this.callingName, filterMessage( message ) );
+        }
     }
 
     error( message ) {

@@ -16,10 +16,18 @@ class TcpSockets {
     }
 
     // add listener to tcp for receiving data and errors
-    // we only want to add this once though    
+    // each socket gets it's own listener on connect
     receiveHandler( info ) {
-        //logger.log("TcpWrapper onReceive: " + JSON.stringify(info));
-        ps.publish( this.receiveChannel, info );
+
+        if ( this.socketID && info.socketId && this.socketID == info.socketID ) {
+            // conversion 
+            const resultData = ( info.data ? BufferConverter.decode( info.data, ArrayBufferType ) : '' );
+            logger.debug( `receiveData data: ${this.socketID} ${resultData}.` );
+            ps.publish( 'receiveData' + this.id, {
+                rawInfo: info,
+                message: resultData
+            } );
+        }
     }
 
     // taken from https://cs.chromium.org/chromium/src/net/base/net_error_list.h?sq=package:chromium&l=111
@@ -34,11 +42,13 @@ class TcpSockets {
     //   700-799 Certificate manager errors
     //   800-899 DNS resolver errors
     errorHandler( info ) {
-        // error code -100 is connection closed in relation to TCP FIN
-        // this happens on the data channel
-        if ( info.resultCode !== -100 ) {
-            logger.error( "TcpWrapper onReceiveError error: " + JSON.stringify( info ) );
-            ps.publish( this.errorChannel, info );
+        if ( this.socketID && info.socketId && this.socketID == info.socketID ) {
+            // error code -100 is connection closed in relation to TCP FIN
+            // this happens on the data channel
+            if ( info.resultCode !== -100 ) {
+                logger.error( "onReceiveError error: " + JSON.stringify( info ) );
+                ps.publish( this.errorChannel, info );
+            }
         }
     }
 
@@ -55,19 +65,19 @@ class TcpSockets {
             tcp.onReceiveError.addListener( this.errorHandler );
 
             const connectCB = ( result ) => {
-                //logger.log.call(this, "TcpWrapper connect tcp.connect: " + JSON.stringify(result));
+                logger.debug( "connect tcp.connect: " + JSON.stringify( result ) );
                 ps.publish( 'connected' + this.id, result );
             };
 
             const create = new Promise( resolve => {
                 tcp.create( {}, ( createInfo ) => {
-                    resolve( createInfo );
+                    this.socketID = createInfo.socketId;
+                    logger.debug( "connect tcp.create: " + JSON.stringify( createInfo ) );
+                    resolve();
                 } );
             } );
 
-            create.then( ( createInfo ) => {
-                //logger.log(" connect tcp.create: " + JSON.stringify(createInfo));
-                this.socketID = createInfo.socketId;
+            create.then( () => {
                 // now actually connect
                 tcp.connect( this.socketID, host, +port, connectCB );
             } );
@@ -78,38 +88,18 @@ class TcpSockets {
     // object should contain { msg: string }
     sendCommand( dataObj ) {
 
+        // convert data to be sent
         const message = BufferConverter.encode( dataObj.msg + "\r\n", ArrayBufferType, 1 );
-        //logger.log("TcpWrapper sendCommand: " + this.id + " " + BufferConverter.decode(message, ArrayBufferType));
 
         tcp.send( this.socketID, message, ( info ) => {
-                ps.publish( 'sendData' + this.id, info );
-            };
-        }
-    }
-
-    // receive data and raise events
-    receiveData( info ) {
-
-        // compare socket ids and log
-        if ( this.socketID && info.socketId !== this.socketID ) {
-            logger.log( "receiveData sockets don't match: " + this.socketID + " " + info.socketId );
-            return;
-        }
-
-        // conversion 
-        const resultData = BufferConverter.decode( info.data, ArrayBufferType );
-        //logger.log(`TcpWrapper receiveData data: ${this.socketID} ` + resultData);
-
-        ps.publish( 'receiveData' + this.id, {
-            rawInfo: info,
-            message: resultData
+            ps.publish( 'sendData' + this.id, info );
         } );
     }
 
     disconnect() {
         if ( this.socketID ) {
             const closeCB = () => {
-                logger.log( this.id + " socket close!" );
+                logger.debug( this.id + " socket close!" );
                 ps.publish( 'closed' + this.id, {
                     socketID: this.socketID
                 } );
@@ -118,7 +108,7 @@ class TcpSockets {
 
             const disconnect = new Promise( resolve => {
                 tcp.disconnect( this.socketID, ( info ) => {
-                    logger.log( this.id + " socket disconnected!" );
+                    logger.debug( this.id + " socket disconnected!" );
                     ps.publish( 'disconnected' + this.id, info );
                     resolve();
                 } );
@@ -128,7 +118,7 @@ class TcpSockets {
                 try {
                     tcp.close( this.socketID, closeCB );
                 } catch ( e ) {
-                    logger.log( "TcpWrapper exception closing socket " + e );
+                    logger.log( "exception closing socket " + e );
                 }
             } );
         }
