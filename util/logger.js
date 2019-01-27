@@ -1,6 +1,12 @@
 class Logger {
 
-    function filterMessage( messageIn ) {
+    constructor( callerName, options = {} ) {
+        this.callingName = callerName;
+        this.logLevel = options.logLevel || 'info';
+    }
+
+    // TODO make this private
+    filterMessage( messageIn ) {
 
         let resultMessage = '';
 
@@ -12,11 +18,6 @@ class Logger {
             resultMessage = 'PASS command sent or no data to log.';
         }
         return resultMessage;
-    }
-
-    constructor( callerName, options = {} ) {
-        this.callingName = callerName;
-        this.logLevel = options.logLevel || 'info';
     }
 
     log( message ) {
