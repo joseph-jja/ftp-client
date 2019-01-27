@@ -2,7 +2,7 @@ class Logger {
 
     constructor( callerName, options = {} ) {
         this.callingName = callerName;
-        this.logLevel = options.logLevel || 'debug';
+        this.logLevel = options.logLevel || 'info';
     }
 
     // TODO make this private
