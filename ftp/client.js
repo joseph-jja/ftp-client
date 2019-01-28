@@ -30,13 +30,13 @@ function FtpClient() {
 
 // commands are always sent on the command channel
 FtpClient.prototype.sendCommand = function () {
-    mediator.send( 'ftpCommandChannel', this.commandList[ this.commandIndex ] );
+    mediator.send( mediator.ftpCommandChannel, this.commandList[ this.commandIndex ] );
     this.commandIndex++;
 };
 
 // data is always sent on the data channel
 FtpClient.prototype.sendData = function ( data ) {
-    mediator.send( 'ftpDataChannel', this.commandList[ this.commandIndex ] );
+    mediator.send( mediator.ftpDataChannel, this.commandList[ this.commandIndex ] );
 };
 
 FtpClient.prototype.receiveCallback = function ( info ) {
