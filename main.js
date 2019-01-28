@@ -1,11 +1,14 @@
-var ftp, mediator;
 // main
 window.onload = function () {
 
-    ftp = new FtpClient();
+    const ftp = new FtpClient();
 
-    mediator = new FtpMediator( ftp, ftp.receiveCallback );
+    const mediator = new FtpMediator( ftp, ftp.receiveCallback );
 
+    const version = chrome.runtime.getManifest().version;
+    
+    document.getElementById('app-version').innerHTML = version;
+    
     const resultDataObj = document.getElementById( 'resultData' );
     function dataChangeEvent( list ) {
          //console.log( list );
