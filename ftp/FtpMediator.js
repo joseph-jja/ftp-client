@@ -63,15 +63,15 @@ class FtpMediator {
 
     // connect and on which channel
     connect( channel, data ) {
-        const ftpChannel = this[ channelNames [ channel ] ];
+        const ftpChannel = this[ channelNames[ channel ] ];
 
         this.logger.debug( `connect: ${ftpChannel.id} channel ${JSON.stringify( data )}` );
         ftpChannel.connect( data );
     }
 
     // disconnect
-    disconnect( channel ) {       
-        const ftpChannel = this[ channelNames [ channel ] ];
+    disconnect( channel ) {
+        const ftpChannel = this[ channelNames[ channel ] ];
         ftpChannel.disconnect();
         ftpChannel.removeListeners();
     }
@@ -95,7 +95,7 @@ FtpMediator.prototype.receive = function ( data ) {
 
         // which channel are we?
         const channel = ( data.rawInfo.socketId === this.ftpCommandChannel.socketID ) ? COMMAND_CHANNEL_NAME : DATA_CHANNEL_NAME;
-        const ftpChannel = this[ channelNames [ channel ] ];
+        const ftpChannel = this[ channelNames[ channel ] ];
 
         // debugging 
         this.logger.debug( `receive: ${data.rawInfo.socketId} ${this.ftpCommandChannel.socketID}` );
