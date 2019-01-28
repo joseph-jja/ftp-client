@@ -71,7 +71,7 @@ class FtpMediator {
 
     // connect and on which channel
     connect( channel, data ) {
-        const ftpChannel = ( channel === COMMAND_CHANNEL_NAME ? this.ftpCommandChannel : this.ftpDataChannel );
+        const ftpChannel = this[ channelNames [ channel ] ];
 
         this.logger.debug( `connect: ${ftpChannel.id} channel ${JSON.stringify( data )}` );
         ftpChannel.connect( data );
@@ -84,7 +84,6 @@ class FtpMediator {
 
     // send command
     send( channel, data ) {
-
         channel.sendCommand( {
             'msg': data
         } );
@@ -102,7 +101,7 @@ FtpMediator.prototype.receive = function ( data ) {
 
         // which channel are we?
         const channel = ( data.rawInfo.socketId === this.ftpCommandChannel.socketID ) ? COMMAND_CHANNEL_NAME : DATA_CHANNEL_NAME;
-        const ftpChannel = ( channel === COMMAND_CHANNEL_NAME ? this.ftpCommandChannel : this.ftpDataChannel );
+        const ftpChannel = this[ channelNames [ channel ] ];
 
         // debugging 
         this.logger.debug( `receive: ${data.rawInfo.socketId} ${this.ftpCommandChannel.socketID}` );
