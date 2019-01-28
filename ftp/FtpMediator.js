@@ -74,21 +74,18 @@ class FtpMediator {
             'msg': data
         } );
     }
+
+    // receive data
+    receive( data ) {
+
+        this.logger.debug( "receive: " + JSON.stringify( data ) );
+
+        // which channel are we?
+        const channel = ( data.rawInfo.socketId === this.ftpCommandChannel.socketID ) ? COMMAND_CHANNEL_NAME : DATA_CHANNEL_NAME;
+
+        // debugging 
+        this.logger.debug( `receive: ${channel} ${this.ftpCommandChannel.socketID}` );
+
+        this.receiveCB.call( this.receiveHandler, data );
+    }
 }
-
-// receive data
-FtpMediator.prototype.receive = function ( data ) {
-
-    this.logger.debug( "receive: " + JSON.stringify( data ) );
-
-    // default is to pass just the data
-    const result = Object.assign( {}, data );
-
-    // which channel are we?
-    const channel = ( data.rawInfo.socketId === this.ftpCommandChannel.socketID ) ? COMMAND_CHANNEL_NAME : DATA_CHANNEL_NAME;
-    
-    // debugging 
-    this.logger.debug( `receive: ${channel} ${this.ftpCommandChannel.socketID}` );
-    
-    this.receiveCB.call( this.receiveHandler, result );
-};
