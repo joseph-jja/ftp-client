@@ -27,18 +27,10 @@ class FtpMediator {
         this.receiveCB = receiveCB;
 
         // setup command channel
-        this.ps.subscribe( 'disconnect' + this.ftpCommandChannel.id, () => {
-            this.ftpCommandChannel.disconnect();
-            this.ftpCommandChannel.removeListeners();
-        }, this.ftpCommandChannel );
         this.ps.subscribe( this.ftpCommandChannel.receiveChannel, this.receive, this );
         this.ps.subscribe( this.ftpCommandChannel.errorChannel, this.logger.error, this );
 
         // setup data channel
-        this.ps.subscribe( 'disconnect' + this.ftpDataChannel.id, () => {
-            this.ftpDataChannel.disconnect();
-            this.ftpCommandChannel.removeListeners();
-        }, this.ftpDataChannel );
         this.ps.subscribe( this.ftpDataChannel.receiveChannel, this.receive, this );
         this.ps.subscribe( this.ftpDataChannel.errorChannel, this.logger.error, this );
 
@@ -78,8 +70,10 @@ class FtpMediator {
     }
 
     // disconnect
-    disconnect( channel ) {
-        this.ps.publish( 'disconnect' + channel, {} );
+    disconnect( channel ) {       
+        const ftpChannel = this[ channelNames [ channel ] ];
+        ftpChannel.disconnect();
+        ftpChannel.removeListeners();
     }
 
     // send command
