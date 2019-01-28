@@ -20,7 +20,7 @@ class TcpSockets {
 
         // add listener to tcp for receiving data and errors
         // each socket gets it's own listener on connect
-        const receiveHandler = ( info ) {
+        const receiveHandler = ( info ) => {
 
             if ( self.socketID && info.socketId && self.socketID === info.socketId ) {
                 // conversion 
@@ -44,7 +44,7 @@ class TcpSockets {
         //   600-699 FTP errors
         //   700-799 Certificate manager errors
         //   800-899 DNS resolver errors
-        const errorHandler = ( info ) {
+        const errorHandler = ( info ) => {
             if ( self.socketID && info.socketId && self.socketID === info.socketId ) {
                 // error code -100 is connection closed in relation to TCP FIN
                 // this happens on the data channel
@@ -96,7 +96,7 @@ class TcpSockets {
     sendCommand( dataObj ) {
 
         // convert data to be sent
-        const message = BufferConverter.encode( dataObj.msg + "\r\n", this.ArrayBufferType, 1 );
+        const message = BufferConverter.encode( dataObj.msg + '\r\n', this.ArrayBufferType, 1 );
 
         this.tcp.send( this.socketID, message, ( info ) => {
             this.ps.publish( 'sendData' + this.id, info );
