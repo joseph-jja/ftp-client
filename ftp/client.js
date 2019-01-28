@@ -47,17 +47,22 @@ FtpClient.prototype.receiveCallback = function ( info ) {
     statusCode = ResponseParser.parseStatusCode( info );
     this.logger.debug( `${this.commandList[ this.commandIndex - 1 ]} ${statusCode} ${FtpResponseCodes[ statusCode ]}` );
 
-    this.logger.debug( JSON.stringify( info ) );
-    if ( info && info.message ) {
-        result = info.message;
-        this.logger.log( `Channel name ${info.channel.name}` );
-        buffer = this.resultData.innerHTML;
-        this.resultData.innerHTML = buffer + result;
-        this.resultData.scrollTop = this.resultData.scrollHeight;
+    if ( info ) { 
+        if ( info.rawInfo ) {
+            this.logger.debug( JSON.stringify( info.rawInfo ) );
+        }
+        if ( info.message ) {
+            result = info.message;
+            this.logger.debug( info.message );
+            this.logger.log( `Channel name ${info.channel.name}` );
+            buffer = this.resultData.innerHTML;
+            this.resultData.innerHTML = buffer + result;
+            this.resultData.scrollTop = this.resultData.scrollHeight;
 
-        if ( info.channel && info.channel.name === 'data' ) {
-            buffer = this.receivedFile.value;
-            this.receivedFile.value = buffer + result;
+            if ( info.channel && info.channel.name === 'data' ) {
+                buffer = this.receivedFile.value;
+                this.receivedFile.value = buffer + result;
+            }
         }
     }
 
