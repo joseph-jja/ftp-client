@@ -9,7 +9,7 @@ const channelNames = {
 // man in the middle for mediating between UI and tcp code
 class FtpMediator {
 
-    constructor( receiver, receiveHandler ) {
+    constructor( receiveHandler, receiveCB ) {
 
         // the channels and their sockets
         this.ftpCommandChannel = new TcpSockets( COMMAND_CHANNEL_NAME );
@@ -19,8 +19,8 @@ class FtpMediator {
 
         this.logger = new Logger( 'FtpMediator' );
 
-        this.receiveHandler = receiver;
-        this.receiveCB = receiveHandler;
+        this.receiveHandler = receiveHandler;
+        this.receiveCB = receiveCB;
 
         // setup command channel
         this.ps.subscribe( 'disconnect' + this.ftpCommandChannel.id, () => {
