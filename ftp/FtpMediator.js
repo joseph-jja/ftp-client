@@ -36,10 +36,7 @@ class FtpMediator {
 
         // on connect to the data port no data is actually sent 
         // so the onReceive is not fired
-        this.ps.subscribe( 'connected' + this.ftpDataChannel.id, ( data ) => {
-            this.logger.debug( `connected ${JSON.stringify( data )} ${this.ftpDataChannel.socketID}` );
-            this.receiveCB.call( this.receiveHandler, data );
-        } );
+        this.ps.subscribe( 'connected' + this.ftpDataChannel.id, this.receive, this );
 
         // listen for data connection data sent
         this.ps.subscribe( 'sendData' + this.ftpDataChannel.id, ( data ) => {
@@ -82,9 +79,10 @@ class FtpMediator {
 
         // which channel are we?
         const channel = ( data.rawInfo.socketId === this.ftpCommandChannel.socketID ) ? COMMAND_CHANNEL_NAME : DATA_CHANNEL_NAME;
+        const ftpChannel = this[ channelNames[ channel ] ];
 
         // debugging 
-        this.logger.debug( `receive: ${channel} ${this.ftpCommandChannel.socketID}` );
+        this.logger.debug( `receive: ${channel} ${ftpChannel.socketID}` );
 
         this.receiveCB.call( this.receiveHandler, data );
     }
