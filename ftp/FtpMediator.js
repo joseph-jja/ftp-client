@@ -34,14 +34,6 @@ class FtpMediator {
         this.ps.subscribe( this.ftpDataChannel.receiveChannel, this.receive, this );
         this.ps.subscribe( this.ftpDataChannel.errorChannel, this.logger.error, this );
 
-
-        // listen for connections and log
-        if ( this.logger.logLevel === 'debug' ) {
-            this.ps.subscribe( 'connected' + this.ftpCommandChannel.id, ( data ) => {
-                this.logger.debug( `connected ${JSON.stringify( data )} ${this.ftpCommandChannel.socketID}` );
-            } );
-        }
-
         // on connect to the data port no data is actually sent 
         // so the onReceive is not fired
         this.ps.subscribe( 'connected' + this.ftpDataChannel.id, ( data ) => {
