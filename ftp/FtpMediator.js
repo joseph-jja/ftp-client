@@ -88,7 +88,7 @@ class FtpMediator {
         const ftpChannel = ( channel === COMMAND_CHANNEL_NAME ? this.ftpCommandChannel : this.ftpDataChannel );
 
         ftpChannel.sendCommand( {
-            'msg': data.filedata
+            'msg': data
         } );
     }
 }
