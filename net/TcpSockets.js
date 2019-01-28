@@ -28,7 +28,12 @@ class TcpSockets {
                 self.logger.debug( `receiveData data: ${self.socketID} ${resultData}.` );
                 self.ps.publish( self.receiveChannel, {
                     rawInfo: info,
-                    message: resultData
+                    message: resultData,
+                    channel: {
+                        name: self.name,
+                        id: self.id,
+                        socketID: self.socketID,
+                    }
                 } );
             }
         };
