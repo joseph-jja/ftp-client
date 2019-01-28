@@ -47,7 +47,7 @@ FtpClient.prototype.receiveCallback = function ( info ) {
     statusCode = ResponseParser.parseStatusCode( info );
     this.logger.debug( `${this.commandList[ this.commandIndex - 1 ]} ${statusCode} ${FtpResponseCodes[ statusCode ]}` );
 
-    if ( info ) { 
+    if ( info ) {
         if ( info.rawInfo ) {
             this.logger.debug( JSON.stringify( info.rawInfo ) );
         }
