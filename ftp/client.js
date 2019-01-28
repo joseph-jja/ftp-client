@@ -36,7 +36,7 @@ FtpClient.prototype.sendCommand = function () {
 
 // data is always sent on the data channel
 FtpClient.prototype.sendData = function ( data ) {
-    mediator.send( 'ftpDataChannel', data );
+    mediator.send( 'ftpDataChannel', this.commandList[ this.commandIndex ] );
 };
 
 FtpClient.prototype.receiveCallback = function ( info ) {
@@ -45,22 +45,16 @@ FtpClient.prototype.receiveCallback = function ( info ) {
 
     // we now have status codes from commands sent on command channel
     statusCode = ResponseParser.parseStatusCode( info );
-    //if ( statusCode ) {
-    this.logger.log( this.commandList[ this.commandIndex - 1 ] + " " + statusCode + " " + FtpResponseCodes[ statusCode ] );
-    //}
+    this.logger.debug( `${this.commandList[ this.commandIndex - 1 ]} ${statusCode} ${FtpResponseCodes[ statusCode ]}` );
 
-    //this.logger.log( JSON.stringify(info));
+    this.logger.debug( JSON.stringify(info));
     if ( info && info.message ) {
         result = info.message;
-        this.logger.log( 'x ' + JSON.stringify( info.channel ) );
+        this.logger.log( `Channel name ${info.channel.name}` );
         buffer = this.resultData.innerHTML;
         this.resultData.innerHTML = buffer + result;
         this.resultData.scrollTop = this.resultData.scrollHeight;
-        //this.logger.log( JSON.stringify(info));
-        //    let directories = this.receivedFile.value.split( /\n/ );
-        //    for ( let x = 0, end = directories.length; x < end; x++ ) {
-        //        Logger.log( directories[ x ] );
-        //    }
+        
         if ( info.channel && info.channel.name === 'data' ) {
             buffer = this.receivedFile.value;
             this.receivedFile.value = buffer + result;
