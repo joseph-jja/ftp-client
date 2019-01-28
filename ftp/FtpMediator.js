@@ -80,6 +80,16 @@ class FtpMediator {
     disconnect( channel ) {
         this.ps.publish( 'disconnect' + channel, {} );
     }
+
+    // send command
+    send( channel, data ) {
+
+        const ftpChannel = this[ channelNames[ channel ] ];
+
+        ftpChannel.sendCommand( {
+            'msg': data.filedata
+        } );
+    }
 }
 
 // receive data
@@ -102,12 +112,3 @@ FtpMediator.prototype.receive = function ( data ) {
     }
 };
 
-// send command
-FtpMediator.prototype.send = function ( channel, data ) {
-
-    const ftpChannel = this[ channelNames[ channel ] ];
-
-    ftpChannel.sendCommand( {
-        'msg': data
-    } );
-};
