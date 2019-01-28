@@ -10,10 +10,10 @@ const channelNames = {
 class FtpMediator {
 
     constructor( receiveHandler, receiveCB ) {
-            
+
         if ( !receiveCB ) {
-            throw('receive callback required');
-        }        
+            throw ( 'receive callback required' );
+        }
 
         // the channels and their sockets
         this.ftpCommandChannel = new TcpSockets( COMMAND_CHANNEL_NAME );
@@ -71,7 +71,7 @@ class FtpMediator {
 
     // connect and on which channel
     connect( channel, data ) {
-        const ftpChannel = (channel === COMMAND_CHANNEL_NAME ? this.ftpCommandChannel: this.ftpDataChannel);
+        const ftpChannel = ( channel === COMMAND_CHANNEL_NAME ? this.ftpCommandChannel : this.ftpDataChannel );
 
         this.logger.debug( `connect: ${ftpChannel.id} channel ${JSON.stringify( data )}` );
         ftpChannel.connect( data );
@@ -85,7 +85,7 @@ class FtpMediator {
     // send command
     send( channel, data ) {
 
-        const ftpChannel = (channel === COMMAND_CHANNEL_NAME ? this.ftpCommandChannel: this.ftpDataChannel);
+        const ftpChannel = ( channel === COMMAND_CHANNEL_NAME ? this.ftpCommandChannel : this.ftpDataChannel );
 
         ftpChannel.sendCommand( {
             'msg': data.filedata
@@ -97,22 +97,21 @@ class FtpMediator {
 FtpMediator.prototype.receive = function ( data ) {
 
     this.logger.debug( "receive: " + JSON.stringify( data ) );
-    
+
     // default is to pass just the data
     let result = Object.assign( {}, data );
     if ( data && data.rawInfo && data.rawInfo.socketId ) {
-        
+
         // which channel are we?
         const channel = ( data.rawInfo.socketId === this.ftpCommandChannel.socketID ) ? COMMAND_CHANNEL_NAME : DATA_CHANNEL_NAME;
-        const ftpChannel = (channel === COMMAND_CHANNEL_NAME ? this.ftpCommandChannel: this.ftpDataChannel);
-        
+        const ftpChannel = ( channel === COMMAND_CHANNEL_NAME ? this.ftpCommandChannel : this.ftpDataChannel );
+
         // debugging 
         this.logger.debug( `receive: ${data.rawInfo.socketId} ${this.ftpCommandChannel.socketID}` );
-        
+
         result = Object.assign( {}, data, {
             channel: ftpChannel
         } );
     }
     this.receiveCB.call( this.receiveHandler, result );
 };
-
