@@ -1,89 +1,121 @@
-const COMMAND_CHANNEL_NAME = 'command',
-    DATA_CHANNEL_NAME = 'data';
+// ftp client library
+// ok so mediator and tcp-wrapper handle network communication
+// this now becomes the UI portion
+// so this object knows UI elements
+// http://www.ncftp.com/libncftp/doc/ftp_overview.html
+function FtpClient() {
 
-const channelNames = {
-    [ COMMAND_CHANNEL_NAME ]: 'ftpCommandChannel',
-    [ DATA_CHANNEL_NAME ]: 'ftpDataChannel'
+    this.hostname = document.getElementById( "ftpHost" );
+    this.port = document.getElementById( "ftpPort" );
+    this.username = document.getElementById( "username" );
+    this.password = document.getElementById( "password" );
+    this.resultData = document.getElementById( "resultData" );
+    this.receivedFile = document.getElementById( "receivedFile" );
+    this.loggerData = document.getElementById( "loggerData" );
+    this.receivedData = document.getElementById( "receivedData" );
+
+    this.logger = new Logger( 'FtpClient' );
+
+    this.loggerData.style.display = 'none';
+    this.receivedData.style.display = 'none';
+
+    this.channel = 'command';
+
+    this.commandList = [];
+    this.commandIndex = 0;
+
+    this.uploadData = undefined;
+    this.resultData.innerHTML = "";
+}
+
+// commands are always sent on the command channel
+FtpClient.prototype.sendCommand = function () {
+    mediator.send( mediator.ftpCommandChannel, this.commandList[ this.commandIndex ] );
+    this.commandIndex++;
 };
 
-// man in the middle for mediating between UI and tcp code
-class FtpMediator {
+// data is always sent on the data channel
+FtpClient.prototype.sendData = function ( data ) {
+    mediator.send( mediator.ftpDataChannel, this.commandList[ this.commandIndex ] );
+};
 
-    constructor( receiveHandler, receiveCB ) {
+FtpClient.prototype.receiveCallback = function ( info ) {
+    let result;
 
-        if ( !receiveCB ) {
-            throw ( 'receive callback required' );
+    // we now have status codes from commands sent on command channel
+    const statusCode = ResponseParser.parseStatusCode( info );
+    this.logger.debug( `${this.commandList[ this.commandIndex - 1 ]} ${statusCode} ${FtpResponseCodes[ statusCode ]}` );
+
+    if ( info ) {
+        if ( info.rawInfo ) {
+            this.logger.debug( JSON.stringify( info.rawInfo ) );
         }
+        if ( info.message ) {
+            result = info.message;
+            this.logger.debug( info.message );
+            this.logger.log( `Channel name ${info.channel.name}` );
+            buffer = this.resultData.innerHTML;
+            this.resultData.innerHTML = buffer + result;
+            this.resultData.scrollTop = this.resultData.scrollHeight;
 
-        // the channels and their sockets
-        this.ftpCommandChannel = new TcpSockets( COMMAND_CHANNEL_NAME );
-        this.ftpDataChannel = new TcpSockets( DATA_CHANNEL_NAME );
+            if ( info.channel && info.channel.name === 'data' ) {
+                const buffer = this.receivedFile.value;
+                this.receivedFile.value = buffer + result;
+            }
+        }
+    }
 
-        this.ps = PublishSubscribe;
+    if ( result && result.toLowerCase().indexOf( "227 entering passive mode" ) === 0 ) {
+        // find the 6 digits - TODO better regexp here
+        const portData = ResponseParser.parsePasvMode( result, this.hostname.value );
+        //this.logger.log( JSON.stringify(portData));
+        this.receivedFile.value = '';
+        this.channel = 'data';
+        mediator.connect( 'data', {
+            host: portData.host,
+            port: +portData.port
+        } );
+    } else if ( this.commandIndex < this.commandList.length ) {
+        this.sendCommand();
+    } else if ( this.commandIndex >= this.commandList.length ) {
+        this.commandList = [];
+        this.commandIndex = 0;
+        // if we are doing a store now we send the data
+        //this.logger.log("here we are with data? " + this.uploadData);
+        if ( typeof this.uploadData !== 'undefined' ) {
+            this.sendData( this.uploadData );
+        }
+    }
+};
 
-        this.logger = new Logger( 'FtpMediator' );
+FtpClient.prototype.reset = function ( data ) {
+    this.uploadData = undefined;
+};
 
-        this.receiveHandler = receiveHandler;
-        this.receiveCB = receiveCB;
+FtpClient.prototype.connect = function () {
+    var self = this;
 
-        // setup command channel
-        this.ps.subscribe( this.ftpCommandChannel.receiveChannel, this.receive, this );
-        this.ps.subscribe( this.ftpCommandChannel.errorChannel, this.logger.error, this );
+    mediator.ps.subscribe( 'datauploaded' + mediator.ftpDataChannel.id, self.reset, self );
 
-        // setup data channel
-        this.ps.subscribe( this.ftpDataChannel.receiveChannel, this.receive, this );
-        this.ps.subscribe( this.ftpDataChannel.errorChannel, this.logger.error, this );
+    if ( this.hostname.value && this.hostname.value.length > 0 ) {
+        port = ( this.port.value && this.port.value.length > 0 ) ? this.port.value : 21;
 
-        // on connect to the data port no data is actually sent 
-        // so the onReceive is not fired
-        this.ps.subscribe( 'connected' + this.ftpDataChannel.id, this.receive, this );
-
-        // listen for data connection data sent
-        this.ps.subscribe( 'sendData' + this.ftpDataChannel.id, ( data ) => {
-            // when data channel sends data, no data is received
-            // notify client
-            this.logger.debug( `data sent: ${JSON.stringify( data )}` );
-            // close socket because we should be done with the passive port
-            this.disconnect( this.ftpDataChannel.id );
-
-            this.ps.publish( 'datauploaded' + this.ftpDataChannel.id, data );
+        if ( this.username.value && this.username.value.length > 0 && this.password.value && this.password.value.length > 0 ) {
+            this.channel = 'command';
+            this.commandIndex = 0;
+            this.uploadData = undefined;
+            this.commandList = FtpCommandSets.getLoginCommandSet( this.username.value, this.password.value );
+        }
+        mediator.connect( "command", {
+            host: this.hostname.value,
+            port: port
         } );
     }
+};
 
-    // connect and on which channel
-    connect( channel, data ) {
-        const ftpChannel = this[ channelNames[ channel ] ];
-
-        this.logger.debug( `connect: ${ftpChannel.id} channel ${JSON.stringify( data )}` );
-        ftpChannel.connect( data );
-    }
-
-    // disconnect
-    disconnect( channel ) {
-        const ftpChannel = this[ channelNames[ channel ] ];
-        ftpChannel.disconnect();
-        ftpChannel.removeListeners();
-    }
-
-    // send command
-    send( channel, data ) {
-        channel.sendCommand( {
-            'msg': data
-        } );
-    }
-
-    // receive data
-    receive( data ) {
-
-        this.logger.debug( "receive: " + JSON.stringify( data ) );
-
-        // which channel are we?
-        const channel = ( data.rawInfo.socketId === this.ftpCommandChannel.socketID ) ? COMMAND_CHANNEL_NAME : DATA_CHANNEL_NAME;
-        const ftpChannel = this[ channelNames[ channel ] ];
-
-        // debugging 
-        this.logger.debug( `receive: ${channel} ${ftpChannel.socketID}` );
-
-        this.receiveCB.call( this.receiveHandler, data );
-    }
-}
+FtpClient.prototype.quit = function () {
+    var self = this;
+    mediator.disconnect( 'command' );
+    mediator.disconnect( 'data' );
+    mediator.ps.unsubscribe( 'datauploaded' + mediator.ftpDataChannel.id, self.reset, self );
+};
