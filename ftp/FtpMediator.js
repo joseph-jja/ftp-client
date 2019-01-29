@@ -39,31 +39,30 @@ FtpClient.prototype.sendData = function ( data ) {
     mediator.send( mediator.ftpDataChannel, this.commandList[ this.commandIndex ] );
 };
 
-FtpClient.prototype.receiveCallback = function ( info ) {
+FtpClient.prototype.receiveCallback = function ( info = {} ) {
     let result;
 
     // we now have status codes from commands sent on command channel
     const statusCode = ResponseParser.parseStatusCode( info );
     this.logger.debug( `${this.commandList[ this.commandIndex - 1 ]} ${statusCode} ${FtpResponseCodes[ statusCode ]}` );
 
-    if ( info ) {
-        if ( info.rawInfo ) {
-            this.logger.debug( JSON.stringify( info.rawInfo ) );
-        }
-        if ( info.message ) {
-            result = info.message;
-            this.logger.debug( info.message );
-            this.logger.log( `Channel name ${info.channel.name}` );
-            buffer = this.resultData.innerHTML;
-            this.resultData.innerHTML = buffer + result;
-            this.resultData.scrollTop = this.resultData.scrollHeight;
+    if ( info.rawInfo ) {
+        this.logger.debug( JSON.stringify( info.rawInfo ) );
+    }
+    if ( info.message ) {
+        result = info.message;
+        this.logger.debug( info.message );
+        this.logger.log( `Channel name ${info.channel.name}` );
+        let buffer = this.resultData.innerHTML;
+        this.resultData.innerHTML = buffer + result;
+        this.resultData.scrollTop = this.resultData.scrollHeight;
 
-            if ( info.channel && info.channel.name === 'data' ) {
-                const buffer = this.receivedFile.value;
-                this.receivedFile.value = buffer + result;
-            }
+        if ( info.channel && info.channel.name === 'data' ) {
+            buffer = this.receivedFile.value;
+            this.receivedFile.value = buffer + result;
         }
     }
+    
 
     if ( result && result.toLowerCase().indexOf( "227 entering passive mode" ) === 0 ) {
         // find the 6 digits - TODO better regexp here
