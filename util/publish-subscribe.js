@@ -33,10 +33,11 @@ const PublishSubscribe = {
             return;
         }
         if ( ps.topics[ topic ] ) {
-            let end = ps.topics[ topic ].length;
+            const topicObj = ps.topics[ topic ];
+            let end = topicObj.length;
             for ( let i = 0; i < end; i++ ) {
-                if ( ps.topics[ topic ][ i ].cb === callback ) {
-                    ps.topics[ topic ][ i ] = undefined;
+                if ( topicObj[ i ] ) {
+                    topicObj[ i ] = undefined;
                     break;
                 }
             }
