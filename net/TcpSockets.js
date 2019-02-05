@@ -15,7 +15,7 @@ class TcpSockets {
         this.ArrayBufferType = Int8Array;
         this.ps = PublishSubscribe;
 
-        // install listeners 
+        // reference to self for scoping the listeners 
         const self = this;
 
         // add listener to tcp for receiving data and errors
