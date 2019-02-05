@@ -55,7 +55,6 @@ class FtpMediator {
     disconnect( channel ) {
         const ftpChannel = this[ channelNames[ channel ] ];
         ftpChannel.disconnect();
-        ftpChannel.removeListeners();
     }
 
     // send command
