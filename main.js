@@ -1,9 +1,9 @@
 const mediator = new FtpMediator();
 
+const ftp = new FtpClient();
+
 // whole app
 window.onload = function () {
-
-    const ftp = new FtpClient();
 
     const version = chrome.runtime.getManifest().version;
     
