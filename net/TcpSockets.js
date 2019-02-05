@@ -20,7 +20,7 @@ class TcpSockets {
 
         // add listener to tcp for receiving data and errors
         // each socket gets it's own listener on connect
-        const receiveHandler = ( info ) => {
+        this.receiveHandler = ( info ) => {
 
             if ( self.socketID && info.socketId && self.socketID === info.socketId ) {
                 // conversion 
@@ -49,7 +49,7 @@ class TcpSockets {
         //   600-699 FTP errors
         //   700-799 Certificate manager errors
         //   800-899 DNS resolver errors
-        const errorHandler = ( info ) => {
+        this.errorHandler = ( info ) => {
             if ( self.socketID && info.socketId && self.socketID === info.socketId ) {
                 // error code -100 is connection closed in relation to TCP FIN
                 // this happens on the data channel
@@ -59,13 +59,6 @@ class TcpSockets {
                 }
             }
         }
-
-        this.tcp.onReceive.addListener( receiveHandler );
-        this.tcp.onReceiveError.addListener( errorHandler );
-        this.removeListeners = () => {
-            this.tcp.onReceive.removeListener( receiveHandler );
-            this.tcp.onReceiveError.removeListener( errorHandler );
-        };
     }
 
     // connect and raise events
@@ -75,6 +68,9 @@ class TcpSockets {
             port = ( typeof data.port !== 'undefined' ? data.port : 21 );
 
         if ( host && host.length > 0 ) {
+
+            this.tcp.onReceive.addListener( this.receiveHandler );
+            this.tcp.onReceiveError.addListener( this.errorHandler );
 
             const connectCB = ( result ) => {
                 this.logger.debug( "connect tcp.connect: " + JSON.stringify( result ) );
@@ -132,6 +128,8 @@ class TcpSockets {
                 } catch ( e ) {
                     this.logger.log( "exception closing socket " + e );
                 }
+                this.tcp.onReceive.removeListener( this.receiveHandler );
+                this.tcp.onReceiveError.removeListener( this.errorHandler );
             } );
         }
     }
