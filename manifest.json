@@ -3,7 +3,7 @@
     "name": "ftp-client",
     "short_name": "ftp-client",
     "description": "",
-    "version": "0.2.8",
+    "version": "0.2.9",
     "minimum_chrome_version": "70",
     "update_url": "https://raw.githubusercontent.com/joseph-jja/ftp-client/master/update.xml",
 
