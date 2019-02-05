@@ -40,7 +40,7 @@ FtpClient.prototype.sendCommand = function () {
 
 // data is always sent on the data channel
 FtpClient.prototype.sendData = function ( data ) {
-    mediator.send( mediator.ftpDataChannel, this.commandList[ this.commandIndex ] );
+    mediator.send( mediator.ftpDataChannel, data );
 };
 
 FtpClient.prototype.receiveCallback = function ( info = {} ) {
