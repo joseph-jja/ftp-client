@@ -8,8 +8,6 @@ class TcpSockets {
         this.receiveChannel = `receive_${name}`;
         this.errorChannel = `error_${name}`;
 
-        this.socketBufferSize = 0;
-
         // constants
         // things that we know wont change :)
         // I wish they could be private properties in chrome 70 :(
@@ -76,10 +74,7 @@ class TcpSockets {
 
             const connectCB = ( result ) => {
                 this.logger.debug( "connect tcp.connect: " + JSON.stringify( result ) );
-                this.tcp.getInfo( this.socketID, ( socketProperties ) => {
-                    this.socketBufferSize = socketProperties.bufferSize;
-                    this.ps.publish( 'connected' + this.id, result );
-                });
+                this.ps.publish( 'connected' + this.id, result );
             };
 
             const create = new Promise( resolve => {

@@ -36,15 +36,10 @@ div.right {
 }
 #clearBuffer {
 }
-#resultData {
+#resultData, #loggerData, #receivedFile {
   width: 98%;
   height: 16em;
-  overflow: auto;
-}
-#receivedFile { 
-  width: 98%;
-  height: 1em;
-  overflow: auto;
+  overflow: scroll;
 }
 #uploadDataToggle {
     margin-top: 0.5em;

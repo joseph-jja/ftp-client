@@ -17,7 +17,7 @@ class FtpMediator {
 
         this.ps = PublishSubscribe;
 
-        this.logger = new Logger( 'FtpMediator' );
+        this.logger = new Logger( 'FtpMediator' );//, { logLevel: 'debug' } );
 
         // setup command channel
         this.ps.subscribe( this.ftpCommandChannel.receiveChannel, this.receive, this );
@@ -27,7 +27,7 @@ class FtpMediator {
         this.ps.subscribe( this.ftpDataChannel.receiveChannel, this.receive, this );
         this.ps.subscribe( this.ftpDataChannel.errorChannel, this.logger.error, this );
 
-        // on connect to the data port no data is actually sent 
+        // on connect to the data port no data is actually sent
         // so the onReceive is not fired
         this.ps.subscribe( 'connected' + this.ftpDataChannel.id, this.receive, this );
 
@@ -36,10 +36,14 @@ class FtpMediator {
             // when data channel sends data, no data is received
             // notify client
             this.logger.debug( `data sent: ${JSON.stringify( data )}` );
-            // close socket because we should be done with the passive port
-            this.disconnect( this.ftpDataChannel.id );
 
-            this.ps.publish( 'datauploaded' + this.ftpDataChannel.id, data );
+            // wait a second, err 2 in order to send large amounts of data
+            setTimeout(() => {
+                // close socket because we should be done with the passive port
+                this.disconnect( this.ftpDataChannel.id );
+
+                this.ps.publish( 'datauploaded' + this.ftpDataChannel.id, data );
+            }, 2000);
         } );
     }
 
@@ -73,7 +77,7 @@ class FtpMediator {
         const channel = ( data.rawInfo && data.rawInfo.socketId === this.ftpCommandChannel.socketID ) ? COMMAND_CHANNEL_NAME : DATA_CHANNEL_NAME;
         const ftpChannel = this[ channelNames[ channel ] ];
 
-        // debugging 
+        // debugging
         this.logger.debug( `receive: ${channel} ${ftpChannel.socketID}` );
 
         this.ps.publish( 'mediatorReceive', data );
