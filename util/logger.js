@@ -3,6 +3,9 @@ class Logger {
     constructor( callerName, options = {} ) {
         this.callingName = callerName;
         this.logLevel = options.logLevel || 'info';
+
+        this.loggerData = 'loggerData';
+        this.handle = undefined;
     }
 
     // TODO make this private
@@ -20,17 +23,31 @@ class Logger {
         return resultMessage;
     }
 
+    logToWindow( message ) {
+        if ( !this.debug ) {
+            return;
+        }
+        if ( !this.handle ) {
+            this.handle = document.getElementById( this.loggerData );
+        }
+        const data = this.handle.innerHTML;
+        this.handle.innerHTML = data + '<br>' + this.filterMessage( message );
+    }
+
     log( message ) {
+        this.logToWindow( message );
         console.log( this.callingName, this.filterMessage( message ) );
     }
 
     debug( message ) {
         if ( this.logLevel === 'debug' ) {
+            this.logToWindow( message );
             console.debug( this.callingName, this.filterMessage( message ) );
         }
     }
 
     error( message ) {
+        this.logToWindow( message )
         console.error( this.callingName, this.filterMessage( message ) );
     }
 };
