@@ -26,7 +26,7 @@ function FtpClient() {
 
     this.uploadData = undefined;
     this.resultData.innerHTML = "";
-        
+
     this.ps = PublishSubscribe;
 
     this.ps.subscribe( 'mediatorReceive', this.receiveCallback, this );
@@ -66,7 +66,7 @@ FtpClient.prototype.receiveCallback = function ( info = {} ) {
             this.receivedFile.value = buffer + result;
         }
     }
-    
+
 
     if ( result && result.toLowerCase().indexOf( "227 entering passive mode" ) === 0 ) {
         // find the 6 digits - TODO better regexp here

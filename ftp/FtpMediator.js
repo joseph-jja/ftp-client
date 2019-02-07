@@ -17,7 +17,7 @@ class FtpMediator {
 
         this.ps = PublishSubscribe;
 
-        this.logger = new Logger( 'FtpMediator' );//, { logLevel: 'debug' } );
+        this.logger = new Logger( 'FtpMediator' ); //, { logLevel: 'debug' } );
 
         // setup command channel
         this.ps.subscribe( this.ftpCommandChannel.receiveChannel, this.receive, this );
@@ -38,12 +38,12 @@ class FtpMediator {
             this.logger.debug( `data sent: ${JSON.stringify( data )}` );
 
             // wait a second, err 2 in order to send large amounts of data
-            setTimeout(() => {
+            setTimeout( () => {
                 // close socket because we should be done with the passive port
                 this.disconnect( this.ftpDataChannel.id );
 
                 this.ps.publish( 'datauploaded' + this.ftpDataChannel.id, data );
-            }, 2000);
+            }, 2000 );
         } );
     }
 
